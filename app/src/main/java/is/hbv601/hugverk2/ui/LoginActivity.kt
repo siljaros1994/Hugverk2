@@ -12,6 +12,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+import com.google.firebase.auth.FirebaseAuth
+
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
@@ -54,4 +57,19 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
+
+    //Logout Activity
+
+    class LoginActivity : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            val auth = FirebaseAuth.getInstance()
+            if (auth.currentUser != null) {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+    }
+
 }
