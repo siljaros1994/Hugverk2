@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,10 +22,29 @@
             android:theme="@style/Theme.Hugverk2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".ui.LoginActivity"
+            android:exported="true"
+            android:label="Login"
+            android:theme="@style/Theme.Hugverk2" />
+        <activity
+            android:name=".ui.RegisterActivity"
+            android:exported="true"
+            android:label="Register"
+            android:theme="@style/Theme.Hugverk2" />
+        <activity
+            android:name=".ui.DonorHomeActivity"
+            android:exported="true"
+            android:label="Donor Home"
+            android:theme="@style/Theme.Hugverk2" />
+        <activity
+            android:name=".ui.RecipientHomeActivity"
+            android:exported="true"
+            android:label="Recipient Home"
+            android:theme="@style/Theme.Hugverk2" />
+    </application>
 </manifest>
