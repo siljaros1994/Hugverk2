@@ -1,4 +1,4 @@
-package `is`.hbv601.hugverk2
+package `is`.hbv601.hugverk2.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
