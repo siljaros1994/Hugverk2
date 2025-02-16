@@ -31,7 +31,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        binding.registerButton.setOnClickListener {
+        // Handle for the register TextView click
+        binding.registerTextView.setOnClickListener {
+            // Navigate to RegisterActivity
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
@@ -42,8 +44,23 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
-                    Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-                    // Navigate to the next screen (e.g., MainActivity)
+                    if (loginResponse != null) {
+                        // Save user data and navigate to the appropriate home screen
+                        saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message)
+                        val intent = when (loginResponse.userType) {
+                            "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
+                            "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)
+                            else -> null
+                        }
+                        if (intent != null) {
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(this@LoginActivity, "Unknown user type", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@LoginActivity, "Login failed: Empty response", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this@LoginActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
                 }
@@ -53,5 +70,14 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun saveUserData(userId: Long, userType: String, token: String) {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putLong("user_id", userId)
+        editor.putString("user_type", userType)
+        editor.putString("token", token)
+        editor.apply()
     }
 }

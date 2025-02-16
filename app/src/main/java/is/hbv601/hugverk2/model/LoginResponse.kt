@@ -1,6 +1,7 @@
 package `is`.hbv601.hugverk2.model
 
 data class LoginResponse(
-    val token: String,
-    val userId: Long
+    val message: String,
+    val userId: Long,
+    val userType: String
 )

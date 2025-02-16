@@ -28,7 +28,7 @@ class RegisterActivity : AppCompatActivity() {
 
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
                 if (password == confirmPassword) {
-                    register(username, email, password, userType)
+                    register(username, email, password, confirmPassword, userType)
                 } else {
                     Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
                 }
@@ -38,13 +38,18 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun register(username: String, email: String, password: String, userType: String) {
-        val registerRequest = RegisterRequest(username, email, password, password, userType)
+    private fun register(username: String, email: String, password: String, confirmPassword: String, userType: String) {
+        val registerRequest = RegisterRequest(username, email, password, confirmPassword, userType)
         RetrofitClient.instance.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@RegisterActivity, "Registration successful", Toast.LENGTH_SHORT).show()
-                    finish() // Go back to LoginActivity
+                    val registerResponse = response.body()
+                    if (registerResponse != null) {
+                        Toast.makeText(this@RegisterActivity, registerResponse.message, Toast.LENGTH_SHORT).show()
+                        finish() // Go back to LoginActivity
+                    } else {
+                        Toast.makeText(this@RegisterActivity, "Registration failed: Empty response", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this@RegisterActivity, "Registration failed", Toast.LENGTH_SHORT).show()
                 }
