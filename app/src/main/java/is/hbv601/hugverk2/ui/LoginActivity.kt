@@ -12,6 +12,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+import com.google.firebase.auth.FirebaseAuth
+
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
 
@@ -72,6 +75,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+<<<<<<< HEAD
     private fun saveUserData(userId: Long, userType: String, token: String) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -80,4 +84,20 @@ class LoginActivity : AppCompatActivity() {
         editor.putString("token", token)
         editor.apply()
     }
+=======
+    //Logout Activity
+
+    class LoginActivity : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+
+            val auth = FirebaseAuth.getInstance()
+            if (auth.currentUser != null) {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+    }
+
+>>>>>>> 7710c5c13458ccbf67e65c9ddf9671e3e4a06978
 }
