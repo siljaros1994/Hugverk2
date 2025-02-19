@@ -7,8 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
+    // use your ip number, 130.208.101.191 is for the school.
     //private const val BASE_URL = "http://10.0.2.2:8080/"
-    private const val BASE_URL = "http://192.168.101.4:8080/"
+    private const val BASE_URL = "http://130.208.101.191:8080/"
 
     // an OkHttpClient with logging interceptor
     private val okHttpClient = OkHttpClient.Builder()

@@ -46,8 +46,16 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
-                        // Save user data and navigate to the appropriate home screen
-                        saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message)
+                        // Save user data in SharedPreferences
+                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putLong("user_id", loginResponse.userId)
+                        editor.putString("user_type", loginResponse.userType)
+                        editor.putString("username", username) // Save the username
+                        editor.putString("token", loginResponse.message)
+                        editor.apply()
+
+                        // Navigate to the appropriate home screen
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)

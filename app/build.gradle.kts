@@ -53,6 +53,9 @@ dependencies {
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    implementation ("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation ("com.google.android.material:material:1.9.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

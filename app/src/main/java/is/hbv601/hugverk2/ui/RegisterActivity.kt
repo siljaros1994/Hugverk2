@@ -45,6 +45,15 @@ class RegisterActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val registerResponse = response.body()
                     if (registerResponse != null) {
+                        // Save user data in SharedPreferences
+                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putLong("user_id", registerResponse.userId)
+                        editor.putString("user_type", registerResponse.userType)
+                        editor.putString("username", username) // Save the username
+                        editor.putString("token", registerResponse.message)
+                        editor.apply()
+
                         Toast.makeText(this@RegisterActivity, registerResponse.message, Toast.LENGTH_SHORT).show()
                         finish() // Go back to LoginActivity
                     } else {
