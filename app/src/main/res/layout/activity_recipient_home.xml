@@ -30,6 +30,13 @@
             android:textSize="24sp"
             android:layout_marginTop="16dp" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="16dp"/>
+
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -40,3 +47,4 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu_recipient" />
 </androidx.drawerlayout.widget.DrawerLayout>
+

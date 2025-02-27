@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/donorType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Donor Type"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/donorAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Age"/>
+
+    <TextView
+        android:id="@+id/donorEyeColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eye Color"/>
+
+    <TextView
+        android:id="@+id/donorHairColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hair Color"/>
+</LinearLayout>
