@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
@@ -11,7 +12,7 @@ import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.databinding.ActivityDonorHomeBinding
 
-class DonorHomeActivity : AppCompatActivity() {
+class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener { // Implement the listener
 
     private lateinit var binding: ActivityDonorHomeBinding
     private lateinit var drawerLayout: DrawerLayout
@@ -32,32 +33,28 @@ class DonorHomeActivity : AppCompatActivity() {
         navigationView = binding.navView
 
         // Set up navigation item selection
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    // Handle for home click
-                    Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
-                }
-            }
-            drawerLayout.closeDrawers()
-            true
-        }
+        navigationView.setNavigationItemSelectedListener(this)
 
-        // Here we retrieve user data
+        // Retrieve user data
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
+        val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
 
-        if (username == null) {
+        if (username == null || userType == null) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
             finish()
         } else {
-            // Here we display the username on the homepage
+            // Display the username on the homepage
             binding.welcomeMessage.text = "Hello, $username!"
             val headerView = navigationView.getHeaderView(0)
             val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
             navHeaderTitle.text = "Welcome, $username!"
+
+            // Save userType for later use
+            this.userType = userType
         }
     }
+    private var userType: String? = null
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -67,5 +64,21 @@ class DonorHomeActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_profile -> {
+                val intent = if (userType == "donor") {
+                    Intent(this, DonorProfileActivity::class.java)
+                } else {
+                    Intent(this, RecipientProfileActivity::class.java)
+                }
+                startActivity(intent)
+            }
+            // Handle other menu items
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 }

@@ -1,0 +1,134 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.DonorProfileActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Donor Profile"
+            android:textSize="24sp"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/donor_profile_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_avatar"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/donorType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Donor Type: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/eyeColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Eye Color: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/hairColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hair Color: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/educationLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Education Level: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/race"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Race: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/ethnicity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ethnicity: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/bloodType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Blood Type: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/medicalHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medical History: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Height: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Age: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/getToKnow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get to Know: Not specified"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

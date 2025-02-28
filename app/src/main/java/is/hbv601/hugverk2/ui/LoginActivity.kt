@@ -2,6 +2,7 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
@@ -41,21 +42,15 @@ class LoginActivity : AppCompatActivity() {
 
     private fun login(username: String, password: String) {
         val loginRequest = LoginRequest(username, password)
-        RetrofitClient.instance.login(loginRequest).enqueue(object : Callback<LoginResponse> {
+        Log.d("LoginActivity", "Logging in with username: $username, password: $password")
+        RetrofitClient.getInstance(this).login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                Log.d("LoginActivity", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
-                        // Save user data in SharedPreferences
-                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-                        editor.putLong("user_id", loginResponse.userId)
-                        editor.putString("user_type", loginResponse.userType)
-                        editor.putString("username", username) // Save the username
-                        editor.putString("token", loginResponse.message)
-                        editor.apply()
-
-                        // Navigate to the appropriate home screen
+                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}")
+                        saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message)
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)
@@ -71,11 +66,13 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this@LoginActivity, "Login failed: Empty response", Toast.LENGTH_SHORT).show()
                     }
                 } else {
+                    Log.d("LoginActivity", "Login failed. Response code: ${response.code()}")
                     Toast.makeText(this@LoginActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                Log.e("LoginActivity", "Login failed", t)
                 Toast.makeText(this@LoginActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
@@ -86,7 +83,7 @@ class LoginActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putLong("user_id", userId)
         editor.putString("user_type", userType)
-        editor.putString("token", token)
+        editor.putString("token", token) // Save the token
         editor.apply()
     }
 }

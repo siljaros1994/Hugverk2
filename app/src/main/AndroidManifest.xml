@@ -46,5 +46,11 @@
             android:exported="true"
             android:label="Recipient Home"
             android:theme="@style/Theme.Hugverk2" />
+        <activity
+            android:name=".ui.DonorProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.RecipientProfileActivity"
+            android:exported="false" />
     </application>
 </manifest>
