@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="eye_color_options">
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Brown</item>
+        <item>Hazel</item>
+        <item>Grey</item>
+        <item>Heterochromia</item>
+    </string-array>
+    <string-array name="hair_color_options">
+        <item>Blonde</item>
+        <item>Dark Blonde</item>
+        <item>Brown</item>
+        <item>Medium Brown</item>
+        <item>Dark Brown</item>
+        <item>Black</item>
+        <item>Red</item>
+        <item>Reddish Brown</item>
+        <item>Strawberry Red</item>
+        <item>White</item>
+    </string-array>
+    <string-array name="education_level_options">
+        <item>Primary School</item>
+        <item>Secondary School</item>
+        <item>University</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="race_options">
+        <item>Asian</item>
+        <item>Black</item>
+        <item>Caucasian</item>
+        <item>Hispanic</item>
+        <item>Native American</item>
+        <item>Pacific Islander</item>
+        <item>Mixed</item>
+    </string-array>
+    <string-array name="ethnicity_options">
+        <item>German</item>
+        <item>African-American</item>
+        <item>Mexican</item>
+        <item>Italian</item>
+        <item>American</item>
+        <item>English</item>
+        <item>Spanish</item>
+        <item>Irish</item>
+        <item>Japanese</item>
+        <item>Puerto Rican</item>
+        <item>Polish</item>
+        <item>Native American</item>
+        <item>French</item>
+        <item>Scottish</item>
+        <item>Chinese</item>
+        <item>Norwegian</item>
+        <item>Swedish</item>
+        <item>Icelandic</item>
+        <item>Danish</item>
+        <item>Finnish</item>
+        <item>Filipinos</item>
+        <item>Tibetans</item>
+        <item>Korean</item>
+        <item>Indian</item>
+        <item>Nepal</item>
+    </string-array>
+    <string-array name="blood_type_options">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+        <item>O+</item>
+        <item>O-</item>
+    </string-array>
+    <string-array name="recipient_type_options">
+        <item>Single</item>
+        <item>Couple</item>
+    </string-array>
+    <string-array name="medical_history_options">
+        <item>Cancer</item>
+        <item>Heart Disease</item>
+        <item>Diabetes</item>
+        <item>Asthma</item>
+        <item>High Blood Pressure</item>
+        <item>Sickle Cell Disease</item>
+        <item>Cystic Fibrosis</item>
+        <item>Tay-Sachs Disease</item>
+        <item>Spinal Muscular Atrophy</item>
+        <item>Fragile X Syndrome</item>
+        <item>Thalassemia</item>
+        <item>Hemophilia</item>
+        <item>Muscular Dystrophies</item>
+        <item>Down Syndrome</item>
+        <item>Turner Syndrome</item>
+        <item>Alzheimer’s Disease</item>
+        <item>Parkinson’s Disease</item>
+        <item>Huntington’s Disease</item>
+        <item>Rheumatoid Arthritis</item>
+        <item>Galactosemia</item>
+    </string-array>
+</resources>

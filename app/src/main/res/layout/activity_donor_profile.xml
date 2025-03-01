@@ -1,9 +1,9 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.DonorProfileActivity">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,12 +11,106 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- The edit Profile Section, where we add values -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Donor Profile"
+            android:text="Edit Profile"
             android:textSize="24sp"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/edit_eyeColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Eye Color" />
+
+        <EditText
+            android:id="@+id/edit_hairColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hair Color" />
+
+        <EditText
+            android:id="@+id/edit_educationLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Education Level" />
+
+        <EditText
+            android:id="@+id/edit_race"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Race" />
+
+        <EditText
+            android:id="@+id/edit_ethnicity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ethnicity" />
+
+        <EditText
+            android:id="@+id/edit_bloodType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Blood Type" />
+
+        <EditText
+            android:id="@+id/edit_medicalHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Medical History (comma-separated)" />
+
+        <EditText
+            android:id="@+id/edit_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Height (cm)"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/edit_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Weight (kg)"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/edit_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Age"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/edit_getToKnow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Get to Know (description)"
+            android:inputType="textMultiLine" />
+
+        <Button
+            android:id="@+id/buttonSaveEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Profile"
+            android:layout_marginTop="16dp" />
+
+        <!-- Here we have a divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginVertical="16dp"/>
+
+        <!-- Profile Information with saved values -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile Information"
+            android:textSize="24sp"
+            android:gravity="center"
             android:layout_marginBottom="16dp"/>
 
         <ImageView
@@ -28,6 +122,8 @@
             android:src="@drawable/default_avatar"
             android:layout_marginBottom="16dp"/>
 
+        <!--Saved profile vales -->
+
         <TextView
             android:id="@+id/donorType"
             android:layout_width="wrap_content"
@@ -37,7 +133,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/eyeColor"
+            android:id="@+id/textEyeColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Eye Color: Not specified"
@@ -45,7 +141,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/hairColor"
+            android:id="@+id/textHairColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hair Color: Not specified"
@@ -53,7 +149,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/educationLevel"
+            android:id="@+id/textEducationLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Education Level: Not specified"
@@ -61,7 +157,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/race"
+            android:id="@+id/textRace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Race: Not specified"
@@ -69,7 +165,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/ethnicity"
+            android:id="@+id/textEthnicity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ethnicity: Not specified"
@@ -77,7 +173,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/bloodType"
+            android:id="@+id/textBloodType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Blood Type: Not specified"
@@ -85,7 +181,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/medicalHistory"
+            android:id="@+id/textMedicalHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Medical History: Not specified"
@@ -93,7 +189,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/height"
+            android:id="@+id/textHeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Height: Not specified"
@@ -101,7 +197,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/weight"
+            android:id="@+id/textWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Weight: Not specified"
@@ -109,7 +205,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/age"
+            android:id="@+id/textAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Age: Not specified"
@@ -117,18 +213,12 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/getToKnow"
+            android:id="@+id/textGetToKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Get to Know: Not specified"
             android:textSize="16sp"
             android:layout_marginTop="8dp" />
 
-        <Button
-            android:id="@+id/editProfileButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile"
-            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>

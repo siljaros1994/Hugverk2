@@ -13,18 +13,28 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
-    @POST("api/users/login") // Update to match the actual login endpoint
+
+    //Login and register:
+    @POST("api/users/login")
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
-    @POST("api/users/register") // Update to match the actual register endpoint
+    @POST("api/users/register")
     fun register(@Body registerRequest: RegisterRequest): Call<RegisterResponse>
 
-    @GET("api/donor/profile/{userId}") // Update to match the actual donor profile endpoint
+    //donor profile:
+    @GET("api/donor/profile/{userId}")
     fun getDonorProfile(@Path("userId") userId: Long): Call<DonorProfile>
 
-    @GET("api/recipient/profile/{userId}") // Update to match the actual recipient profile endpoint
+    @POST("api/donor/profile/saveOrEdit")
+    fun saveOrEditDonorProfile(@Body profile: DonorProfile): Call<DonorProfile>
+
+    // Recipient profile:
+    @GET("api/recipient/profile/{userId}")
     fun getRecipientProfile(@Path("userId") userId: Long): Call<RecipientProfile>
 
-    // Add other endpoints here like search, match, message,...
+    @POST("api/recipient/profile/saveOrEdit")
+    fun saveOrEditRecipientProfile(@Body profile: RecipientProfile): Call<RecipientProfile>
+
+    // Here we add our other endpoints here like search, match, message,...
 
 }
