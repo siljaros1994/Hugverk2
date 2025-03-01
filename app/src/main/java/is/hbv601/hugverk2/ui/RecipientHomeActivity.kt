@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Intent
 import `is`.hbv601.hugverk2.R
 import android.os.Bundle
 import android.view.MenuItem
@@ -11,7 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 
-class RecipientHomeActivity : AppCompatActivity() {
+class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityRecipientHomeBinding
     private lateinit var drawerLayout: DrawerLayout
@@ -32,15 +33,7 @@ class RecipientHomeActivity : AppCompatActivity() {
         navigationView = binding.navView
 
         // Set up navigation item selection
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
-                }
-            }
-            drawerLayout.closeDrawers()
-            true
-        }
+        navigationView.setNavigationItemSelectedListener(this)
 
         // Here we retrieve the user data
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
@@ -66,5 +59,32 @@ class RecipientHomeActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_home -> {
+                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_profile -> {
+                val intent = Intent(this, RecipientProfileActivity::class.java) // Always Recipient profile for RecipientHome
+                startActivity(intent)
+            }
+            R.id.nav_messages -> {
+                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_favorites -> {
+                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_matches -> {
+                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_booking -> {
+                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            }
+            // Handle other menu items
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 }

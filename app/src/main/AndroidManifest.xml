@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
@@ -46,5 +47,11 @@
             android:exported="true"
             android:label="Recipient Home"
             android:theme="@style/Theme.Hugverk2" />
+        <activity
+            android:name=".ui.DonorProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.RecipientProfileActivity"
+            android:exported="false" />
     </application>
 </manifest>

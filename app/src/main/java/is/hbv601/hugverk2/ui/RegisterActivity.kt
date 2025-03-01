@@ -40,7 +40,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun register(username: String, email: String, password: String, confirmPassword: String, userType: String) {
         val registerRequest = RegisterRequest(username, email, password, confirmPassword, userType)
-        RetrofitClient.instance.register(registerRequest).enqueue(object : Callback<RegisterResponse> {
+        RetrofitClient.getInstance(this).register(registerRequest).enqueue(object : Callback<RegisterResponse> { // Use getInstance(this)
             override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                 if (response.isSuccessful) {
                     val registerResponse = response.body()
