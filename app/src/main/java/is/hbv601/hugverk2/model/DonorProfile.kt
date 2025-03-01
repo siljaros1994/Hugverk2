@@ -1,22 +1,22 @@
 package `is`.hbv601.hugverk2.model
 
 data class DonorProfile(
-    val donorProfileId: Long? = null, // nullable in the case it is a new profile
-    val donorType: String? = null,
-    val height: Double? = null,
-    val weight: Double? = null,
-    val age: Int? = null,
-    val eyeColor: String? = null,
-    val hairColor: String? = null,
-    val educationLevel: String? = null,
-    val medicalHistory: List<String>? = null,
-    val race: String? = null,
-    val ethnicity: String? = null,
-    val bloodType: String? = null,
-    val getToKnow: String? = null,
-    val traits: String? = null,
-    val imagePath: String? = null,
-    val donationLimit: Int? = 5,
-    val donationsCompleted: Int? = 0,
-    val user: MyAppUser? = null
+    var donorProfileId: Long? = null, // nullable in the case it is a new profile
+    var donorType: String? = null,
+    var height: Double? = null,
+    var weight: Double? = null,
+    var age: Int? = null,
+    var eyeColor: String? = null,
+    var hairColor: String? = null,
+    var educationLevel: String? = null,
+    var medicalHistory: List<String>? = null,
+    var race: String? = null,
+    var ethnicity: String? = null,
+    var bloodType: String? = null,
+    var getToKnow: String? = null,
+    var traits: String? = null,
+    var imagePath: String? = null,
+    var donationLimit: Int? = 5,
+    var donationsCompleted: Int? = 0,
+    var user: MyAppUser? = null
 )
