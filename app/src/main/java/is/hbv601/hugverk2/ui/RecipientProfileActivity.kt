@@ -228,7 +228,7 @@ class RecipientProfileActivity : AppCompatActivity() {
         textAge.text = "Age: ${profile.age ?: "Not specified"}"
         textGetToKnow.text = "Get to Know: ${profile.getToKnow ?: "Not specified"}"
 
-        // Load image if available
+        // Load image if it is available
         profile.imagePath?.let { path ->
             Glide.with(this)
                 .load("http://10.0.2.2:8080$path")

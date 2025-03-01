@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <!-- The edit Profile Section, where we add values -->
         <TextView
@@ -20,47 +20,100 @@
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
 
-        <EditText
-            android:id="@+id/edit_eyeColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Eye Color" />
+        <ImageView
+            android:id="@+id/image_edit_profile"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_avatar"
+            android:contentDescription="@string/choose_profile_image"
+            android:layout_marginBottom="8dp"/>
 
-        <EditText
-            android:id="@+id/edit_hairColor"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/buttonChooseImage"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Hair Color" />
+            android:text="Choose Image"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
-        <EditText
-            android:id="@+id/edit_educationLevel"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Education Level" />
+            android:text="Eye Color:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_eyeColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/eye_color_options" />
 
-        <EditText
-            android:id="@+id/edit_race"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Race" />
+            android:text="Hair Color:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_hairColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/hair_color_options" />
 
-        <EditText
-            android:id="@+id/edit_ethnicity"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ethnicity" />
+            android:text="Education Level:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_educationLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/education_level_options" />
 
-        <EditText
-            android:id="@+id/edit_bloodType"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Blood Type" />
+            android:text="Race:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_race"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/race_options" />
 
-        <EditText
-            android:id="@+id/edit_medicalHistory"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Medical History (comma-separated)" />
+            android:text="Ethnicity:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_ethnicity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/ethnicity_options" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blood Type:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_bloodType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/blood_type_options" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Family and Recipient's Medical History:"
+            android:textSize="16sp"/>
+        <is.hbv601.hugverk2.customviews.MultiSelectSpinner
+            android:id="@+id/spinner_medicalHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/select_medical_history" />
 
         <EditText
             android:id="@+id/edit_height"
@@ -123,14 +176,6 @@
             android:layout_marginBottom="16dp"/>
 
         <!--Saved profile vales -->
-
-        <TextView
-            android:id="@+id/donorType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Donor Type: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/textEyeColor"

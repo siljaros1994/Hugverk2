@@ -76,6 +76,9 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             R.id.nav_favorites -> {
                 Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
             }
+            R.id.nav_matches -> {
+                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+            }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }

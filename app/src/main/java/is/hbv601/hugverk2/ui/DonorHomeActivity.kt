@@ -50,10 +50,11 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
             navHeaderTitle.text = "Welcome, $username!"
 
-            // Save userType for later use
+            // userType saved for possible later use
             this.userType = userType
         }
     }
+
     private var userType: String? = null
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -68,17 +69,28 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_profile -> {
-                val intent = if (userType == "donor") {
-                    Intent(this, DonorProfileActivity::class.java)
-                } else {
-                    Intent(this, RecipientProfileActivity::class.java)
-                }
+            R.id.nav_home -> {
+                // Start donor home activity (or refresh the current one)
+                val intent = Intent(this, DonorHomeActivity::class.java)
                 startActivity(intent)
             }
-            // Handle other menu items
+            R.id.nav_profile -> {
+                // open donor profile activity
+                val intent = Intent(this, DonorProfileActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_messages -> {
+                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_matches -> {
+                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_booking -> {
+                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
