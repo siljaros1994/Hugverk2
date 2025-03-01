@@ -35,14 +35,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choose Image"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"/>
+            style="@style/ChooseImageButtonStyle"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Eye Color:"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
+
         <Spinner
             android:id="@+id/spinner_eyeColor"
             android:layout_width="match_parent"
@@ -148,7 +148,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save Profile"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            style="@style/ProfileButton" />
 
         <!-- Here we have a divider -->
         <View
@@ -182,88 +183,77 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Eye Color: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textHairColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hair Color: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textEducationLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Education Level: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textRace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Race: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textEthnicity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ethnicity: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textBloodType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Blood Type: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textMedicalHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Medical History: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textHeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Height: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Weight: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textAge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Age: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
         <TextView
             android:id="@+id/textGetToKnow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Get to Know: Not specified"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp" />
+            style="@style/ProfileText" />
 
     </LinearLayout>
 </ScrollView>
