@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="4dp"
+    android:layout_margin="50dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="9dp">
+
+        <ImageView
+            android:id="@+id/donorImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_avatar" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/tvEyeColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eye Color: "
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvHairColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hair Color: "
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvRace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Race: "
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvBloodType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blood Type: "
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvDonorType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Donor Type: "
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Favorite" />
+
+            <Button
+                android:id="@+id/btnViewProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Profile"
+                android:layout_marginStart="16dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

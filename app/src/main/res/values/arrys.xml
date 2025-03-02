@@ -76,6 +76,10 @@
         <item>Single</item>
         <item>Couple</item>
     </string-array>
+    <string-array name="donor_type_options">
+        <item>Sperm</item>
+        <item>Egg</item>
+    </string-array>
     <string-array name="medical_history_options">
         <item>Cancer</item>
         <item>Heart Disease</item>
