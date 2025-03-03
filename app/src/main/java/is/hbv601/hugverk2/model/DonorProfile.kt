@@ -20,5 +20,4 @@ data class DonorProfile(
     var donationsCompleted: Int? = 0,
     var imageData: String? = null,
     var user: MyAppUser? = null
-
 )

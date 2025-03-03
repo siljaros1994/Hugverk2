@@ -63,6 +63,20 @@ class DonorProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun getFileFromUri(uri: Uri): File? {
+        return try {
+            val inputStream = contentResolver.openInputStream(uri) ?: return null
+            val tempFile = File.createTempFile("upload_", ".jpg", cacheDir)
+            tempFile.outputStream().use { output ->
+                inputStream.copyTo(output)
+            }
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donor_profile)
@@ -108,30 +122,53 @@ class DonorProfileActivity : AppCompatActivity() {
             openImageChooser()
         }
 
+
         // Set up save button with image upload support.
         buttonSaveEdit.setOnClickListener {
             if (imageUri != null) {
-                // Upload the image first
-                uploadImage(imageUri!!, onSuccess = { uploadedPath ->
-                    Log.d("DonorProfile", "Uploaded path: $uploadedPath")
-                    val updatedProfile = DonorProfile(
-                        eyeColor = spinnerEyeColor.selectedItem.toString(),
-                        hairColor = spinnerHairColor.selectedItem.toString(),
-                        educationLevel = spinnerEducationLevel.selectedItem.toString(),
-                        race = spinnerRace.selectedItem.toString(),
-                        ethnicity = spinnerEthnicity.selectedItem.toString(),
-                        bloodType = spinnerBloodType.selectedItem.toString(),
-                        medicalHistory = spinnerMedicalHistory.getSelectedItems(),
-                        height = editHeight.text.toString().toDoubleOrNull(),
-                        weight = editWeight.text.toString().toDoubleOrNull(),
-                        age = editAge.text.toString().toIntOrNull(),
-                        getToKnow = editGetToKnow.text.toString(),
-                        imagePath = uploadedPath // Set the uploaded path here
-                    )
-                    saveOrEditProfile(updatedProfile)
-                }, onFailure = {
-                    Toast.makeText(this, "Image upload failed", Toast.LENGTH_SHORT).show()
-                })
+                // Instead of getRealPathFromUri, try getFileFromUri to obtain a File
+                val file = getFileFromUri(imageUri!!)
+                if (file != null) {
+                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestFile)
+
+                    RetrofitClient.getInstance(this)
+                        .uploadFile(multipartBody)
+                        .enqueue(object : Callback<String> {
+                            override fun onResponse(call: Call<String>, response: Response<String>) {
+                                if (response.isSuccessful) {
+                                    response.body()?.let { uploadedPath ->
+                                        Log.d("DonorProfile", "Uploaded path: $uploadedPath")
+                                        // Build your updated profile with the uploadedPath (server-relative)
+                                        val updatedProfile = DonorProfile(
+                                            eyeColor = spinnerEyeColor.selectedItem.toString(),
+                                            hairColor = spinnerHairColor.selectedItem.toString(),
+                                            educationLevel = spinnerEducationLevel.selectedItem.toString(),
+                                            race = spinnerRace.selectedItem.toString(),
+                                            ethnicity = spinnerEthnicity.selectedItem.toString(),
+                                            bloodType = spinnerBloodType.selectedItem.toString(),
+                                            medicalHistory = spinnerMedicalHistory.getSelectedItems(),
+                                            height = editHeight.text.toString().toDoubleOrNull(),
+                                            weight = editWeight.text.toString().toDoubleOrNull(),
+                                            age = editAge.text.toString().toIntOrNull(),
+                                            getToKnow = editGetToKnow.text.toString(),
+                                            imagePath = uploadedPath // use the returned relative path here!
+                                        )
+                                        saveOrEditProfile(updatedProfile)
+                                    } ?: onFailure(call, Throwable("Empty response body"))
+                                } else {
+                                    Log.e("Upload Error", "Error Code: ${response.code()}")
+                                    onFailure(call, Throwable("Error uploading file"))
+                                }
+                            }
+                            override fun onFailure(call: Call<String>, t: Throwable) {
+                                Log.e("Upload Failure", t.message ?: "Unknown error")
+                                Toast.makeText(this@DonorProfileActivity, "Image upload failed", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                } else {
+                    Toast.makeText(this, "Unable to access image file", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 // Save profile without updating the imagePath
                 val updatedProfile = DonorProfile(
@@ -200,21 +237,6 @@ class DonorProfileActivity : AppCompatActivity() {
                     onFailure()
                 }
             })
-    }
-
-    private fun getFileFromUri(uri: Uri): File? {
-        return try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-            // Create a temporary file in the cache directory
-            val tempFile = File.createTempFile("upload_", ".jpg", cacheDir)
-            tempFile.outputStream().use { output ->
-                inputStream.copyTo(output)
-            }
-            tempFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
     }
 
     private fun fetchDonorProfile(userId: Long) {
