@@ -42,30 +42,37 @@ android {
 
 dependencies {
     // Retrofit for API calls
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    // SQLite
-    implementation ("androidx.room:room-runtime:2.5.2")
-    annotationProcessor ("androidx.room:room-compiler:2.5.2")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Room (Kotlin version)
+    implementation("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
+
     // Gson for JSON parsing
-    implementation ("com.google.code.gson:gson:2.10.1")
-    implementation ("androidx.appcompat:appcompat:1.6.1")
-    implementation ("com.google.android.material:material:1.9.0")
-    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    implementation ("androidx.drawerlayout:drawerlayout:1.2.0")
-    implementation ("com.google.android.material:material:1.9.0")
+    // Drawer Layout and Material Design
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation("com.google.android.material:material:1.9.0")
 
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
-
-    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.3")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    // OkHttp and logging interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    // Glide OkHttp integration for sending cookies with HTTP requests.
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0")
+
+    // OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.3")
 
+    // Other dependencies (version catalog aliases)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -107,6 +107,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Donor Type:"
+            android:textSize="16sp"/>
+        <Spinner
+            android:id="@+id/spinner_donorType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/donor_type_options" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Family and Recipient's Medical History:"
             android:textSize="16sp"/>
         <is.hbv601.hugverk2.customviews.MultiSelectSpinner

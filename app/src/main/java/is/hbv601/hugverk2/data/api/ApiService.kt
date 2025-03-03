@@ -6,11 +6,16 @@ import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
 import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.RecipientProfile
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -25,8 +30,12 @@ interface ApiService {
     @GET("api/donor/profile/{userId}")
     fun getDonorProfile(@Path("userId") userId: Long): Call<DonorProfile>
 
+    @Headers("Content-Type: application/json")
     @POST("api/donor/profile/saveOrEdit")
     fun saveOrEditDonorProfile(@Body profile: DonorProfile): Call<DonorProfile>
+
+    @GET("api/donor/all")
+    fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
 
     // Recipient profile:
     @GET("api/recipient/profile/{userId}")
@@ -34,6 +43,10 @@ interface ApiService {
 
     @POST("api/recipient/profile/saveOrEdit")
     fun saveOrEditRecipientProfile(@Body profile: RecipientProfile): Call<RecipientProfile>
+
+    @Multipart
+    @POST("api/upload")
+    fun uploadFile(@Part file: MultipartBody.Part): Call<String>
 
     // Here we add our other endpoints here like search, match, message,...
 

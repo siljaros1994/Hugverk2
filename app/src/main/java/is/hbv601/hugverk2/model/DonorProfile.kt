@@ -1,7 +1,7 @@
 package `is`.hbv601.hugverk2.model
 
 data class DonorProfile(
-    var donorProfileId: Long? = null, // nullable in the case it is a new profile
+    val donorProfileId: Long? = null, // nullable in the case it is a new profile
     var donorType: String? = null,
     var height: Double? = null,
     var weight: Double? = null,
@@ -18,5 +18,6 @@ data class DonorProfile(
     var imagePath: String? = null,
     var donationLimit: Int? = 5,
     var donationsCompleted: Int? = 0,
+    var imageData: String? = null,
     var user: MyAppUser? = null
 )
