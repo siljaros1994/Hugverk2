@@ -1,7 +1,7 @@
 #  Hugbúnaðarverkefni 2 [HBV601G] - Team 18 - DonorMatch 
 ## Höfundar - Authors
 Silja Rós Svansdóttir Þormar <br/>
-Þrándur Orri Ólason <br/>
+Þrándur Orri Ólason (test) <br/>
 Guðrún Ísabella Kjartansdóttir <br/>
 Alexandra Björk Magnúsdóttir <br/>
 ## Verkefni - Assignment
