@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
-import `is`.hbv601.hugverk2.data.model.RegisterRequest
-import `is`.hbv601.hugverk2.data.model.RegisterResponse
+import `is`.hbv601.hugverk2.model.RegisterRequest
+import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.databinding.ActivityRegisterBinding
 import retrofit2.Call
 import retrofit2.Callback

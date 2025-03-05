@@ -1,11 +1,12 @@
 package `is`.hbv601.hugverk2.data.api
 
-import `is`.hbv601.hugverk2.data.model.RegisterRequest
-import `is`.hbv601.hugverk2.data.model.RegisterResponse
+import `is`.hbv601.hugverk2.model.RegisterRequest
+import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
 import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.RecipientProfile
+import `is`.hbv601.hugverk2.model.UploadResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -46,7 +47,7 @@ interface ApiService {
 
     @Multipart
     @POST("api/upload")
-    fun uploadFile(@Part file: MultipartBody.Part): Call<String>
+    fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
     // Here we add our other endpoints here like search, match, message,...
 

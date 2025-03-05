@@ -53,7 +53,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
         // Here we retrieve the user data
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", null)
+        val username = sharedPreferences.getString("username", "Unknown")
 
         if (username == null) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()

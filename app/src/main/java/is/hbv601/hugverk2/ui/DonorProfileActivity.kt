@@ -2,7 +2,6 @@ package `is`.hbv601.hugverk2.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,6 +11,7 @@ import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.customviews.MultiSelectSpinner
+import `is`.hbv601.hugverk2.model.UploadResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -29,6 +29,7 @@ class DonorProfileActivity : AppCompatActivity() {
     private lateinit var spinnerRace: Spinner
     private lateinit var spinnerEthnicity: Spinner
     private lateinit var spinnerBloodType: Spinner
+    private lateinit var spinnerDonorType: Spinner
     private lateinit var spinnerMedicalHistory: MultiSelectSpinner
     private lateinit var editHeight: EditText
     private lateinit var editWeight: EditText
@@ -45,24 +46,30 @@ class DonorProfileActivity : AppCompatActivity() {
     private lateinit var textRace: TextView
     private lateinit var textEthnicity: TextView
     private lateinit var textBloodType: TextView
+    private lateinit var textDonorType: TextView
     private lateinit var textMedicalHistory: TextView
     private lateinit var textHeight: TextView
     private lateinit var textWeight: TextView
     private lateinit var textAge: TextView
     private lateinit var textGetToKnow: TextView
 
-    private val PICK_IMAGE_REQUEST = 1
-    private var imageUri: Uri? = null
-    private var currentProfile: DonorProfile? = null
-
-    // Register an ActivityResultLauncher for picking images.
+    // Here we use ActivityResultLauncher for picking an image.
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
             imageUri = uri
+            Log.d("DonorProfile", "Image URI selected: $uri")
             Glide.with(this).load(uri).into(profileImage)
         }
     }
 
+    private var imageUri: Uri? = null
+    private var currentProfile: DonorProfile? = null
+
+    private fun openImageChooser() {
+        pickImageLauncher.launch("image/*")
+    }
+
+    // Helper method: convert a Uri to a File.
     private fun getFileFromUri(uri: Uri): File? {
         return try {
             val inputStream = contentResolver.openInputStream(uri) ?: return null
@@ -70,6 +77,7 @@ class DonorProfileActivity : AppCompatActivity() {
             tempFile.outputStream().use { output ->
                 inputStream.copyTo(output)
             }
+            Log.d("DonorProfile", "File created from URI: ${tempFile.absolutePath}")
             tempFile
         } catch (e: Exception) {
             e.printStackTrace()
@@ -88,6 +96,7 @@ class DonorProfileActivity : AppCompatActivity() {
         spinnerRace = findViewById(R.id.spinner_race)
         spinnerEthnicity = findViewById(R.id.spinner_ethnicity)
         spinnerBloodType = findViewById(R.id.spinner_bloodType)
+        spinnerDonorType = findViewById(R.id.spinner_donorType)
         spinnerMedicalHistory = findViewById(R.id.spinner_medicalHistory)
         editHeight = findViewById(R.id.edit_height)
         editWeight = findViewById(R.id.edit_weight)
@@ -96,7 +105,7 @@ class DonorProfileActivity : AppCompatActivity() {
         buttonSaveEdit = findViewById(R.id.buttonSaveEdit)
         buttonChooseImage = findViewById(R.id.buttonChooseImage)
 
-        // Initialize preview views
+        // Bind preview views
         profileImage = findViewById(R.id.donor_profile_image)
         textEyeColor = findViewById(R.id.textEyeColor)
         textHairColor = findViewById(R.id.textHairColor)
@@ -104,13 +113,14 @@ class DonorProfileActivity : AppCompatActivity() {
         textRace = findViewById(R.id.textRace)
         textEthnicity = findViewById(R.id.textEthnicity)
         textBloodType = findViewById(R.id.textBloodType)
+        textDonorType = findViewById(R.id.textDonorType)
         textMedicalHistory = findViewById(R.id.textMedicalHistory)
         textHeight = findViewById(R.id.textHeight)
         textWeight = findViewById(R.id.textWeight)
         textAge = findViewById(R.id.textAge)
         textGetToKnow = findViewById(R.id.textGetToKnow)
 
-        // Initialize MultiSelectSpinner with options
+        // Initialize MultiSelectSpinner options
         spinnerMedicalHistory.setItems(resources.getStringArray(R.array.medical_history_options))
 
         // Fetch the donor profile
@@ -122,24 +132,21 @@ class DonorProfileActivity : AppCompatActivity() {
             openImageChooser()
         }
 
-
-        // Set up save button with image upload support.
+        // Set up save button with image upload support
         buttonSaveEdit.setOnClickListener {
             if (imageUri != null) {
-                // Instead of getRealPathFromUri, try getFileFromUri to obtain a File
                 val file = getFileFromUri(imageUri!!)
                 if (file != null) {
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                     val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestFile)
-
                     RetrofitClient.getInstance(this)
                         .uploadFile(multipartBody)
-                        .enqueue(object : Callback<String> {
-                            override fun onResponse(call: Call<String>, response: Response<String>) {
+                        .enqueue(object : Callback<UploadResponse> {
+                            override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
+                                Log.d("DonorProfile", "Upload response code: ${response.code()}")
                                 if (response.isSuccessful) {
-                                    response.body()?.let { uploadedPath ->
-                                        Log.d("DonorProfile", "Uploaded path: $uploadedPath")
-                                        // Build your updated profile with the uploadedPath (server-relative)
+                                    response.body()?.let { uploadResponse ->
+                                        Log.d("DonorProfile", "Uploaded path: ${uploadResponse.fileUrl}")
                                         val updatedProfile = DonorProfile(
                                             eyeColor = spinnerEyeColor.selectedItem.toString(),
                                             hairColor = spinnerHairColor.selectedItem.toString(),
@@ -147,22 +154,24 @@ class DonorProfileActivity : AppCompatActivity() {
                                             race = spinnerRace.selectedItem.toString(),
                                             ethnicity = spinnerEthnicity.selectedItem.toString(),
                                             bloodType = spinnerBloodType.selectedItem.toString(),
+                                            // Make sure the donor type string exactly matches your backend expectations.
+                                            donorType = spinnerDonorType.selectedItem.toString(),
                                             medicalHistory = spinnerMedicalHistory.getSelectedItems(),
                                             height = editHeight.text.toString().toDoubleOrNull(),
                                             weight = editWeight.text.toString().toDoubleOrNull(),
                                             age = editAge.text.toString().toIntOrNull(),
                                             getToKnow = editGetToKnow.text.toString(),
-                                            imagePath = uploadedPath // use the returned relative path here!
+                                            imagePath = uploadResponse.fileUrl
                                         )
                                         saveOrEditProfile(updatedProfile)
                                     } ?: onFailure(call, Throwable("Empty response body"))
                                 } else {
-                                    Log.e("Upload Error", "Error Code: ${response.code()}")
+                                    Log.e("DonorProfile", "Error Code: ${response.code()}")
                                     onFailure(call, Throwable("Error uploading file"))
                                 }
                             }
-                            override fun onFailure(call: Call<String>, t: Throwable) {
-                                Log.e("Upload Failure", t.message ?: "Unknown error")
+                            override fun onFailure(call: Call<UploadResponse>, t: Throwable) {
+                                Log.e("DonorProfile", "Upload Failure: ${t.message}")
                                 Toast.makeText(this@DonorProfileActivity, "Image upload failed", Toast.LENGTH_SHORT).show()
                             }
                         })
@@ -178,6 +187,7 @@ class DonorProfileActivity : AppCompatActivity() {
                     race = spinnerRace.selectedItem.toString(),
                     ethnicity = spinnerEthnicity.selectedItem.toString(),
                     bloodType = spinnerBloodType.selectedItem.toString(),
+                    donorType = spinnerDonorType.selectedItem.toString(),
                     medicalHistory = spinnerMedicalHistory.getSelectedItems(),
                     height = editHeight.text.toString().toDoubleOrNull(),
                     weight = editWeight.text.toString().toDoubleOrNull(),
@@ -190,62 +200,13 @@ class DonorProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun openImageChooser() {
-        pickImageLauncher.launch("image/*")
-    }
-
-    // Helper to get a real file system path from a content Uri.
-    private fun getRealPathFromUri(uri: Uri): String {
-        var realPath = ""
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = contentResolver.query(uri, projection, null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                realPath = it.getString(columnIndex)
-            }
-        }
-        return realPath
-    }
-
-    // Here we have a function to upload the image file to the backend.
-    private fun uploadImage(uri: Uri, onSuccess: (String) -> Unit, onFailure: () -> Unit) {
-        val realPath = getRealPathFromUri(uri)
-        if (realPath.isEmpty()) {
-            onFailure()
-            return
-        }
-        val file = File(realPath)
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestFile)
-
-        RetrofitClient.getInstance(this)
-            .uploadFile(multipartBody)
-            .enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { filePath ->
-                            onSuccess(filePath)
-                        } ?: onFailure()
-                    } else {
-                        Log.e("Upload Error", "Error Code: ${response.code()}")
-                        onFailure()
-                    }
-                }
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    Log.e("Upload Failure", t.message ?: "Unknown error")
-                    onFailure()
-                }
-            })
-    }
-
     private fun fetchDonorProfile(userId: Long) {
         RetrofitClient.getInstance(this).getDonorProfile(userId)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {
                         response.body()?.let { profile ->
-                            currentProfile = profile // save the current profile
+                            currentProfile = profile
                             updateFormFields(profile)
                             updatePreview(profile)
                         } ?: Toast.makeText(this@DonorProfileActivity, "Empty response", Toast.LENGTH_SHORT).show()
@@ -284,6 +245,10 @@ class DonorProfileActivity : AppCompatActivity() {
         val bloodTypeIndex = bloodTypeArray.indexOf(profile.bloodType ?: "")
         if (bloodTypeIndex >= 0) spinnerBloodType.setSelection(bloodTypeIndex)
 
+        val donorTypeArray = resources.getStringArray(R.array.donor_type_options)
+        val donorTypeIndex = donorTypeArray.indexOf(profile.donorType ?: "")
+        if (donorTypeIndex >= 0) spinnerDonorType.setSelection(donorTypeIndex)
+
         profile.medicalHistory?.let { history ->
             spinnerMedicalHistory.setSelection(history.toList())
         }
@@ -301,6 +266,7 @@ class DonorProfileActivity : AppCompatActivity() {
         textRace.text = "Race: ${profile.race ?: "Not specified"}"
         textEthnicity.text = "Ethnicity: ${profile.ethnicity ?: "Not specified"}"
         textBloodType.text = "Blood Type: ${profile.bloodType ?: "Not specified"}"
+        textDonorType.text = "Donor Type: ${profile.donorType ?: "Not specified"}"
         textMedicalHistory.text = "Medical History: ${profile.medicalHistory?.joinToString(", ") ?: "Not specified"}"
         textHeight.text = "Height: ${profile.height ?: "Not specified"}"
         textWeight.text = "Weight: ${profile.weight ?: "Not specified"}"
@@ -308,9 +274,14 @@ class DonorProfileActivity : AppCompatActivity() {
         textGetToKnow.text = "Get to Know: ${profile.getToKnow ?: "Not specified"}"
 
         profile.imagePath?.trim()?.let { path ->
-            val baseUrl = "http://192.168.101.4:8080"
-            val formattedPath = if (path.startsWith("/")) path else "/$path"
-            val imageUrl = baseUrl + formattedPath
+            val imageUrl = if (path.startsWith("http")) {
+                path
+            } else {
+                // Here we use the base URL only if the path is relative.
+                val baseUrl = "http://192.168.101.4:8080"
+                val formattedPath = if (path.startsWith("/")) path else "/$path"
+                baseUrl + formattedPath
+            }
             Log.d("DonorProfile", "Loading image from: $imageUrl")
             Glide.with(this)
                 .load(imageUrl)
