@@ -53,6 +53,13 @@ class DonorProfileActivity : AppCompatActivity() {
     private lateinit var textAge: TextView
     private lateinit var textGetToKnow: TextView
 
+    private var imageUri: Uri? = null
+    private var currentProfile: DonorProfile? = null
+
+    private fun openImageChooser() {
+        pickImageLauncher.launch("image/*")
+    }
+
     // Here we use ActivityResultLauncher for picking an image.
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
@@ -60,13 +67,6 @@ class DonorProfileActivity : AppCompatActivity() {
             Log.d("DonorProfile", "Image URI selected: $uri")
             Glide.with(this).load(uri).into(profileImage)
         }
-    }
-
-    private var imageUri: Uri? = null
-    private var currentProfile: DonorProfile? = null
-
-    private fun openImageChooser() {
-        pickImageLauncher.launch("image/*")
     }
 
     // Helper method: convert a Uri to a File.
@@ -273,15 +273,9 @@ class DonorProfileActivity : AppCompatActivity() {
         textAge.text = "Age: ${profile.age ?: "Not specified"}"
         textGetToKnow.text = "Get to Know: ${profile.getToKnow ?: "Not specified"}"
 
+        // Now we will be using Cloudinary, our imagePath should be a the full URL.
         profile.imagePath?.trim()?.let { path ->
-            val imageUrl = if (path.startsWith("http")) {
-                path
-            } else {
-                // Here we use the base URL only if the path is relative.
-                val baseUrl = "http://192.168.101.4:8080"
-                val formattedPath = if (path.startsWith("/")) path else "/$path"
-                baseUrl + formattedPath
-            }
+            val imageUrl = path
             Log.d("DonorProfile", "Loading image from: $imageUrl")
             Glide.with(this)
                 .load(imageUrl)

@@ -23,6 +23,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import `is`.hbv601.hugverk2.customviews.MultiSelectSpinner
+import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 
 class RecipientProfileActivity : AppCompatActivity() {
@@ -59,6 +60,11 @@ class RecipientProfileActivity : AppCompatActivity() {
     private lateinit var textGetToKnow: TextView
 
     private var imageUri: Uri? = null
+    private var currentProfile: RecipientProfile? = null
+
+    private fun openImageChooser() {
+        pickImageLauncher.launch("image/*")
+    }
 
     // Use ActivityResultLauncher for picking an image.
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -83,10 +89,6 @@ class RecipientProfileActivity : AppCompatActivity() {
             e.printStackTrace()
             null
         }
-    }
-
-    private fun openImageChooser() {
-        pickImageLauncher.launch("image/*")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,6 +210,7 @@ class RecipientProfileActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<RecipientProfile>, response: Response<RecipientProfile>) {
                     if (response.isSuccessful) {
                         response.body()?.let { profile ->
+                            currentProfile = profile
                             updateFormFields(profile)
                             updatePreview(profile)
                         } ?: Toast.makeText(this@RecipientProfileActivity, "Empty response", Toast.LENGTH_SHORT).show()
@@ -274,15 +277,9 @@ class RecipientProfileActivity : AppCompatActivity() {
         textAge.text = "Age: ${profile.age ?: "Not specified"}"
         textGetToKnow.text = "Get to Know: ${profile.getToKnow ?: "Not specified"}"
 
+        // Now we will be using Cloudinary, our imagePath should be a the full URL.
         profile.imagePath?.trim()?.let { path ->
-            val imageUrl = if (path.startsWith("http")) {
-                path
-            } else {
-                // Here we use the base URL only if the path is relative.
-                val baseUrl = "http://192.168.101.4:8080"
-                val formattedPath = if (path.startsWith("/")) path else "/$path"
-                baseUrl + formattedPath
-            }
+            val imageUrl = path
             Log.d("RecipientProfile", "Loading image from: $imageUrl")
             Glide.with(this)
                 .load(imageUrl)
