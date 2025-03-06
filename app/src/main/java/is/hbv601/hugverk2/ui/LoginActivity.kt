@@ -49,8 +49,16 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
-                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}")
-                        saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message)
+                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}, Username: ${loginResponse.username}")
+                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                        sharedPreferences.edit()
+                            .putLong("user_id", loginResponse.userId)
+                            .putString("user_type", loginResponse.userType)
+                            .putString("username", loginResponse.username)  // Save the correct username
+                            .putString("token", loginResponse.message)
+                            .apply()
+
+                        // Redirect based on user type
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)

@@ -1,4 +1,4 @@
-package `is`.hbv601.hugverk2.data.model
+package `is`.hbv601.hugverk2.model
 
 data class RegisterRequest(
     val username: String,
