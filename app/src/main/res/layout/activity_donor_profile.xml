@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="is.hbv601.hugverk2.ui.DonorProfileActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- The edit Profile Section, where we add values -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Edit Profile"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <ImageView
+                    android:id="@+id/image_edit_profile"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_avatar"
+                    android:contentDescription="@string/choose_profile_image"
+                    android:layout_marginBottom="8dp"/>
+
+                <Button
+                    android:id="@+id/buttonChooseImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Choose Image"
+                    style="@style/ChooseImageButtonStyle"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Eye Color:"
+                    android:textSize="16sp" />
+
+                <Spinner
+                    android:id="@+id/spinner_eyeColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/eye_color_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hair Color:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_hairColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/hair_color_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Education Level:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_educationLevel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/education_level_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Race:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_race"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/race_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ethnicity:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_ethnicity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/ethnicity_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Type:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_bloodType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/blood_type_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Donor Type:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinner_donorType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/donor_type_options" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Family and Donor's Medical History:"
+                    android:textSize="16sp"/>
+                <is.hbv601.hugverk2.customviews.MultiSelectSpinner
+                    android:id="@+id/spinner_medicalHistory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:prompt="@string/select_medical_history" />
+
+                <EditText
+                    android:id="@+id/edit_height"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Height (cm)"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/edit_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Weight (kg)"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/edit_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Age"
+                    android:inputType="number" />
+
+                <EditText
+                    android:id="@+id/edit_getToKnow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Get to Know (description)"
+                    android:inputType="textMultiLine" />
+
+                <Button
+                    android:id="@+id/buttonSaveEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save Profile"
+                    android:layout_marginTop="16dp"
+                    style="@style/ProfileButton" />
+
+                <!-- Here we have a divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginVertical="16dp"/>
+
+                <!-- Profile Information with saved values -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Information"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <ImageView
+                    android:id="@+id/donor_profile_image"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_avatar"
+                    android:layout_marginBottom="16dp"/>
+
+                <!--Saved profile vales -->
+
+                <TextView
+                    android:id="@+id/textEyeColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Eye Color: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textHairColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hair Color: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textEducationLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Education Level: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textRace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Race: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textEthnicity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ethnicity: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textBloodType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Type: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textDonorType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Donor Type: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textMedicalHistory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Medical History: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Height: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textWeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weight: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Age: Not specified"
+                    style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textGetToKnow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Get to Know: Not specified"
+                    style="@style/ProfileText" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu_donor" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
