@@ -1,8 +1,10 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -11,8 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import com.bumptech.glide.Glide
+import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
@@ -26,7 +32,11 @@ import `is`.hbv601.hugverk2.customviews.MultiSelectSpinner
 import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 
-class RecipientProfileActivity : AppCompatActivity() {
+class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    // Drawer components
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
 
     // Edit fields
     private lateinit var spinnerEyeColor: Spinner
@@ -94,6 +104,24 @@ class RecipientProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipient_profile)
+
+        // Initialize DrawerLayout and NavigationView
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        // Update Navigation Header with logged in username
+        val headerView = navigationView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val username = sharedPrefs.getString("username", "Guest")
+        navHeaderTitle.text = "Welcome, $username!"
+
+        // Setup Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
         // Bind edit fields
         spinnerEyeColor = findViewById(R.id.spinner_eyeColor)
@@ -306,6 +334,39 @@ class RecipientProfileActivity : AppCompatActivity() {
                     Toast.makeText(this@RecipientProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_home -> {
+                val intent = Intent(this, RecipientHomeActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_profile -> {
+                // Already on the profile screen.
+            }
+            R.id.nav_messages -> {
+                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_favorites -> {
+                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+            }
+            R.id.nav_booking -> {
+                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     private fun getLoggedInUserId(): Long {
