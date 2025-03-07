@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
+import `is`.hbv601.hugverk2.ui.DonorViewActivity
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
@@ -76,12 +77,13 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
-                // Navigate to a detailed donor profile screen
-                val intent = Intent(this@RecipientHomeActivity, DonorProfileActivity::class.java)
+                // Launch the DonorViewActivity with the donor's profile ID
+                val intent = Intent(this@RecipientHomeActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)
                 startActivity(intent)
             }
         })
+
         donorRecyclerView.adapter = donorAdapter
 
         // Pagination: button click listeners

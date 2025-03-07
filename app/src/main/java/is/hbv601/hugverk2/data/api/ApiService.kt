@@ -35,6 +35,10 @@ interface ApiService {
     @POST("api/donor/profile/saveOrEdit")
     fun saveOrEditDonorProfile(@Body profile: DonorProfile): Call<DonorProfile>
 
+    //donorpage view profile:
+    @GET("api/donor/view/{donorProfileId}")
+    fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
+
     @GET("api/donor/all")
     fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
 
