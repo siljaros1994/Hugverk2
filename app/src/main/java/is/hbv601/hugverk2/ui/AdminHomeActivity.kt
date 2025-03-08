@@ -1,18 +1,21 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import `is`.hbv601.hugverk2.databinding.ActivityAdminHomeBinding
+import `is`.hbv601.hugverk2.R
 
 class AdminHomeActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAdminHomeBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAdminHomeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_admin_home)
 
-        // TODO: Add admin dashboard features here
+        val btnSeeUsers: Button = findViewById(R.id.btnSeeUsers)
+        btnSeeUsers.setOnClickListener {
+            val intent = Intent(this, UserListActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

@@ -6,18 +6,15 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/adminWelcomeText"
+        android:id="@+id/userListTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome, Admin!"
-        android:textSize="24sp"
+        android:text="User List"
+        android:textSize="22sp"
         android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/btnSeeUsers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="See List of Users"
-        android:layout_marginTop="20dp"/>
-
+    <ListView
+        android:id="@+id/userListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
