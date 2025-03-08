@@ -59,6 +59,7 @@
             android:exported="true"
             android:label="Donor Profile" />
         <activity android:name=".ui.AdminHomeActivity" />
+        <activity android:name=".ui.UserListActivity" />
 
     </application>
 </manifest>
