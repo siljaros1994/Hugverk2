@@ -103,7 +103,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
     private fun loadDonors(page: Int) {
         isLoading = true
-        RetrofitClient.getInstance(this).getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> {
+        RetrofitClient.getInstance().getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> { //this
             override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
                 isLoading = false
                 if (response.isSuccessful) {

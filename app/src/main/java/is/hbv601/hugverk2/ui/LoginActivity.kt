@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
     private fun login(username: String, password: String) {
         val loginRequest = LoginRequest(username, password)
         Log.d("LoginActivity", "Logging in with username: $username, password: $password")
-        RetrofitClient.getInstance(this).login(loginRequest).enqueue(object : Callback<LoginResponse> {
+        RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> { //(this)
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("LoginActivity", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
