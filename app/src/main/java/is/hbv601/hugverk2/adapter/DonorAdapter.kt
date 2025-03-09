@@ -12,8 +12,9 @@ import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.DonorProfile
 
 class DonorAdapter(
-    private val donors: List<DonorProfile>,
+    private var donors: List<DonorProfile>,
     private val listener: OnDonorClickListener
+
 ) : RecyclerView.Adapter<DonorAdapter.DonorViewHolder>() {
 
     interface OnDonorClickListener {
@@ -63,4 +64,9 @@ class DonorAdapter(
     }
 
     override fun getItemCount(): Int = donors.size
+
+    fun updateList(newList: List<DonorProfile>) {
+        donors = newList
+        notifyDataSetChanged()
+    }
 }

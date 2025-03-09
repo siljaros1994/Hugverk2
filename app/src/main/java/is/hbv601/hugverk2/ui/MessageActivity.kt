@@ -58,7 +58,7 @@ class MessageActivity : AppCompatActivity() {
             return
         }
 
-        RetrofitClient.getInstance(this).getMessages("recipient", receiverId!!)
+        RetrofitClient.getInstance().getMessages("recipient", receiverId!!)
             .enqueue(object : Callback<List<MessageDTO>> {
                 override fun onResponse(call: Call<List<MessageDTO>>, response: Response<List<MessageDTO>>) {
                     if (response.isSuccessful) {
@@ -101,7 +101,7 @@ class MessageActivity : AppCompatActivity() {
 
         val messageForm = MessageForm(senderId, receiverId!!, messageText)
 
-        RetrofitClient.getInstance(this).sendMessage(messageForm)
+        RetrofitClient.getInstance().sendMessage(messageForm)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {

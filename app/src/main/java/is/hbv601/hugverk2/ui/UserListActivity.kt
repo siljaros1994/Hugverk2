@@ -31,7 +31,7 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun fetchUsersFromApi() {
-        val apiService = RetrofitClient.getInstance(this)
+        val apiService = RetrofitClient.getInstance()
 
         apiService.getAllUsers().enqueue(object : Callback<List<UserDTO>> {
             override fun onResponse(call: Call<List<UserDTO>>, response: Response<List<UserDTO>>) {
@@ -56,7 +56,7 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun deleteUser(username: String, position: Int) {
-        val apiService = RetrofitClient.getInstance(this)
+        val apiService = RetrofitClient.getInstance()
 
         // Fetch stored cookies (same as fetching users)
         val cookies = RetrofitClient.cookieManager.cookieStore.cookies.joinToString("; ") { it.toString() }

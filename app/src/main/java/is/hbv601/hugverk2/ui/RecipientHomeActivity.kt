@@ -16,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.room.RoomDatabase
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.ui.DonorViewActivity
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
@@ -33,8 +34,10 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     private lateinit var navigationView: NavigationView
     private lateinit var donorRecyclerView: RecyclerView
     private lateinit var donorAdapter: DonorAdapter
+    private lateinit var searchView: SearchView
 
     private var donorsList = mutableListOf<DonorProfile>()
+    private var filteredList = mutableListOf<DonorProfile>()
     private var currentPage = 0
     private var isLoading = false
     private var isLastPage = false
@@ -44,6 +47,9 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+
 
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
@@ -91,6 +97,20 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
         donorRecyclerView.adapter = donorAdapter
 
+        searchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterDonors(newText)
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterDonors(query)
+                return true
+            }
+        })
+
+
         // Pagination: button click listeners
         binding.btnPreviousPage.setOnClickListener {
             if (currentPage > 0) {
@@ -122,7 +142,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                         currentPage = page
                         donorsList.clear()
                         donorsList.addAll(donors)
-                        donorAdapter.notifyDataSetChanged()
+                        filterDonors(searchView.query.toString()) //for search
                         binding.tvCurrentPage.text = "Page ${currentPage + 1}"
                         // If fewer items than pageSize, it's the last page
                         isLastPage = donors.size < pageSize
@@ -140,6 +160,28 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             }
         })
     }
+
+    private fun filterDonors(query: String?) {
+        filteredList.clear()
+        if (query.isNullOrBlank()) {
+            filteredList.addAll(donorsList)
+        } else {
+            filteredList.addAll(donorsList.filter { donor ->
+                donor.donorType?.contains(query, ignoreCase = true) == true ||
+                        donor.eyeColor?.contains(query, ignoreCase = true) == true ||
+                        donor.hairColor?.contains(query, ignoreCase = true) == true ||
+                        donor.educationLevel?.contains(query, ignoreCase = true) == true ||
+                        donor.race?.contains(query, ignoreCase = true) == true ||
+                        donor.ethnicity?.contains(query, ignoreCase = true) == true ||
+                        donor.bloodType?.contains(query, ignoreCase = true) == true ||
+                        donor.getToKnow?.contains(query, ignoreCase = true) == true ||
+                        donor.traits?.contains(query, ignoreCase = true) == true
+            })
+        }
+        donorAdapter.updateList(filteredList)
+    }
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
