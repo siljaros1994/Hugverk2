@@ -10,9 +10,12 @@ import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
+import `is`.hbv601.hugverk2.model.DeleteResponseDTO
+
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
@@ -20,6 +23,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Header
 
 interface ApiService {
 
@@ -63,6 +67,15 @@ interface ApiService {
 
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
+
+    @GET("delete/{username}")
+    fun deleteUser(
+        @Path("username") username: String,
+        @Header("Cookie") cookie: String
+    ): Call<DeleteResponseDTO>
+
+
+
 
 
 
