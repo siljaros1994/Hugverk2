@@ -8,6 +8,8 @@ import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
+import `is`.hbv601.hugverk2.model.MessageDTO
+import `is`.hbv601.hugverk2.model.MessageForm
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -56,6 +58,21 @@ interface ApiService {
 
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
+
+
+
+
+    @GET("api/messages/{userType}/{id}")
+    fun getMessages(
+        @Path("userType") userType: String,
+        @Path("id") userId: Long
+    ): Call<List<MessageDTO>>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/messages/send")
+    fun sendMessage(@Body messageForm: MessageForm): Call<Void>
+
+
 
 
     // Here we add our other endpoints here like search, match, message,...

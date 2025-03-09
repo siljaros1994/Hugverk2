@@ -80,7 +80,8 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
             }
             R.id.nav_messages -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_matches -> {
                 Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
