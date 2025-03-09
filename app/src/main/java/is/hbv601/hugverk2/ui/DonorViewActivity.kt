@@ -91,7 +91,7 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun loadDonorProfile() {
-        RetrofitClient.getInstance(this).viewDonorProfile(donorProfileId)
+        RetrofitClient.getInstance().viewDonorProfile(donorProfileId) //(this)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {

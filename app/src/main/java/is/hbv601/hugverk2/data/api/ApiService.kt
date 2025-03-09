@@ -5,6 +5,8 @@ import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
 import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.model.FavoriteRequest
+import `is`.hbv601.hugverk2.model.FavoriteResponse
 import `is`.hbv601.hugverk2.model.LogoutRequest
 import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
@@ -64,17 +66,15 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
-    @POST("recipient/favorite/{recipientId}/{donorId}")
-    suspend fun addFavorite(
-        @Path("recipientId") recipientId: Long,
-        @Path("donorId") donorId: Long
-    ): Response<ResponseBody>
+    @POST("recipient/favorite")
+    fun addFavorite(
+        @Body request: FavoriteRequest): Call<FavoriteResponse>
 
-    @DELETE("recipient/unfavorite/{recipientId}/{donorId}")
-    suspend fun removeFavorite(
-        @Path("recipientId") recipientId: Long,
-        @Path("donorId") donorId: Long
-    ): Response<ResponseBody>
+    @DELETE("recipient/unfavorite")
+    fun removeFavorite(
+        @Body request: FavoriteRequest):
+            Call<FavoriteResponse>
+
 
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>

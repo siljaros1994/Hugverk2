@@ -28,7 +28,7 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun fetchUsersFromApi() {
-        val apiService = RetrofitClient.getInstance(this)
+        val apiService = RetrofitClient.getInstance() //(this)
 
         apiService.getAllUsers().enqueue(object : Callback<List<UserDTO>> {
             override fun onResponse(call: Call<List<UserDTO>>, response: Response<List<UserDTO>>) {

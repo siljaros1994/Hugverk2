@@ -183,6 +183,16 @@
                     android:text="Save Profile"
                     android:layout_marginTop="16dp"
                     style="@style/ProfileButton" />
+                <!-- Here is the button for favorite-->
+                <Button
+                    android:id="@+id/btnFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Favorite"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:enabled="true"/>
+
 
                 <!-- Here we have a divider -->
                 <View
