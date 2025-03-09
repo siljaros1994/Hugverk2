@@ -19,6 +19,10 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import `is`.hbv601.hugverk2.model.MyAppUser
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.http.DELETE
 
 interface ApiService {
 
@@ -55,8 +59,24 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
+    @POST("recipient/favorite/{recipientId}/{donorId}")
+    suspend fun addFavorite(
+        @Path("recipientId") recipientId: Long,
+        @Path("donorId") donorId: Long
+    ): Response<ResponseBody>
+
+    @DELETE("recipient/unfavorite/{recipientId}/{donorId}")
+    suspend fun removeFavorite(
+        @Path("recipientId") recipientId: Long,
+        @Path("donorId") donorId: Long
+    ): Response<ResponseBody>
 
 
     // Here we add our other endpoints here like search, match, message,...
 
+    @GET("recipient/favorites/{recipientId}")
+    suspend fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Response<List<MyAppUser>>
+
+    @GET("recipient/favorited-by/{donorId}")
+    suspend fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<MyAppUser>>
 }

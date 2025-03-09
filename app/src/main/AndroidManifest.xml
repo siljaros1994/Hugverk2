@@ -59,5 +59,8 @@
         <activity android:name=".ui.LogoutActivity"
             android:exported="true" />
 
+        <activity android:name=".ui.FavoriteActivity$FavoriteActivity"
+            android:exported="true"/>
+
     </application>
 </manifest>

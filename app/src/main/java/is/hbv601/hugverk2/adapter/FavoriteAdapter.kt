@@ -1,0 +1,44 @@
+package `is`.hbv601.hugverk2.adapter
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import `is`.hbv601.hugverk2.R
+import `is`.hbv601.hugverk2.model.MyAppUser
+
+
+class FavoriteAdapter(
+    private val favoriteList: List<MyAppUser>,
+    private val onFavoriteClick: (MyAppUser) -> Unit
+):
+        RecyclerView.Adapter<FavoriteAdapter.ViewHolder>() {
+
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val tvName: TextView = itemView.findViewById(R.id.tvName)
+            val btnFavorite: Button = itemView.findViewById(R.id.btnFavorite) // Ensure this exists in XML
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_favorite, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val donor = favoriteList[position]
+            holder.tvName.text = donor.username
+
+            // Set button text dynamically (Favorite / Unfavorite)
+            holder.btnFavorite.text = if (donor.isFavorited) "Unfavorite" else "Favorite"
+
+            // Handle click on Favorite button
+            holder.btnFavorite.setOnClickListener {
+                onFavoriteClick(donor)
+        }
+            }
+
+        override fun getItemCount(): Int = favoriteList.size
+    }
+
