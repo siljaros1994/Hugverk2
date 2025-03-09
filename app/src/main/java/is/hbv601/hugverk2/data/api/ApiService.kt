@@ -12,6 +12,7 @@ import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
+//import `is`.hbv601.hugverk2.model.FavoriteDTO
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -26,6 +27,8 @@ import `is`.hbv601.hugverk2.model.MyAppUser
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.DELETE
+import retrofit2.http.*
+
 
 interface ApiService {
 
@@ -66,14 +69,20 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
-    @POST("recipient/favorite")
+    @POST("api/recipient/favorite/{recipientId}/{donorId}")
     fun addFavorite(
-        @Body request: FavoriteRequest): Call<FavoriteResponse>
+        @Path("recipientId") recipientId: Long,
+        @Path("donorId") donorId: Long
+        //@Body request: FavoriteRequest): Call<FavoriteResponse>
+    ): Call<FavoriteResponse>
 
-    @DELETE("recipient/unfavorite")
+    @DELETE("api/recipient/unfavorite/{recipientId}/{donorId}")
     fun removeFavorite(
-        @Body request: FavoriteRequest):
-            Call<FavoriteResponse>
+        @Path("recipientId") recipientId: Long,
+        @Path("donorId") donorId: Long
+    ): Call<FavoriteResponse>
+
+
 
 
     @GET("api/users/all")
@@ -83,9 +92,10 @@ interface ApiService {
 
     // Here we add our other endpoints here like search, match, message,...
 
-    @GET("recipient/favorites/{recipientId}")
-    suspend fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Response<List<MyAppUser>>
+    @GET("api/recipient/favorites/{recipientId}")
+    fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Response<List<DonorProfile>>
 
-    @GET("recipient/favorited-by/{donorId}")
-    suspend fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<MyAppUser>>
+    @GET("api/recipient/favorited-by/{donorId}")
+    fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<MyAppUser>>
+
 }

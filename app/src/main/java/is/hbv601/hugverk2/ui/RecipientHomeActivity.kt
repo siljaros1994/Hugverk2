@@ -22,9 +22,13 @@ import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.model.FavoriteRequest
+import `is`.hbv601.hugverk2.model.FavoriteResponse
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -78,7 +82,23 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
         donorAdapter = DonorAdapter(donorsList, object : DonorAdapter.OnDonorClickListener {
             override fun onFavoriteClicked(donor: DonorProfile) {
-                // Here comes favorite action, we call API to add favorite
+                Log.d("FavoriteButton", "Recipient clicked favorite for donor ID: ${donor.donorProfileId}")
+                val recipientId = getUserId()
+                if (recipientId == -1L || donor.donorProfileId == null) {
+                    Log.e("FavoriteButton", "Error: recipientId or donorProfileId is null")
+                    return
+                }
+                val request = FavoriteRequest(recipientId, donor.donorProfileId)
+                if (donor.isFavorited) {
+                    Log.d("FavoriteButton", "Unfavoriting donor: ${donor.donorProfileId}")
+                    removeFavorite(request) //Pass the correct request object
+                } else {
+                    Log.d("FavoriteButton", "Favoriting donor: ${donor.donorProfileId}")
+                    addFavorite(request) //Pass the correct request object
+                }
+                donor.isFavorited = !donor.isFavorited
+                donorAdapter.notifyDataSetChanged() //Refresh UI after favorite change
+
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
@@ -150,6 +170,60 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun getUserId(): Long {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        return sharedPreferences.getLong("user_id", -1) // Fetch the recipient's ID
+    }
+
+
+    private fun addFavorite(request: FavoriteRequest) {
+        Log.d("FavoriteAPI", "Recipient ${request.recipientId} favoriting donor ${request.donorId}")
+
+        //val apiService = RetrofitClient.getInstance()
+        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId)
+            .enqueue(object : Callback<FavoriteResponse> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Log.d("FavoriteAPI", "Success: Recipient ${request.recipientId} favorited donor ${request.donorId}")
+                    Toast.makeText(this@RecipientHomeActivity, "Donor favorited!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("FavoriteAPI", "Failed: ${response.code()}")
+                    Toast.makeText(this@RecipientHomeActivity, "Failed to favorite donor", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("FavoriteAPI", "Error: ${t.message}")
+                Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun removeFavorite(request: FavoriteRequest) {
+        Log.d("FavoriteAPI", "Recipient ${request.recipientId} unfavoriting donor ${request.donorId}")
+
+        val apiService = RetrofitClient.getInstance()
+
+        apiService.removeFavorite(request.recipientId, request.donorId) // Pass IDs directly
+            .enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        Log.d("FavoriteAPI", "Success: Recipient ${request.recipientId} unfavorited donor ${request.donorId}")
+                        Toast.makeText(this@RecipientHomeActivity, "Donor unfavorited!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e("FavoriteAPI", "Failed: ${response.code()}")
+                        Toast.makeText(this@RecipientHomeActivity, "Failed to unfavorite donor", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Log.e("FavoriteAPI", "Error: ${t.message}")
+                    Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

@@ -69,8 +69,8 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var textGetToKnow: TextView
 
     //Favorite button
-    private lateinit var btnFavorite: Button
-    private lateinit var donor: MyAppUser
+   // private lateinit var btnFavorite: Button
+   // private lateinit var donor: MyAppUser
 
     private var imageUri: Uri? = null
     private var currentProfile: DonorProfile? = null
@@ -116,18 +116,18 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
 
 
-        donor = intent.getSerializableExtra("donor") as? MyAppUser ?: throw IllegalStateException("Donor not found")//Get donor info from intent
+        //donor = intent.getSerializableExtra("donor") as? MyAppUser ?: throw IllegalStateException("Donor not found")//Get donor info from intent
 
         //Set initial button text
-        updateFavoriteButton()
+        //updateFavoriteButton()
 
         //Handle button click
-        btnFavorite = findViewById(R.id.btnFavorite)
-        btnFavorite.setOnClickListener {
-            Log.d("FavoriteButton", "Button Click Detected") //Log that the button is clicked
-            Toast.makeText(this, "Favorite button clicked", Toast.LENGTH_SHORT).show() //Alternative if the Log doesn't come, shows a toast
-            toggleFavorite()
-        }
+        //btnFavorite = findViewById(R.id.btnFavorite)
+        //btnFavorite.setOnClickListener {
+          //  Log.d("FavoriteButton", "Button Click Detected") //Log that the button is clicked
+            //Toast.makeText(this, "Favorite button clicked", Toast.LENGTH_SHORT).show() //Alternative if the Log doesn't come, shows a toast
+            //toggleFavorite()
+       // }
 
         // Update Navigation Header with logged in username
         val headerView = navigationView.getHeaderView(0)
@@ -272,52 +272,55 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 }
             })
     }
-    private fun addFavorite(request: FavoriteRequest) {
-        Log.d("FavoriteAPI","Recipient ${request.recipientId} favoriting donor ${request.donorId}" ) //Debug Log
-        val apiService = RetrofitClient.getInstance()
-        apiService.addFavorite(request).enqueue(object : retrofit2.Callback<FavoriteResponse> {
-            override fun onResponse(call: Call<FavoriteResponse>, response: retrofit2.Response<FavoriteResponse>) {
-                if (response.isSuccessful) {
-                    Log.d("FavoriteAPI", "Success: Recipient ${request.recipientId} favorited donor ${request.donorId}")
-                    Toast.makeText(this@DonorProfileActivity, "Donor favorited!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Log.e("FavoriteAPI", "Failed: ${response.code()}")
-                    Toast.makeText(this@DonorProfileActivity, "Failed to favorite donor", Toast.LENGTH_SHORT).show()
+    /*private fun addFavorite(request: FavoriteRequest) {
+        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId)
+            .enqueue(object : Callback<FavoriteResponse> {
+                override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                    if (response.isSuccessful) {
+                        donor.isFavorited = true
+                        btnFavorite.text = "Unfavorite"
+                        Toast.makeText(this@DonorProfileActivity, "Donor favorited!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@DonorProfileActivity, "Failed to favorite donor", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                Log.e("FavoriteAPI", "Error favoriting donor: ${t.message}")
-                Toast.makeText(this@DonorProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-    private fun removeFavorite(request: FavoriteRequest) {
-        val apiService = RetrofitClient.getInstance()
-        apiService.removeFavorite(request).enqueue(object : retrofit2.Callback<FavoriteResponse> {
-            override fun onResponse(call: Call<FavoriteResponse>, response: retrofit2.Response<FavoriteResponse>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@DonorProfileActivity, "Donor unfavorited!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@DonorProfileActivity, "Failed to unfavorite donor", Toast.LENGTH_SHORT).show()
+                override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                    Toast.makeText(this@DonorProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
                 }
-            }
-
-            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
-                Toast.makeText(this@DonorProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
-            }
-        })
+            })
     }
+    */
 
 
+    /*private fun removeFavorite(request: FavoriteRequest) {
+        RetrofitClient.getInstance().removeFavorite(request.recipientId, request.donorId)
+            .enqueue(object : Callback<FavoriteResponse> {
+                override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                    if (response.isSuccessful) {
+                        donor.isFavorited = false
+                        btnFavorite.text = "Favorite"
+                        Toast.makeText(this@DonorProfileActivity, "Donor unfavorited!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@DonorProfileActivity, "Failed to unfavorite donor", Toast.LENGTH_SHORT).show()
+                    }
+                }
 
-    private fun toggleFavorite() {
+                override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                    Toast.makeText(this@DonorProfileActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+*/
+
+
+    /*private fun toggleFavorite() {
         Log.d("FavoriteButton", "toggleFavorite() triggered by recipient!") //Log when button is clicked
         val recipientId = getUserId() //Fetch current recipient (user)
         val donorId = donor.id
 
         //Ensure recipeintId and donorId are valid
-        if (recipientId == null || donorId == null) {
+        if (recipientId == -1L || donorId == null) {
             Log.e("FavoriteButton", "Error: recipientId or donorId is null")
             return
         }
@@ -332,7 +335,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             Log.d("FavoriteButton", "Adding favorite for donor ID: $donorId") //Log addition
             addFavorite(request)//viewModel.addFavorite(recipientId, donorId)
         }
-        //Toggle favorite state
+        //Toggle favorite state **After Api calls succeeds**
         donor.isFavorited = !donor.isFavorited
         updateFavoriteButton()
     }
@@ -340,7 +343,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun updateFavoriteButton() {
         btnFavorite.text = if (donor.isFavorited) "Unfavorite" else "Favorite"
     }
-
+*/
     private fun getUserId(): Long {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         return sharedPreferences.getLong("user_id", -1) //Retrieve the recipient's ID

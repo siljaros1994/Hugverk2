@@ -69,7 +69,8 @@
         <activity android:name=".ui.UserListActivity" />
 
 
-        <activity android:name=".ui.FavoriteActivity$FavoriteActivity"
+
+        <activity android:name=".ui.FavoriteActivity"
             android:exported="true"/>
 
     </application>

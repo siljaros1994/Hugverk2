@@ -1,4 +1,4 @@
-package `is`.hbv601.hugverk2.adapter
+/*package `is`.hbv601.hugverk2.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -44,3 +44,4 @@ class FavoriteAdapter(
         override fun getItemCount(): Int = favoriteList.size
     }
 
+*/
