@@ -56,8 +56,18 @@
             android:name=".ui.RecipientProfileActivity"
             android:exported="false" />
 
+
         <activity android:name=".ui.LogoutActivity"
             android:exported="true" />
+      
+        <activity
+            android:name=".ui.DonorViewActivity"
+            android:exported="true"
+            android:label="Donor Profile" />
+
+        <activity android:name=".ui.AdminHomeActivity" />
+        <activity android:name=".ui.UserListActivity" />
+
 
         <activity android:name=".ui.FavoriteActivity$FavoriteActivity"
             android:exported="true"/>

@@ -9,6 +9,7 @@ import `is`.hbv601.hugverk2.model.LogoutRequest
 import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
+import `is`.hbv601.hugverk2.model.UserDTO
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -45,6 +46,10 @@ interface ApiService {
     @POST("api/donor/profile/saveOrEdit")
     fun saveOrEditDonorProfile(@Body profile: DonorProfile): Call<DonorProfile>
 
+    //donorpage view profile:
+    @GET("api/donor/view/{donorProfileId}")
+    fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
+
     @GET("api/donor/all")
     fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
 
@@ -70,6 +75,10 @@ interface ApiService {
         @Path("recipientId") recipientId: Long,
         @Path("donorId") donorId: Long
     ): Response<ResponseBody>
+
+    @GET("api/users/all")
+    fun getAllUsers(): Call<List<UserDTO>>
+
 
 
     // Here we add our other endpoints here like search, match, message,...
