@@ -83,12 +83,7 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
-
-
-
-
+    
     // Here we add our other endpoints here like search, match, message,...
-
-
 
 }
