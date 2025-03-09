@@ -173,7 +173,7 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 if (file != null) {
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                     val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestFile)
-                    RetrofitClient.getInstance(this)
+                    RetrofitClient.getInstance() //(this)
                         .uploadFile(multipartBody)
                         .enqueue(object : Callback<UploadResponse> {
                             override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
@@ -233,7 +233,7 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
     }
 
     private fun fetchRecipientProfile(userId: Long) {
-        RetrofitClient.getInstance(this).getRecipientProfile(userId)
+        RetrofitClient.getInstance().getRecipientProfile(userId) //this
             .enqueue(object : Callback<RecipientProfile> {
                 override fun onResponse(call: Call<RecipientProfile>, response: Response<RecipientProfile>) {
                     if (response.isSuccessful) {
@@ -318,7 +318,7 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
     }
 
     private fun saveOrEditProfile(profile: RecipientProfile) {
-        RetrofitClient.getInstance(this).saveOrEditRecipientProfile(profile)
+        RetrofitClient.getInstance().saveOrEditRecipientProfile(profile) //this
             .enqueue(object : Callback<RecipientProfile> {
                 override fun onResponse(call: Call<RecipientProfile>, response: Response<RecipientProfile>) {
                     if (response.isSuccessful) {

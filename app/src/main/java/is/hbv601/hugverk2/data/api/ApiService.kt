@@ -5,6 +5,8 @@ import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
 import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.model.LogoutRequest
+import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
@@ -27,6 +29,10 @@ interface ApiService {
 
     @POST("api/users/register")
     fun register(@Body registerRequest: RegisterRequest): Call<RegisterResponse>
+
+    //Logout
+    @POST("api/users/logout")
+    fun logout(): Call<Void>
 
     //donor profile:
     @GET("api/donor/profile/{userId}")
@@ -54,8 +60,10 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
+
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
+
 
 
     // Here we add our other endpoints here like search, match, message,...

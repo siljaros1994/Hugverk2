@@ -9,6 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import android.util.Log
+import android.os.Build
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
+import androidx.room.RoomDatabase
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
@@ -105,7 +110,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
     private fun loadDonors(page: Int) {
         isLoading = true
-        RetrofitClient.getInstance(this).getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> {
+        RetrofitClient.getInstance().getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> { //this
             override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
                 isLoading = false
                 if (response.isSuccessful) {
@@ -168,6 +173,20 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
             // Handle other menu items
+            R.id.nav_logout -> { //Matches navigation menu ID
+                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
+                //Close the navigation drawer before logging out
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                }
+                //Delay logout slightly to prevent UI conflicts
+                drawerLayout.postDelayed({
+                    val intent = Intent(this, LogoutActivity::class.java)
+                    startActivity(intent) //Call logout function
+                    finish()
+                }, 300) //Small delay ensures smooth UI transition
+            }
+
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
