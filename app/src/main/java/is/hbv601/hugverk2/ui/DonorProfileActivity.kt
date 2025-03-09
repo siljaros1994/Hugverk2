@@ -167,7 +167,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 if (file != null) {
                     val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                     val multipartBody = MultipartBody.Part.createFormData("file", file.name, requestFile)
-                    RetrofitClient.getInstance(this)
+                    RetrofitClient.getInstance()
                         .uploadFile(multipartBody)
                         .enqueue(object : Callback<UploadResponse> {
                             override fun onResponse(call: Call<UploadResponse>, response: Response<UploadResponse>) {
@@ -229,7 +229,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun fetchDonorProfile(userId: Long) {
-        RetrofitClient.getInstance(this).getDonorProfile(userId)
+        RetrofitClient.getInstance().getDonorProfile(userId)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {
@@ -315,7 +315,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     private fun saveOrEditProfile(profile: DonorProfile) {
         Log.d("DonorProfile", "Saving profile with imagePath: ${profile.imagePath}")
-        RetrofitClient.getInstance(this).saveOrEditDonorProfile(profile)
+        RetrofitClient.getInstance().saveOrEditDonorProfile(profile) //(this)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {
