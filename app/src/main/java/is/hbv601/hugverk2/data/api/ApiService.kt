@@ -10,8 +10,9 @@ import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
+import `is`.hbv601.hugverk2.model.MessageDTO
+import `is`.hbv601.hugverk2.model.MessageForm
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
-
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -64,7 +65,6 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
-
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
 
@@ -73,8 +73,16 @@ interface ApiService {
         @Path("username") username: String,
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
+  
+    @GET("api/messages/{userType}/{id}")
+    fun getMessages(
+        @Path("userType") userType: String,
+        @Path("id") userId: Long
+    ): Call<List<MessageDTO>>
 
-
+    @Headers("Content-Type: application/json")
+    @POST("api/messages/send")
+    fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
 
 
