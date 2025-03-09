@@ -48,9 +48,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -109,7 +106,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 return true
             }
         })
-
 
         // Pagination: button click listeners
         binding.btnPreviousPage.setOnClickListener {
@@ -180,8 +176,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         }
         donorAdapter.updateList(filteredList)
     }
-
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

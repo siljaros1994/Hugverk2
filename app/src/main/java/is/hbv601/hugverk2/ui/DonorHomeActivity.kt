@@ -144,16 +144,4 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     return true
                 }
 
-
-
-
         }
-
-
-
-
-
-
-
-
-
