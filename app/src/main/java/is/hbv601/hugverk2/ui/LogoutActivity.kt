@@ -26,7 +26,7 @@ class LogoutActivity : AppCompatActivity() { //  Fix: Extend AppCompatActivity
         // Redirect to LoginActivity
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent) // ✅ Fix: Now we can start activity
+        startActivity(intent) // Fix: Now we can start activity
         finish()
 
         runOnUiThread{
