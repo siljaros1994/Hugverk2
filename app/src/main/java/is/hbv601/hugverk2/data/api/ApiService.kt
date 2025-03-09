@@ -72,7 +72,8 @@ interface ApiService {
     @POST("api/recipient/favorite/{recipientId}/{donorId}")
     fun addFavorite(
         @Path("recipientId") recipientId: Long,
-        @Path("donorId") donorId: Long
+        @Path("donorId") donorId: Long,
+        @Header("Authorization") authToken: String
         //@Body request: FavoriteRequest): Call<FavoriteResponse>
     ): Call<FavoriteResponse>
 
@@ -93,9 +94,9 @@ interface ApiService {
     // Here we add our other endpoints here like search, match, message,...
 
     @GET("api/recipient/favorites/{recipientId}")
-    fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Response<List<DonorProfile>>
+    fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Call<List<DonorProfile>>
 
     @GET("api/recipient/favorited-by/{donorId}")
-    fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<MyAppUser>>
+    fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<DonorProfile>>
 
 }

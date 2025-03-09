@@ -176,14 +176,21 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         return sharedPreferences.getLong("user_id", -1) // Fetch the recipient's ID
     }
 
+    private fun getAuthToken(): String {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        return sharedPreferences.getString("auth_token", "") ?: "" // Return token or empty string
+    }
+
 
     private fun addFavorite(request: FavoriteRequest) {
+        val authToken = getAuthToken() // Fetch stored token
         Log.d("FavoriteAPI", "Recipient ${request.recipientId} favoriting donor ${request.donorId}")
 
         //val apiService = RetrofitClient.getInstance()
-        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId)
-            .enqueue(object : Callback<FavoriteResponse> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId,
+            "Bearer $authToken" // Include token in the request)
+        ).enqueue(object : Callback<FavoriteResponse> {
+            override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                 if (response.isSuccessful) {
                     Log.d("FavoriteAPI", "Success: Recipient ${request.recipientId} favorited donor ${request.donorId}")
                     Toast.makeText(this@RecipientHomeActivity, "Donor favorited!", Toast.LENGTH_SHORT).show()
@@ -193,7 +200,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 }
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
                 Log.e("FavoriteAPI", "Error: ${t.message}")
                 Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
@@ -206,8 +213,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         val apiService = RetrofitClient.getInstance()
 
         apiService.removeFavorite(request.recipientId, request.donorId) // Pass IDs directly
-            .enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            .enqueue(object : Callback<FavoriteResponse> {
+                override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                     if (response.isSuccessful) {
                         Log.d("FavoriteAPI", "Success: Recipient ${request.recipientId} unfavorited donor ${request.donorId}")
                         Toast.makeText(this@RecipientHomeActivity, "Donor unfavorited!", Toast.LENGTH_SHORT).show()
@@ -217,7 +224,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                     }
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
                     Log.e("FavoriteAPI", "Error: ${t.message}")
                     Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
                 }
