@@ -62,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)
+                            "admin" -> Intent(this@LoginActivity, AdminHomeActivity::class.java)
                             else -> null
                         }
                         if (intent != null) {
