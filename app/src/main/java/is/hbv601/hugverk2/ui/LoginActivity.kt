@@ -57,6 +57,9 @@ class LoginActivity : AppCompatActivity() {
                             .putString("username", loginResponse.username)  // Save the correct username
                             .putString("token", loginResponse.message)
                             .apply()
+                            //Log.d message for debugging authToken
+                            Log.d("AuthToken", "Stored Token: ${loginResponse.message}")
+
 
                         // Redirect based on user type
                         val intent = when (loginResponse.userType) {
@@ -94,5 +97,10 @@ class LoginActivity : AppCompatActivity() {
         editor.putString("user_type", userType)
         editor.putString("token", token) // Save the token
         editor.apply()
+        //To store data e.g. favorite
+        //val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        //val token = sharedPreferences.getString("token", null)
+        Log.d("AuthToken", "Retrieved Token: $token")
+
     }
 }

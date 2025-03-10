@@ -69,6 +69,7 @@ interface ApiService {
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
+    //Recipient favorites a donor
     @POST("api/recipient/favorite/{recipientId}/{donorId}")
     fun addFavorite(
         @Path("recipientId") recipientId: Long,
@@ -77,10 +78,12 @@ interface ApiService {
         //@Body request: FavoriteRequest): Call<FavoriteResponse>
     ): Call<FavoriteResponse>
 
+    //Recipient unfavorites a donor
     @DELETE("api/recipient/unfavorite/{recipientId}/{donorId}")
     fun removeFavorite(
         @Path("recipientId") recipientId: Long,
-        @Path("donorId") donorId: Long
+        @Path("donorId") donorId: Long,
+        @Header("Authorization") authToken: String
     ): Call<FavoriteResponse>
 
 
@@ -93,10 +96,19 @@ interface ApiService {
 
     // Here we add our other endpoints here like search, match, message,...
 
+    //Recipient sees his favorites
     @GET("api/recipient/favorites/{recipientId}")
-    fun getFavoriteDonors(@Path("recipientId") recipientId: Long): Call<List<DonorProfile>>
+    fun getFavoriteDonors(@Path("recipientId") recipientId: Long,@Header("Authorization") authToken: String
+    ): Call<List<DonorProfile>>
 
-    @GET("api/recipient/favorited-by/{donorId}")
-    fun getFavoritedByRecipients(@Path("donorId") donorId: Long): Response<List<DonorProfile>>
+    //Donor can see recipients who have favorite them on his home page, make sure that the getFavoriteRecipient matches
+    @GET("api/donor/favorites/{donorId}")
+    fun getFavoritingRecipients(
+        @Path("donorId") donorId: Long,
+        @Header("Authorization") authToken: String
+    ): Call<List<RecipientProfile>>
+
+
+
 
 }

@@ -12,12 +12,18 @@ import android.util.Log
 import android.os.Build
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.room.RoomDatabase
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
+import `is`.hbv601.hugverk2.adapter.DonorAdapter
+import `is`.hbv601.hugverk2.adapter.RecipientAdapter
+import `is`.hbv601.hugverk2.data.api.ApiService
 import `is`.hbv601.hugverk2.databinding.ActivityDonorHomeBinding
 import `is`.hbv601.hugverk2.model.LogoutResponse
+import `is`.hbv601.hugverk2.model.RecipientProfile
 //import okhttp3.Response
 import `is`.hbv601.hugverk2.ui.LoginActivity
 import retrofit2.Call
@@ -29,6 +35,10 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var binding: ActivityDonorHomeBinding
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var recipientAdapter: RecipientAdapter
+    private lateinit var apiService: ApiService
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,12 +57,22 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Set up navigation item selection
         navigationView.setNavigationItemSelectedListener(this)
 
+        // Initialize RecyclerView
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recipientAdapter = RecipientAdapter(emptyList()) { recipient ->
+            Toast.makeText(this, "Clicked on ${recipient.user?.username}", Toast.LENGTH_SHORT).show()
+        }
+        recyclerView.adapter = recipientAdapter
+
         // Retrieve user data
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
+        val donorId = sharedPreferences.getLong("user_id", -1L) //Assuming user_id is donor ID
+        val authToken = "Bearer" + sharedPreferences.getString("auth_token", null) //Replace with actual token key
 
-        if (username == null || userType == null) {
+        if (username == null || userType == null || donorId == -1L ) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
             finish()
         } else {
@@ -64,6 +84,9 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             // userType saved for possible later use
             this.userType = userType
+
+            //Fetch favoriting recipients
+            fetchFavoritingRecipients(donorId, authToken)
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //Android 13+
             onBackInvokedDispatcher.registerOnBackInvokedCallback(
@@ -84,6 +107,24 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private var userType: String? = null
+
+    private fun fetchFavoritingRecipients(donorId: Long, authToken: String) {
+        val apiService = RetrofitClient.getInstance() // Use getInstance() instead of direct apiService
+        apiService.getFavoritingRecipients(donorId, authToken).enqueue(object : Callback<List<RecipientProfile>> {
+            override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+                if (response.isSuccessful) {
+                    val recipients = response.body() ?: emptyList()
+                    recipientAdapter.updateList(recipients) // Update RecyclerView
+                } else {
+                    Log.e("DonorHomeActivity", "Error fetching recipients: ${response.errorBody()?.string()}")
+                }
+            }
+            override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
+                Log.e("DonorHomeActivity", "API call failed", t)
+            }
+        })
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

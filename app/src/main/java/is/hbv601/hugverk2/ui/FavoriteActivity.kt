@@ -48,10 +48,19 @@ class FavoriteActivity : AppCompatActivity() {
 
         loadFavoriteDonors()
     }
+    private fun getAuthToken(): String? {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        return sharedPreferences.getString("token", null)
+    }
+
+
     private fun loadFavoriteDonors() {
         val recipientId = getUserId()
+        val authToken = getAuthToken() ?: ""// Retrieve token
 
-        RetrofitClient.getInstance().getFavoriteDonors(recipientId).enqueue(object : Callback<List<DonorProfile>> {
+        Log.d("AuthToken", "Token being sent in FavoriteActivity: $authToken") // Debugging
+
+        RetrofitClient.getInstance().getFavoriteDonors(recipientId, authToken).enqueue(object : Callback<List<DonorProfile>> {
             override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
                 if (response.isSuccessful) {
                     favoriteDonors.clear()
@@ -74,8 +83,9 @@ class FavoriteActivity : AppCompatActivity() {
     private fun removeFavorite(donor: DonorProfile) {
         val recipientId = getUserId()
         val donorId = donor.donorProfileId ?: return
+        val authToken = getAuthToken() ?: ""
 
-        RetrofitClient.getInstance().removeFavorite(recipientId, donorId).enqueue(object : Callback<FavoriteResponse> {
+        RetrofitClient.getInstance().removeFavorite(recipientId, donorId, authToken).enqueue(object : Callback<FavoriteResponse> {
             override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                 if (response.isSuccessful) {
                     favoriteDonors.remove(donor)
