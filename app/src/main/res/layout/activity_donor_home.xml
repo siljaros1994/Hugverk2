@@ -26,7 +26,9 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:padding="16dp"/>
+        <!--android:layout_height="0dp" -->
 
         <TextView
             android:id="@+id/welcomeMessage"
@@ -35,6 +37,42 @@
             android:text="Welcome, Donor!"
             android:textSize="24sp"
             android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tvCurrentPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Page 1"
+            android:textSize="16sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+        <Button
+            android:id="@+id/btnPreviousPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Previous"
+            android:layout_margin="8dp"
+            android:enabled="true" />
+
+
+        <Button
+            android:id="@+id/btnNextPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:layout_margin="8dp"
+            android:enabled="true" />
+    </LinearLayout>
+
+
+
 
     </LinearLayout>
 

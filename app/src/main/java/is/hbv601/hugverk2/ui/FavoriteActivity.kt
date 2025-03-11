@@ -34,8 +34,14 @@ class FavoriteActivity : AppCompatActivity() {
 
         donorAdapter = DonorAdapter(favoriteDonors, object : DonorAdapter.OnDonorClickListener {
             override fun onFavoriteClicked(donor: DonorProfile) {
-                //Toast.makeText(this@FavoriteActivity, "Unfavoriting ${donor.username}", Toast.LENGTH_SHORT).show()
-                removeFavorite(donor)
+                if (favoriteDonors.contains(donor)){
+                    removeFavorite(donor)
+                } else {
+                    addFavorite(donor)
+                }
+
+                //Toast.makeText(this@FavoriteActivity, "Unfavoriting ${donor.username}", Toast.LENGTH_SHORT).show
+
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
@@ -50,7 +56,10 @@ class FavoriteActivity : AppCompatActivity() {
     }
     private fun getAuthToken(): String? {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        return sharedPreferences.getString("token", null)
+        val token = sharedPreferences.getString("token", null)
+        Log.d("AuthToken", "Retrieved Token: $token") // Debugging
+
+        return token //sharedPreferences.getString("token", null)
     }
 
 
@@ -102,6 +111,32 @@ class FavoriteActivity : AppCompatActivity() {
             }
             })
     }
+
+    private fun addFavorite(donor: DonorProfile) {
+        val recipientId = getUserId()
+        val donorId = donor.donorProfileId ?: return
+        val authToken = getAuthToken() ?: ""
+
+        Log.d("FavoriteActivity", "Adding favorite for donor ID: $donorId with token: $authToken")
+
+        RetrofitClient.getInstance().addFavorite(recipientId, donorId, authToken).enqueue(object : Callback<FavoriteResponse> {
+            override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
+                if (response.isSuccessful) {
+                    favoriteDonors.add(donor)
+                    donorAdapter.notifyDataSetChanged()
+                    Toast.makeText(this@FavoriteActivity, "Added to favorites", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@FavoriteActivity, "Error adding favorite", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<FavoriteResponse>, t: Throwable) {
+                Log.e("FavoriteActivity", "Network error adding favorite: ${t.message}")
+                Toast.makeText(this@FavoriteActivity, "Network error", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
 
     private fun getUserId(): Long {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)

@@ -39,6 +39,14 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var recipientAdapter: RecipientAdapter
     private lateinit var apiService: ApiService
 
+    private var recipientsList = mutableListOf<RecipientProfile>()
+    private var currentPage = 0
+    private var isLoading = false
+    private var isLastPage = false
+    private val pageSize = 4
+    private var donorId: Long = -1L
+    private var authToken: String = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,17 +68,22 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recipientAdapter = RecipientAdapter(emptyList()) { recipient ->
+        //Initialize adapter for recipients
+        recipientAdapter = RecipientAdapter(recipientsList) { recipient ->
             Toast.makeText(this, "Clicked on ${recipient.user?.username}", Toast.LENGTH_SHORT).show()
         }
         recyclerView.adapter = recipientAdapter
 
-        // Retrieve user data
+        // Retrieve user data like recipients who favorited this donor
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
         val donorId = sharedPreferences.getLong("user_id", -1L) //Assuming user_id is donor ID
         val authToken = "Bearer" + sharedPreferences.getString("auth_token", null) //Replace with actual token key
+
+        //if (donorId != -1L) {
+        //    loadFavoritingRecipients(donorId, authToken, currentPage)
+       // }
 
         if (username == null || userType == null || donorId == -1L ) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
@@ -83,11 +96,30 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             navHeaderTitle.text = "Welcome, $username!"
 
             // userType saved for possible later use
-            this.userType = userType
+            //this.userType = userType
 
             //Fetch favoriting recipients
-            fetchFavoritingRecipients(donorId, authToken)
+            //fetchFavoritingRecipients(donorId, authToken)
         }
+
+        //Fetch favoriting recipients
+        if (donorId != -1L) {
+            loadFavoritingRecipients(donorId,authToken,currentPage)
+        }
+
+        //Set up pagination buttons
+        binding.btnPreviousPage.setOnClickListener {
+            if (currentPage > 0) {
+                loadFavoritingRecipients(donorId, authToken, currentPage - 1)
+            }
+        }
+        binding.btnNextPage.setOnClickListener {
+            if (!isLastPage) {
+                loadFavoritingRecipients(donorId, authToken, currentPage + 1)
+            }
+        }
+
+        //Handle back button behavior
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //Android 13+
             onBackInvokedDispatcher.registerOnBackInvokedCallback(
                 OnBackInvokedDispatcher.PRIORITY_DEFAULT
@@ -108,7 +140,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private var userType: String? = null
 
-    private fun fetchFavoritingRecipients(donorId: Long, authToken: String) {
+    private fun fetchFavoritingRecipients(donorId: Long, authToken: String,) {
         val apiService = RetrofitClient.getInstance() // Use getInstance() instead of direct apiService
         apiService.getFavoritingRecipients(donorId, authToken).enqueue(object : Callback<List<RecipientProfile>> {
             override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
@@ -141,6 +173,43 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         } else {
             finish() //Exits the activity
         }
+    }
+    //FetchingFavoritingRecipients
+    private fun loadFavoritingRecipients(donorId: Long, authToken: String, page: Int) {
+        isLoading = true
+
+        RetrofitClient.getInstance().getFavoritingRecipients(donorId, authToken).enqueue(object : Callback<List<RecipientProfile>> {
+            override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+                isLoading = false
+                if (response.isSuccessful) {
+                    val newRecipients = response.body() ?: emptyList()
+
+                    if (page == 0) {
+                        recipientsList.clear()
+                    }
+
+                    if (newRecipients.isNotEmpty()) {
+                        currentPage = page
+                        recipientsList.addAll(newRecipients)
+                        recipientAdapter.notifyDataSetChanged()
+                        //Update page number
+                        binding.tvCurrentPage.text = "Page ${currentPage + 1}"
+
+                        // If fewer items than pageSize, mark as last page
+                        isLastPage = newRecipients.size < pageSize
+                    } else {
+                        isLastPage = true
+                    }
+                } else {
+                    Toast.makeText(this@DonorHomeActivity, "Error fetching recipients", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
+                isLoading = false
+                Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 
@@ -186,8 +255,14 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
 
 
+    }
 
-        }
+
+
+
+
+
+
 
 
 
