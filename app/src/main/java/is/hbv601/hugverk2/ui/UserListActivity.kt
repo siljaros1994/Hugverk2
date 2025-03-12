@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.adapter.UserAdapter
 import `is`.hbv601.hugverk2.model.UserDTO
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
 import retrofit2.Call
