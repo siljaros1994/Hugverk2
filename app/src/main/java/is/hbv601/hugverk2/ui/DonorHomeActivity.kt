@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.RoomDatabase
 import com.google.android.material.navigation.NavigationView
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.adapter.RecipientAdapter
@@ -37,7 +38,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var navigationView: NavigationView
     private lateinit var recyclerView: RecyclerView
     private lateinit var recipientAdapter: RecipientAdapter
-    private lateinit var apiService: ApiService
+    //private lateinit var apiService: ApiService
 
     private var recipientsList = mutableListOf<RecipientProfile>()
     private var currentPage = 0
@@ -45,7 +46,8 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private var isLastPage = false
     private val pageSize = 4
     private var donorId: Long = -1L
-    private var authToken: String = ""
+    //private var authToken: String = ""
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +81,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val username = sharedPreferences.getString("username", null)
         val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
         val donorId = sharedPreferences.getLong("user_id", -1L) //Assuming user_id is donor ID
-        val authToken = "Bearer" + sharedPreferences.getString("auth_token", null) //Replace with actual token key
+        //val authToken = "Bearer" + sharedPreferences.getString("auth_token", null) //Replace with actual token key
 
         //if (donorId != -1L) {
         //    loadFavoritingRecipients(donorId, authToken, currentPage)
@@ -100,22 +102,23 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             //Fetch favoriting recipients
             //fetchFavoritingRecipients(donorId, authToken)
-        }
+
 
         //Fetch favoriting recipients
         if (donorId != -1L) {
-            loadFavoritingRecipients(donorId,authToken,currentPage)
+            loadFavoritingRecipients(donorId,currentPage)
         }
+    }
 
         //Set up pagination buttons
         binding.btnPreviousPage.setOnClickListener {
             if (currentPage > 0) {
-                loadFavoritingRecipients(donorId, authToken, currentPage - 1)
+                loadFavoritingRecipients(donorId, currentPage - 1)
             }
         }
         binding.btnNextPage.setOnClickListener {
             if (!isLastPage) {
-                loadFavoritingRecipients(donorId, authToken, currentPage + 1)
+                loadFavoritingRecipients(donorId, currentPage + 1)
             }
         }
 
@@ -140,9 +143,9 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private var userType: String? = null
 
-    private fun fetchFavoritingRecipients(donorId: Long, authToken: String,) {
+    private fun fetchFavoritingRecipients(donorId: Long) {
         val apiService = RetrofitClient.getInstance() // Use getInstance() instead of direct apiService
-        apiService.getFavoritingRecipients(donorId, authToken).enqueue(object : Callback<List<RecipientProfile>> {
+        apiService.getFavoritingRecipients(donorId).enqueue(object : Callback<List<RecipientProfile>> {
             override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
                 if (response.isSuccessful) {
                     val recipients = response.body() ?: emptyList()
@@ -175,10 +178,10 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
     //FetchingFavoritingRecipients
-    private fun loadFavoritingRecipients(donorId: Long, authToken: String, page: Int) {
+    private fun loadFavoritingRecipients(donorId: Long, page: Int) {
         isLoading = true
 
-        RetrofitClient.getInstance().getFavoritingRecipients(donorId, authToken).enqueue(object : Callback<List<RecipientProfile>> {
+        RetrofitClient.getInstance().getFavoritingRecipients(donorId).enqueue(object : Callback<List<RecipientProfile>> {
             override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
                 isLoading = false
                 if (response.isSuccessful) {

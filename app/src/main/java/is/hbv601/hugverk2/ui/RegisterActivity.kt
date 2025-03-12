@@ -3,7 +3,8 @@ package `is`.hbv601.hugverk2.ui
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.model.RegisterRequest
 import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.databinding.ActivityRegisterBinding
@@ -51,7 +52,7 @@ class RegisterActivity : AppCompatActivity() {
                         editor.putLong("user_id", registerResponse.userId)
                         editor.putString("user_type", registerResponse.userType)
                         editor.putString("username", username) // Save the username
-                        editor.putString("token", registerResponse.message)
+                        //editor.putString("token", registerResponse.message)
                         editor.apply()
 
                         Toast.makeText(this@RegisterActivity, registerResponse.message, Toast.LENGTH_SHORT).show()

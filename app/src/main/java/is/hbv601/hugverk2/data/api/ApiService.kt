@@ -74,7 +74,7 @@ interface ApiService {
     fun addFavorite(
         @Path("recipientId") recipientId: Long,
         @Path("donorId") donorId: Long,
-        @Header("Authorization") authToken: String
+        //@Header("Authorization") authToken: String
         //@Body request: FavoriteRequest): Call<FavoriteResponse>
     ): Call<FavoriteResponse>
 
@@ -83,7 +83,7 @@ interface ApiService {
     fun removeFavorite(
         @Path("recipientId") recipientId: Long,
         @Path("donorId") donorId: Long,
-        @Header("Authorization") authToken: String
+        //@Header("Authorization") authToken: String
     ): Call<FavoriteResponse>
 
 
@@ -97,16 +97,23 @@ interface ApiService {
     // Here we add our other endpoints here like search, match, message,...
 
     //Recipient sees his favorites
-    @GET("api/recipient/favorites/{recipientId}")
-    fun getFavoriteDonors(@Path("recipientId") recipientId: Long,@Header("Authorization") authToken: String
-    ): Call<List<DonorProfile>>
+    //@GET("api/recipient/favorites/{recipientId}")
+    //fun getFavoriteDonors(@Path("recipientId") recipientId: Long,@Header("Authorization") authToken: String
+    //): Call<List<DonorProfile>>
 
     //Donor can see recipients who have favorite them on his home page, make sure that the getFavoriteRecipient matches
     @GET("api/donor/favorites/{donorId}")
     fun getFavoritingRecipients(
         @Path("donorId") donorId: Long,
-        @Header("Authorization") authToken: String
+        //@Header("Authorization") authToken: String
     ): Call<List<RecipientProfile>>
+
+    // Recipient sees their favorite donors
+    @GET("api/recipient/favorites/{recipientId}")
+    fun getFavoriteDonors(
+        @Path("recipientId") recipientId: Long,
+        //@Header("Authorization") authToken: String
+    ): Call<List<DonorProfile>>
 
 
 

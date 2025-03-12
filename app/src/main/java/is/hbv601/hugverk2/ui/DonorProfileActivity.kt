@@ -16,7 +16,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.R
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.customviews.MultiSelectSpinner
 import `is`.hbv601.hugverk2.data.api.ApiService
 import `is`.hbv601.hugverk2.model.FavoriteRequest

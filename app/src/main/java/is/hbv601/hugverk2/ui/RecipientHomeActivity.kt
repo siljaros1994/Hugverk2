@@ -18,7 +18,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.ui.DonorViewActivity
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
@@ -176,28 +177,48 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         return sharedPreferences.getLong("user_id", -1) // Fetch the recipient's ID
     }
 
-    private fun getAuthToken(): String {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val token = sharedPreferences.getString("auth_token", "") ?: "" // Return token or empty string
-        //log the token before making API requests
+    //private fun getAuthToken(): String {
+    //    val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+    //    val token = sharedPreferences.getString("auth_token", null) // Return token or empty string
+
+    //log the token before making API requests
         //val token = getAuthToken()
-        Log.d("AuthToken", "Using Token: $token")
-    return token
-    }
+        //Log.d("AuthToken", "Using Token: $token")
+    //return token
+
+        //if (token.isEmpty())
+    //    if (token.isNullOrEmpty())
+    //    {
+    //        Log.e("AuthToken", "Auth token is missing!")
+    //        return ""
+    //    } else {
+    //        Log.d("AuthToken", "Using Token: $token") //Log token properly
+    //    }
+
+    //    return token //Return as is
+    //}
 
 
     private fun addFavorite(request: FavoriteRequest) {
-        val authToken = getAuthToken()
+        //val authToken = getAuthToken()
 
-        if (authToken.isEmpty()) {
-            Log.e("FavoriteAPI", "Auth token is missing")
-            Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        //if (authToken.isEmpty()) {
+            //Log.e("FavoriteAPI", "Auth token is missing")
+            //Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+           // return
+        //}
 
-        Log.d("FavoriteAPI", "Recipient ${request.recipientId} favoriting donor ${request.donorId} with token: $authToken")
+        //if (authToken.isBlank() || authToken == "Bearer ") {
+        //if (authToken == "Bearer" || authToken.isBlank()) {
+        //    Log.e("FavoriteAPI", "Auth token is missing!")
+        //    Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+        //    return
+        //}
 
-        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId, "Bearer $authToken")
+        //Log.d("FavoriteAPI", "Recipient ${request.recipientId} favoriting donor ${request.donorId} with token: $authToken")
+
+        //val authToken = getAuthToken() ?:"" //Retrieve the authentication token
+        RetrofitClient.getInstance().addFavorite(request.recipientId, request.donorId)  //(this)
             .enqueue(object : Callback<FavoriteResponse> {
                 override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                     if (response.isSuccessful) {
@@ -219,17 +240,24 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
 
     private fun removeFavorite(request: FavoriteRequest) {
-        val authToken = getAuthToken()
+        //val authToken = getAuthToken()
 
-        if (authToken.isEmpty()) {
-            Log.e("FavoriteAPI", "Auth token is missing")
-            Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
-            return
-        }
+        //if (authToken.isEmpty()) {
+        //    Log.e("FavoriteAPI", "Auth token is missing")
+        //    Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+        //    return
+        //}
 
-        Log.d("FavoriteAPI", "Recipient ${request.recipientId} unfavoriting donor ${request.donorId} with token: $authToken")
+        //if (authToken.isBlank() || authToken == "Bearer ") {
+        //if (authToken == "Bearer" || authToken.isBlank()) {
+        //    Log.e("FavoriteAPI", "Auth token is missing!")
+        //    Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+        //    return
+        //}
 
-        RetrofitClient.getInstance().removeFavorite(request.recipientId, request.donorId, "Bearer $authToken")
+        //Log.d("FavoriteAPI", "Recipient ${request.recipientId} unfavoriting donor ${request.donorId} with token: $authToken")
+
+        RetrofitClient.getInstance().removeFavorite(request.recipientId, request.donorId)
             .enqueue(object : Callback<FavoriteResponse> {
                 override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                     if (response.isSuccessful) {
@@ -265,6 +293,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_favorites -> {
+                //val intent = Intent(this, FavoriteDonorsActivity::class.java)
+                //startActivity(intent)
                 Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_matches -> {

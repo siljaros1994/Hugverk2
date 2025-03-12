@@ -5,7 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.databinding.ActivityLoginBinding
 import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
@@ -43,22 +44,45 @@ class LoginActivity : AppCompatActivity() {
     private fun login(username: String, password: String) {
         val loginRequest = LoginRequest(username, password)
         Log.d("LoginActivity", "Logging in with username: $username, password: $password")
+        // Print the exact JSON that is being sent
+        Log.d("LoginActivity", "Sending login request: ${loginRequest}")
         RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> { //(this)
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("LoginActivity", "Response code: ${response.code()}")
+                Log.d("LoginActivity", "Response body: ${response.body()?.toString()}")
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
-                    if (loginResponse != null) {
+                    if (loginResponse != null ) //&& !loginResponse.token.isNullOrEmpty()
+                    {
                         Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}, Username: ${loginResponse.username}")
                         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+
                         sharedPreferences.edit()
                             .putLong("user_id", loginResponse.userId)
                             .putString("user_type", loginResponse.userType)
                             .putString("username", loginResponse.username)  // Save the correct username
-                            .putString("token", loginResponse.message)
+
+
+
+
                             .apply()
-                            //Log.d message for debugging authToken
-                            Log.d("AuthToken", "Stored Token: ${loginResponse.message}")
+
+
+                        //Extract JSESSIONID from response headers
+                        val cookies = response.headers().values("Set-Cookie")
+                        for (cookie in cookies) {
+                            Log.d("LoginActivity", "Received Cookie: $cookie") // Debugging
+                            if (cookie.startsWith("JSESSIONID")) {
+                                val sessionId = cookie.split(";")[0].split("=")[1]
+                                sharedPreferences.edit().putString("session_id", sessionId).apply()
+                                Log.d("LoginActivity", "Stored Session ID: $sessionId")
+                                break
+                            }
+                        }
+
+
+
+
 
 
                         // Redirect based on user type
@@ -90,17 +114,23 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveUserData(userId: Long, userType: String, token: String) {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putLong("user_id", userId)
-        editor.putString("user_type", userType)
-        editor.putString("token", token) // Save the token
-        editor.apply()
+    //private fun saveUserData(userId: Long, userType: String, token: String) {
+    //    val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+    //    val token = sharedPreferences.getString("token", null) // Retrieve the stored token
+    //    val editor = sharedPreferences.edit()
+    //    editor.putLong("user_id", userId)
+    //    editor.putString("user_type", userType)
+    //    editor.putString("token", token) // Save the token
+    //    editor.apply()
         //To store data e.g. favorite
         //val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         //val token = sharedPreferences.getString("token", null)
-        Log.d("AuthToken", "Retrieved Token: $token")
+        //Log.d("AuthToken", "Retrieved Token: $token")
+        //Debugging if-else loop
+        //if (token.isNullOrEmpty()) {
+        //    Log.e("AuthToken", "TOKEN NOT STORED!")
+        //} else {
+        //    Log.d("AuthToken", "Stored Token after login: Bearer $token") // Debugging
+        //}
 
     }
-}

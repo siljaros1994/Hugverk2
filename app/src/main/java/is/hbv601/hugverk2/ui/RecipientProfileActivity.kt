@@ -19,7 +19,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import retrofit2.Call

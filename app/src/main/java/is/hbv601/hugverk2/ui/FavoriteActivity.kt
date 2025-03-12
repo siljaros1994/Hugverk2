@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.model.DonorProfile
-import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.data.api.RetrofitClient
+//import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.model.FavoriteResponse
 import retrofit2.Callback
 import retrofit2.Call
@@ -39,9 +41,7 @@ class FavoriteActivity : AppCompatActivity() {
                 } else {
                     addFavorite(donor)
                 }
-
                 //Toast.makeText(this@FavoriteActivity, "Unfavoriting ${donor.username}", Toast.LENGTH_SHORT).show
-
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
@@ -54,22 +54,43 @@ class FavoriteActivity : AppCompatActivity() {
 
         loadFavoriteDonors()
     }
-    private fun getAuthToken(): String? {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val token = sharedPreferences.getString("token", null)
-        Log.d("AuthToken", "Retrieved Token: $token") // Debugging
+    //private fun getAuthToken(): String {
+    //    val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+    //    val token = sharedPreferences.getString("auth_token", "").orEmpty()  // Use correct key
+        //val token = sharedPreferences.getString("token", "") ?: ""
+        //val token = sharedPreferences.getString("token", null)
+        //Log.d("AuthToken", "Retrieved Token: $token") // Debugging
 
-        return token //sharedPreferences.getString("token", null)
-    }
+        //return token //sharedPreferences.getString("token", null)
+        //if (token.isBlank()) {
+        //if (token.isEmpty()) {
+        //    //if (token.isNullOrEmpty()) {
+        //    Log.e("AuthToken", "Auth token is missing!")
+        //    //return null//return ""
+        //} else {
+        //Log.d("AuthToken", "Retrieved Token: $token") //Debugging Log
+       // }
+
+        //return token //Ensure proper formatting
 
 
     private fun loadFavoriteDonors() {
         val recipientId = getUserId()
-        val authToken = getAuthToken() ?: ""// Retrieve token
+        //val authToken = getAuthToken() ?: ""// Retrieve token
 
-        Log.d("AuthToken", "Token being sent in FavoriteActivity: $authToken") // Debugging
+        //Log.d("AuthToken", "Token being sent in FavoriteActivity: $authToken") // Debugging
 
-        RetrofitClient.getInstance().getFavoriteDonors(recipientId, authToken).enqueue(object : Callback<List<DonorProfile>> {
+        //val authToken = getAuthToken() //Retrieve the authentication token
+        //if (authToken.isEmpty()) {
+            //if (authToken.isNullOrEmpty()) {
+        //    Log.e("FavoriteActivity", "Auth token is missing!")
+        //Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+        //    return
+        //}
+
+        //Log.d("FavoriteActivity", "Token being sent: $authToken") // Debugging
+
+        RetrofitClient.getInstance().getFavoriteDonors(recipientId).enqueue(object : Callback<List<DonorProfile>> { //(this)
             override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
                 if (response.isSuccessful) {
                     favoriteDonors.clear()
@@ -92,9 +113,9 @@ class FavoriteActivity : AppCompatActivity() {
     private fun removeFavorite(donor: DonorProfile) {
         val recipientId = getUserId()
         val donorId = donor.donorProfileId ?: return
-        val authToken = getAuthToken() ?: ""
+        //val authToken = getAuthToken() ?: ""
 
-        RetrofitClient.getInstance().removeFavorite(recipientId, donorId, authToken).enqueue(object : Callback<FavoriteResponse> {
+        RetrofitClient.getInstance().removeFavorite(recipientId, donorId).enqueue(object : Callback<FavoriteResponse> {
             override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                 if (response.isSuccessful) {
                     favoriteDonors.remove(donor)
@@ -115,11 +136,17 @@ class FavoriteActivity : AppCompatActivity() {
     private fun addFavorite(donor: DonorProfile) {
         val recipientId = getUserId()
         val donorId = donor.donorProfileId ?: return
-        val authToken = getAuthToken() ?: ""
+        //val authToken = getAuthToken()
 
-        Log.d("FavoriteActivity", "Adding favorite for donor ID: $donorId with token: $authToken")
+        //if (authToken.isNullOrEmpty()) {
+        //    Log.e("FavoriteActivity", "Auth token is missing!")
+        //    Toast.makeText(this, "Authentication required. Please log in again.", Toast.LENGTH_SHORT).show()
+        //    return
+        //}
 
-        RetrofitClient.getInstance().addFavorite(recipientId, donorId, authToken).enqueue(object : Callback<FavoriteResponse> {
+        //Log.d("FavoriteActivity", "Adding favorite for donor ID: $donorId with token: $authToken")
+
+        RetrofitClient.getInstance().addFavorite(recipientId, donorId).enqueue(object : Callback<FavoriteResponse> {
             override fun onResponse(call: Call<FavoriteResponse>, response: Response<FavoriteResponse>) {
                 if (response.isSuccessful) {
                     favoriteDonors.add(donor)
@@ -142,4 +169,8 @@ class FavoriteActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         return sharedPreferences.getLong("user_id", -1)
     }
+
 }
+
+
+
