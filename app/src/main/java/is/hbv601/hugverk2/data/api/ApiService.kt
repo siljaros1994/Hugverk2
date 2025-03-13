@@ -72,6 +72,9 @@ interface ApiService {
     @GET("recipient/favorites")
     fun getFavoriteDonors(): Call<List<DonorProfile>>
 
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(@Path("donorId") donorId: Long): Call<List<RecipientProfile>>
+
     // Here we add a donor to favorites
     @GET("favorite/{donorProfileId}")
     fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
@@ -86,7 +89,6 @@ interface ApiService {
 
     @GET("api/match/donor/matches")
     fun getDonorMatches(): Call<List<RecipientProfile>>
-
 
     @GET("delete/{username}")
     fun deleteUser(

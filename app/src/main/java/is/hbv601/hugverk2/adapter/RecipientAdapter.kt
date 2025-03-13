@@ -1,9 +1,11 @@
 package `is`.hbv601.hugverk2.adapter
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
@@ -28,7 +30,6 @@ class RecipientAdapter(
         val tvBloodType: TextView = itemView.findViewById(R.id.tvBloodType)
         val tvHeight: TextView = itemView.findViewById(R.id.tvHeight)
         val tvWeight: TextView = itemView.findViewById(R.id.tvWeight)
-        // Add other UI elements as needed, like match button, view profile button)
         val btnMatch: Button = itemView.findViewById(R.id.btnMatch)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
     }
@@ -40,7 +41,7 @@ class RecipientAdapter(
 
     override fun onBindViewHolder(holder: RecipientViewHolder, position: Int) {
         val recipient = recipients[position]
-        // Load image using Glide
+        // Here we load the image using Glide
         if (!recipient.imagePath.isNullOrEmpty()) {
             Glide.with(holder.itemView.context)
                 .load(recipient.imagePath)

@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
@@ -16,7 +17,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FavoriteActivity : AppCompatActivity(), androidx.navigation.ui.NavigationView.OnNavigationItemSelectedListener {
+class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityFavoriteBinding
     private lateinit var donorAdapter: DonorAdapter
@@ -27,30 +28,28 @@ class FavoriteActivity : AppCompatActivity(), androidx.navigation.ui.NavigationV
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up toolbar and navigation drawer
+        // Setup toolbar and drawer
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
         binding.navView.setNavigationItemSelectedListener(this)
 
-        // Setup RecyclerView with a one-column grid layout
+        // Setup RecyclerView (using one column)
         binding.rvFavorites.layoutManager = GridLayoutManager(this, 1)
         donorAdapter = DonorAdapter(favoritesList, object : DonorAdapter.OnDonorClickListener {
-            // In this favorites context, clicking the favorite button will unfavorite the donor.
+            // In favorites context, clicking "Favorite" means "Unfavorite"
             override fun onFavoriteClicked(donor: DonorProfile) {
-                // Call your API endpoint to remove the donor from favorites.
                 RetrofitClient.getInstance(this@FavoriteActivity)
                     .unfavoriteDonor(donor.donorProfileId!!)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             if (response.isSuccessful) {
                                 Toast.makeText(this@FavoriteActivity, "Donor removed from favorites", Toast.LENGTH_SHORT).show()
-                                loadFavorites() // Refresh the list after removal
+                                loadFavorites() // Refresh list after removal
                             } else {
                                 Toast.makeText(this@FavoriteActivity, "Error removing favorite", Toast.LENGTH_SHORT).show()
                             }
                         }
-
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Toast.makeText(this@FavoriteActivity, "Network error", Toast.LENGTH_SHORT).show()
                         }
@@ -58,7 +57,6 @@ class FavoriteActivity : AppCompatActivity(), androidx.navigation.ui.NavigationV
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
-                // Launch the detailed donor view
                 val intent = Intent(this@FavoriteActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)
                 startActivity(intent)
@@ -66,7 +64,6 @@ class FavoriteActivity : AppCompatActivity(), androidx.navigation.ui.NavigationV
         })
         binding.rvFavorites.adapter = donorAdapter
 
-        // Load favorites from the API
         loadFavorites()
     }
 
@@ -82,7 +79,6 @@ class FavoriteActivity : AppCompatActivity(), androidx.navigation.ui.NavigationV
                     Toast.makeText(this@FavoriteActivity, "Error fetching favorites", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<DonorProfile>>, t: Throwable) {
                 Toast.makeText(this@FavoriteActivity, "Network error", Toast.LENGTH_SHORT).show()
             }

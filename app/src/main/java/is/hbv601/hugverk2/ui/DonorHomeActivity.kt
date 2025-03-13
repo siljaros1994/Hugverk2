@@ -9,17 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
-import android.os.Build
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.OnBackPressedCallback
-import androidx.room.RoomDatabase
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
+import `is`.hbv601.hugverk2.adapter.RecipientAdapter
 import `is`.hbv601.hugverk2.databinding.ActivityDonorHomeBinding
-import `is`.hbv601.hugverk2.model.LogoutResponse
-//import okhttp3.Response
-import `is`.hbv601.hugverk2.ui.LoginActivity
+import `is`.hbv601.hugverk2.model.RecipientProfile
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +27,9 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var navigationView: NavigationView
 
     private var userType: String? = null
+
+    private var recipientList = mutableListOf<RecipientProfile>()
+    private lateinit var recipientAdapter: RecipientAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,22 +66,45 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             // userType saved for possible later use
             this.userType = userType
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //Android 13+
-            onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT
-            ) {
-                handleBackPressed()
+
+        // Here we setup an RecyclerView for recipient cards
+        binding.rvRecipientCards.layoutManager = GridLayoutManager(this, 1)
+        recipientAdapter = RecipientAdapter(recipientList, object : RecipientAdapter.OnRecipientClickListener {
+            override fun onMatchClicked(recipient: RecipientProfile) {
+                Toast.makeText(this@DonorHomeActivity, "Match action for recipient ID ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
             }
-        } else  { //Older versions of Android
-            onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true)
-            {
-                override fun handleOnBackPressed() {
-                    handleBackPressed()
-                }
+            override fun onViewProfileClicked(recipient: RecipientProfile) {
+                // Launch a RecipientViewActivity to show full recipient details (create this activity separately)
+                val intent = Intent(this@DonorHomeActivity, RecipientViewActivity::class.java)
+                intent.putExtra("recipientProfileId", recipient.recipientProfileId)
+                startActivity(intent)
+            }
+        })
+        binding.rvRecipientCards.adapter = recipientAdapter
 
-            })
+        // Retrieve donor ID from sharedPreferences.
+        val donorId = sharedPreferences.getLong("donor_id", -1)
+        if (donorId != -1L) {
+            RetrofitClient.getInstance().getRecipientsWhoFavoritedDonor(donorId)
+                .enqueue(object : Callback<List<RecipientProfile>> {
+                    override fun onResponse(
+                        call: Call<List<RecipientProfile>>,
+                        response: Response<List<RecipientProfile>>
+                    ) {
+                        if (response.isSuccessful) {
+                            val recipients = response.body() ?: emptyList()
+                            recipientList.clear()
+                            recipientList.addAll(recipients)
+                            recipientAdapter.notifyDataSetChanged()
+                        } else {
+                            Toast.makeText(this@DonorHomeActivity, "Error fetching recipient favorites", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
+                        Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -92,13 +114,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-    private fun handleBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START) //Closes navigation drawer if open
-        } else {
-            finish() //Exits the activity
         }
     }
 
@@ -136,9 +151,10 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     val intent = Intent(this, LogoutActivity::class.java)
                     startActivity(intent) //Call logout function
                     finish()
-                                         }, 300)
-                        }
-                    }
-                    return true
-                }
+                }, 300)
+            }
         }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+}
