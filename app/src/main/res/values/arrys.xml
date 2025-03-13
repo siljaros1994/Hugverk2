@@ -102,4 +102,12 @@
         <item>Rheumatoid Arthritis</item>
         <item>Galactosemia</item>
     </string-array>
+    <string-array name="location_options">
+        <item>Höfuðborgarsvæðið</item>
+        <item>Suðurnes</item>
+        <item>Norðurland</item>
+        <item>Vesturland</item>
+        <item>Austurland</item>
+        <item>Suðurland</item>
+    </string-array>
 </resources>

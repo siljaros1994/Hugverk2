@@ -47,6 +47,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var editGetToKnow: EditText
     private lateinit var buttonSaveEdit: Button
     private lateinit var buttonChooseImage: Button
+    private lateinit var spinnerLocation: Spinner
 
     // Preview views
     private lateinit var profileImage: ImageView
@@ -62,6 +63,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private lateinit var textWeight: TextView
     private lateinit var textAge: TextView
     private lateinit var textGetToKnow: TextView
+    private lateinit var textLocation: TextView
 
     private var imageUri: Uri? = null
     private var currentProfile: DonorProfile? = null
@@ -132,6 +134,10 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         editGetToKnow = findViewById(R.id.edit_getToKnow)
         buttonSaveEdit = findViewById(R.id.buttonSaveEdit)
         buttonChooseImage = findViewById(R.id.buttonChooseImage)
+        spinnerLocation = findViewById(R.id.spinnerLocation)
+        val locations = resources.getStringArray(R.array.location_options)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        spinnerLocation.adapter = adapter
 
         // Bind preview views
         profileImage = findViewById(R.id.donor_profile_image)
@@ -147,6 +153,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         textWeight = findViewById(R.id.textWeight)
         textAge = findViewById(R.id.textAge)
         textGetToKnow = findViewById(R.id.textGetToKnow)
+        textLocation = findViewById(R.id.textLocation)
 
         // Initialize MultiSelectSpinner options
         spinnerMedicalHistory.setItems(resources.getStringArray(R.array.medical_history_options))
@@ -162,6 +169,8 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         // Set up save button with image upload support
         buttonSaveEdit.setOnClickListener {
+            val selectedLocation = if (spinnerLocation.selectedItemPosition > 0) spinnerLocation.selectedItem.toString() else null
+
             if (imageUri != null) {
                 val file = getFileFromUri(imageUri!!)
                 if (file != null) {
@@ -189,7 +198,8 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                                             weight = editWeight.text.toString().toDoubleOrNull(),
                                             age = editAge.text.toString().toIntOrNull(),
                                             getToKnow = editGetToKnow.text.toString(),
-                                            imagePath = uploadResponse.fileUrl
+                                            imagePath = uploadResponse.fileUrl,
+                                            location = selectedLocation
                                         )
                                         saveOrEditProfile(updatedProfile)
                                     } ?: onFailure(call, Throwable("Empty response body"))
@@ -221,7 +231,8 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                     weight = editWeight.text.toString().toDoubleOrNull(),
                     age = editAge.text.toString().toIntOrNull(),
                     getToKnow = editGetToKnow.text.toString(),
-                    imagePath = null
+                    imagePath = null,
+                    location = selectedLocation
                 )
                 saveOrEditProfile(updatedProfile)
             }
@@ -277,6 +288,10 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         val donorTypeIndex = donorTypeArray.indexOf(profile.donorType ?: "")
         if (donorTypeIndex >= 0) spinnerDonorType.setSelection(donorTypeIndex)
 
+        val locationsArray = resources.getStringArray(R.array.location_options)
+        val locationIndex = locationsArray.indexOf(profile.location ?: locationsArray[0])
+        if (locationIndex >= 0) spinnerLocation.setSelection(locationIndex)
+
         profile.medicalHistory?.let { history ->
             spinnerMedicalHistory.setSelection(history.toList())
         }
@@ -296,6 +311,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         textBloodType.text = "Blood Type: ${profile.bloodType ?: "Not specified"}"
         textDonorType.text = "Donor Type: ${profile.donorType ?: "Not specified"}"
         textMedicalHistory.text = "Medical History: ${profile.medicalHistory?.joinToString(", ") ?: "Not specified"}"
+        textLocation.text = "Location: ${profile.location ?: "Not specified"}"
         textHeight.text = "Height: ${profile.height ?: "Not specified"}"
         textWeight.text = "Weight: ${profile.weight ?: "Not specified"}"
         textAge.text = "Age: ${profile.age ?: "Not specified"}"
@@ -314,6 +330,24 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     private fun saveOrEditProfile(profile: DonorProfile) {
+        val selectedLocation = if (spinnerLocation.selectedItemPosition > 0) spinnerLocation.selectedItem.toString() else null
+
+        val updatedProfile = DonorProfile(
+            eyeColor = spinnerEyeColor.selectedItem.toString(),
+            hairColor = spinnerHairColor.selectedItem.toString(),
+            educationLevel = spinnerEducationLevel.selectedItem.toString(),
+            race = spinnerRace.selectedItem.toString(),
+            ethnicity = spinnerEthnicity.selectedItem.toString(),
+            bloodType = spinnerBloodType.selectedItem.toString(),
+            donorType = spinnerDonorType.selectedItem.toString(),
+            medicalHistory = spinnerMedicalHistory.getSelectedItems(),
+            height = editHeight.text.toString().toDoubleOrNull(),
+            weight = editWeight.text.toString().toDoubleOrNull(),
+            age = editAge.text.toString().toIntOrNull(),
+            getToKnow = editGetToKnow.text.toString(),
+            imagePath = currentProfile?.imagePath,
+            location = selectedLocation
+        )
         Log.d("DonorProfile", "Saving profile with imagePath: ${profile.imagePath}")
         RetrofitClient.getInstance().saveOrEditDonorProfile(profile) //(this)
             .enqueue(object : Callback<DonorProfile> {

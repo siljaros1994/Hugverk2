@@ -52,7 +52,7 @@ interface ApiService {
     fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
 
     @GET("api/donor/all")
-    fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
+    fun getDonors(@Query("page") page: Int, @Query("size") size: Int, @Query("location") location: String? = null): Call<List<DonorProfile>>
 
     // Recipient profile:
     @GET("api/recipient/profile/{userId}")
@@ -83,7 +83,7 @@ interface ApiService {
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
-    
+
     // Here we add our other endpoints here like search, match, message,...
 
 }
