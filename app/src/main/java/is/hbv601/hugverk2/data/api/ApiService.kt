@@ -80,6 +80,14 @@ interface ApiService {
     @POST("unfavorite/{donorProfileId}")
     fun unfavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
 
+    // Match users
+    @GET("api/match/recipient/matches")
+    fun getRecipientMatches(): Call<List<DonorProfile>>
+
+    @GET("api/match/donor/matches")
+    fun getDonorMatches(): Call<List<RecipientProfile>>
+
+
     @GET("delete/{username}")
     fun deleteUser(
         @Path("username") username: String,
