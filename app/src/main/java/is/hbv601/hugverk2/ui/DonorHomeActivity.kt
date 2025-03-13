@@ -30,6 +30,8 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
 
+    private var userType: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDonorHomeBinding.inflate(layoutInflater)
@@ -83,8 +85,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     }
 
-    private var userType: String? = null
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -131,7 +131,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     drawerLayout.closeDrawer(GravityCompat.START)
                 }
-
                 // Delay logout slightly to prevent UI conflicts
                 drawerLayout.postDelayed({
                     val intent = Intent(this, LogoutActivity::class.java)

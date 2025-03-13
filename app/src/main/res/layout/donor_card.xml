@@ -77,6 +77,12 @@
                 android:text="Favorite" />
 
             <Button
+                android:id="@+id/btnUnfavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unfavorite" />
+
+            <Button
                 android:id="@+id/btnViewProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
