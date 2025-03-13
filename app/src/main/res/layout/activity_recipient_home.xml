@@ -39,6 +39,11 @@ tools:context=".ui.RecipientHomeActivity">
         android:queryHint="Search donors..."
         android:iconifiedByDefault="false"/>
 
+    <Spinner
+        android:id="@+id/spinnerLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDonorCards"

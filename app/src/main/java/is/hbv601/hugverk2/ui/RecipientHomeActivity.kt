@@ -5,11 +5,15 @@ import `is`.hbv601.hugverk2.R
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
+import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import android.widget.Spinner
 import android.os.Build
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
@@ -48,9 +52,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -66,6 +67,14 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we retrieve the user data
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "Unknown")
+        val locationSpinner: Spinner = findViewById(R.id.spinnerLocation)
+
+        // here we define list of locations
+        val locations = listOf("All", "Höfuðborgarsvæðið", "Suðurnes", "Norðurland", "Vesturland", "Austurland", "Suðurland")
+
+        // create adapter for the spinner
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        locationSpinner.adapter = adapter
 
         if (username == null) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
@@ -77,7 +86,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
             navHeaderTitle.text = "Welcome, $username!"
         }
-
+        // recyclerview initialize
         donorRecyclerView = findViewById(R.id.rvDonorCards)
         val layoutManager = GridLayoutManager(this, 1)
         donorRecyclerView.layoutManager = layoutManager
@@ -96,90 +105,110 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         })
 
         donorRecyclerView.adapter = donorAdapter
-
+        //search bar setup
         searchView = findViewById(R.id.searchView)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
-                filterDonors(newText)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                filterDonors(newText, selectedLocation)
                 return true
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                filterDonors(query)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                filterDonors(query, selectedLocation)
                 return true
             }
         })
 
-
         // Pagination: button click listeners
         binding.btnPreviousPage.setOnClickListener {
             if (currentPage > 0) {
-                loadDonors(currentPage - 1)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                loadDonors(currentPage - 1, selectedLocation)
             }
         }
 
         binding.btnNextPage.setOnClickListener {
             if (!isLastPage) {
-                loadDonors(currentPage + 1)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                loadDonors(currentPage + 1, selectedLocation)
             }
         }
-
         // Here we load the first page
-        loadDonors(currentPage)
-    }
+        loadDonors(0, null)
 
-    private fun loadDonors(page: Int) {
-        isLoading = true
-        RetrofitClient.getInstance().getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> { //this
-            override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
-                isLoading = false
-                if (response.isSuccessful) {
-                    val donors = response.body() ?: emptyList()
-                    if (page == 0) {
-                        donorsList.clear()
-                    }
-                    if (donors.isNotEmpty()) {
-                        currentPage = page
-                        donorsList.clear()
-                        donorsList.addAll(donors)
-                        filterDonors(searchView.query.toString()) //for search
-                        binding.tvCurrentPage.text = "Page ${currentPage + 1}"
-                        // If fewer items than pageSize, it's the last page
-                        isLastPage = donors.size < pageSize
-                    } else {
-                        isLastPage = true
-                    }
-                } else {
-                    Toast.makeText(this@RecipientHomeActivity, "Error fetching donor profiles", Toast.LENGTH_SHORT).show()
-                }
+        //location selection changes handler
+        locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedLocation = if (position == 0) null else locations[position]
+                loadDonors(0, selectedLocation)
             }
-
-            override fun onFailure(call: Call<List<DonorProfile>>, t: Throwable) {
-                isLoading = false
-                Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun filterDonors(query: String?) {
-        filteredList.clear()
-        if (query.isNullOrBlank()) {
-            filteredList.addAll(donorsList)
-        } else {
-            filteredList.addAll(donorsList.filter { donor ->
-                donor.donorType?.contains(query, ignoreCase = true) == true ||
-                        donor.eyeColor?.contains(query, ignoreCase = true) == true ||
-                        donor.hairColor?.contains(query, ignoreCase = true) == true ||
-                        donor.educationLevel?.contains(query, ignoreCase = true) == true ||
-                        donor.race?.contains(query, ignoreCase = true) == true ||
-                        donor.ethnicity?.contains(query, ignoreCase = true) == true ||
-                        donor.bloodType?.contains(query, ignoreCase = true) == true ||
-                        donor.getToKnow?.contains(query, ignoreCase = true) == true ||
-                        donor.traits?.contains(query, ignoreCase = true) == true
-            })
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
+    }
+
+    private fun loadDonors(page: Int, selectedLocation: String? = null) {
+        isLoading = true
+
+        val locationParam = if (selectedLocation == "All" || selectedLocation.isNullOrBlank()) null else selectedLocation
+
+        RetrofitClient.getInstance().getDonors(page, pageSize, locationParam)
+            .enqueue(object : Callback<List<DonorProfile>> {
+                override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
+                    isLoading = false
+                    if (response.isSuccessful) {
+                        val donors = response.body() ?: emptyList()
+
+                        if (donors.isEmpty()) {
+                            donorsList.clear()
+                            donorAdapter.updateList(donorsList)
+                            binding.tvCurrentPage.text = "No donors found"
+                            isLastPage = true
+                        } else {
+                            if (page == 0) {
+                                donorsList.clear()
+                            }
+                            currentPage = page
+                            donorsList.clear()
+                            donorsList.addAll(donors)
+                            filterDonors(searchView.query.toString(), selectedLocation)
+                            binding.tvCurrentPage.text = "Page ${currentPage + 1}"
+                            isLastPage = donors.size < pageSize
+                        }
+                    } else {
+                        Toast.makeText(this@RecipientHomeActivity, "Error fetching donor profiles", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<List<DonorProfile>>, t: Throwable) {
+                    isLoading = false
+                    Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+
+    private fun filterDonors(query: String?, selectedLocation: String?) {
+        filteredList.clear()
+        filteredList.addAll(donorsList.filter { donor ->
+            val matchesSearch = query.isNullOrBlank() || donor.donorType?.contains(query, ignoreCase = true) == true ||
+                    donor.eyeColor?.contains(query, ignoreCase = true) == true ||
+                    donor.hairColor?.contains(query, ignoreCase = true) == true ||
+                    donor.educationLevel?.contains(query, ignoreCase = true) == true ||
+                    donor.race?.contains(query, ignoreCase = true) == true ||
+                    donor.ethnicity?.contains(query, ignoreCase = true) == true ||
+                    donor.bloodType?.contains(query, ignoreCase = true) == true ||
+                    donor.getToKnow?.contains(query, ignoreCase = true) == true ||
+                    donor.traits?.contains(query, ignoreCase = true) == true
+
+            val matchesLocation = selectedLocation.isNullOrBlank() || selectedLocation == "All" || donor.location?.contains(selectedLocation, ignoreCase = true) == true
+
+            matchesSearch && matchesLocation
+        })
         donorAdapter.updateList(filteredList)
     }
+
 
 
 
