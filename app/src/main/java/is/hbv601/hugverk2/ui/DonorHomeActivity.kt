@@ -12,6 +12,7 @@ import android.util.Log
 import android.os.Build
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.RoomDatabase
@@ -36,17 +37,18 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var binding: ActivityDonorHomeBinding
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var recipientRecyclerView: RecyclerView
     private lateinit var recipientAdapter: RecipientAdapter
-    //private lateinit var apiService: ApiService
+
 
     private var recipientsList = mutableListOf<RecipientProfile>()
+    //private var recipientsList : List<RecipientProfile> = listOf()
     private var currentPage = 0
     private var isLoading = false
     private var isLastPage = false
     private val pageSize = 4
-    private var donorId: Long = -1L
-    //private var authToken: String = ""
+    //private var donorId: Long = -1L
+
 
 
 
@@ -67,25 +69,15 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Set up navigation item selection
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Initialize RecyclerView
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        //Initialize adapter for recipients
-        recipientAdapter = RecipientAdapter(recipientsList) { recipient ->
-            Toast.makeText(this, "Clicked on ${recipient.user?.username}", Toast.LENGTH_SHORT).show()
-        }
-        recyclerView.adapter = recipientAdapter
+
 
         // Retrieve user data like recipients who favorited this donor
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
         val donorId = sharedPreferences.getLong("user_id", -1L) //Assuming user_id is donor ID
-        //val authToken = "Bearer" + sharedPreferences.getString("auth_token", null) //Replace with actual token key
 
-        //if (donorId != -1L) {
-        //    loadFavoritingRecipients(donorId, authToken, currentPage)
-       // }
+
 
         if (username == null || userType == null || donorId == -1L ) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
@@ -100,17 +92,19 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             // userType saved for possible later use
             //this.userType = userType
 
-            //Fetch favoriting recipients
-            //fetchFavoritingRecipients(donorId, authToken)
+            recipientRecyclerView = findViewById(R.id.rvRecipientCards)
+            val layoutManager = GridLayoutManager(this, 1)
+            recipientRecyclerView.layoutManager = layoutManager
+
 
 
         //Fetch favoriting recipients
-        if (donorId != -1L) {
-            loadFavoritingRecipients(donorId,currentPage)
-        }
+        //if (donorId != -1L) {
+        //    loadFavoritingRecipients(donorId,currentPage)
+        //}
     }
 
-        //Set up pagination buttons
+        //Set up pagination buttons with listeners
         binding.btnPreviousPage.setOnClickListener {
             if (currentPage > 0) {
                 loadFavoritingRecipients(donorId, currentPage - 1)
@@ -121,55 +115,33 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 loadFavoritingRecipients(donorId, currentPage + 1)
             }
         }
+        // Here we load the first page
+        //loadFavoritingRecipients(currentPage)
 
         //Handle back button behavior
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //Android 13+
-            onBackInvokedDispatcher.registerOnBackInvokedCallback(
-                OnBackInvokedDispatcher.PRIORITY_DEFAULT
-            ) {
-                handleBackPressed()
-            }
-        } else  { //Older versions of Android
-            onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true)
-            {
-                override fun handleOnBackPressed() {
-                    handleBackPressed()
-                }
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { //Android 13+
+        //    onBackInvokedDispatcher.registerOnBackInvokedCallback(
+        //        OnBackInvokedDispatcher.PRIORITY_DEFAULT
+        //    ) {
+        //        handleBackPressed()
+        //    }
+        //} else  { //Older versions of Android
+        //    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true)
+        //    {
+        //        override fun handleOnBackPressed() {
+        //            handleBackPressed()
+        //        }
 
-            })
-        }
+            //})
+       // }
 
     }
 
-    private var userType: String? = null
-
-    private fun fetchFavoritingRecipients(donorId: Long) {
-        val apiService = RetrofitClient.getInstance() // Use getInstance() instead of direct apiService
-        apiService.getFavoritingRecipients(donorId).enqueue(object : Callback<List<RecipientProfile>> {
-            override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
-                if (response.isSuccessful) {
-                    val recipients = response.body() ?: emptyList()
-                    recipientAdapter.updateList(recipients) // Update RecyclerView
-                } else {
-                    Log.e("DonorHomeActivity", "Error fetching recipients: ${response.errorBody()?.string()}")
-                }
-            }
-            override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
-                Log.e("DonorHomeActivity", "API call failed", t)
-            }
-        })
-    }
 
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                drawerLayout.openDrawer(GravityCompat.START)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+
+
+
     private fun handleBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START) //Closes navigation drawer if open
@@ -215,6 +187,21 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         })
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun getUserId(): Long {
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        return sharedPreferences.getLong("user_id", -1) // Fetch the donors's ID
+    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -253,10 +240,9 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                             }, 300) // Small delay ensures smooth UI transition
                         }
                     }
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     return true
                 }
-
-
 
     }
 

@@ -55,6 +55,10 @@ interface ApiService {
     @GET("api/donor/view/{donorProfileId}")
     fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
 
+    //recipientpage view profile:
+    @GET("api/recipient/view/{recipientProfileId}")
+    fun viewRecipientProfile(@Path("recipientProfileId") recipientProfile: Long): Call<RecipientProfile>
+
     @GET("api/donor/all")
     fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
 
@@ -64,6 +68,11 @@ interface ApiService {
 
     @POST("api/recipient/profile/saveOrEdit")
     fun saveOrEditRecipientProfile(@Body profile: RecipientProfile): Call<RecipientProfile>
+
+    //Fetching Recipients for Donor Home Activity
+    @GET("api/recipient/all")
+    fun getAllRecipients(): Call<List<RecipientProfile>>
+
 
     @Multipart
     @POST("api/upload")
@@ -96,10 +105,7 @@ interface ApiService {
 
     // Here we add our other endpoints here like search, match, message,...
 
-    //Recipient sees his favorites
-    //@GET("api/recipient/favorites/{recipientId}")
-    //fun getFavoriteDonors(@Path("recipientId") recipientId: Long,@Header("Authorization") authToken: String
-    //): Call<List<DonorProfile>>
+
 
     //Donor can see recipients who have favorite them on his home page, make sure that the getFavoriteRecipient matches
     @GET("api/donor/favorites/{donorId}")

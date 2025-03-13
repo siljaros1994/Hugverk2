@@ -41,6 +41,7 @@ tools:context=".ui.RecipientHomeActivity">
         android:layout_marginTop="16dp"
         android:scrollbars="vertical" />
 
+
     <LinearLayout
         android:id="@+id/paginationLayout"
         android:layout_width="match_parent"
