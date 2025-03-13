@@ -1,4 +1,4 @@
-package `is`.hbv601.hugverk2.ui
+package `is`.hbv601.hugverk2.adapter
 
 import android.view.LayoutInflater
 import android.view.View

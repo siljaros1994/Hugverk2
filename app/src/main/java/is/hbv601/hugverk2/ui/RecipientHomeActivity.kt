@@ -209,9 +209,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         donorAdapter.updateList(filteredList)
     }
 
-
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

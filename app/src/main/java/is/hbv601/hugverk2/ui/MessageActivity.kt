@@ -16,8 +16,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-
 class MessageActivity : AppCompatActivity() {
 
     private lateinit var recyclerMessages: RecyclerView
@@ -118,6 +116,4 @@ class MessageActivity : AppCompatActivity() {
                 }
             })
     }
-
-
 }
