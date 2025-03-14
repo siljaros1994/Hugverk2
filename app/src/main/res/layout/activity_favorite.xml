@@ -18,6 +18,14 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Favorites"
+            android:textSize="24sp"
+            android:layout_marginTop="16dp"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFavorites"
             android:layout_width="match_parent"
