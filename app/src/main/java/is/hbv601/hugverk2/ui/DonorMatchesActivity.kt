@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
@@ -23,12 +22,8 @@ import retrofit2.Response
 class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityDonorMatchesBinding
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
     private lateinit var rvMatches: RecyclerView
-    private lateinit var matchesAdapter: RecipientAdapter  // We can reuse DonorAdapter if you’d like to show recipient profiles similarly
-
-    // We'll assume RecipientProfile is similar enough; if not, you might need a separate adapter.
+    private lateinit var matchesAdapter: RecipientAdapter
     private var matchesList = mutableListOf<RecipientProfile>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,20 +37,18 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
-        // Initialize Drawer and NavigationView
-        drawerLayout = binding.drawerLayout
-        navigationView = binding.navView
-        navigationView.setNavigationItemSelectedListener(this)
+        // Initialize drawer and navigation view
+        binding.navView.setNavigationItemSelectedListener(this)
 
         // Setup RecyclerView
         rvMatches = binding.rvMatches
         rvMatches.layoutManager = GridLayoutManager(this, 1)
         matchesAdapter = RecipientAdapter(matchesList, object : RecipientAdapter.OnRecipientClickListener {
             override fun onMatchClicked(recipient: RecipientProfile) {
-                // Handle match action (e.g., unmatch) if needed
+                // Handle match action if needed
             }
             override fun onViewProfileClicked(recipient: RecipientProfile) {
-                // Launch the RecipientViewActivity to show full recipient details (create this activity)
+                // Launch RecipientViewActivity with recipientProfileId
                 val intent = Intent(this@DonorMatchesActivity, RecipientViewActivity::class.java)
                 intent.putExtra("recipientProfileId", recipient.recipientProfileId)
                 startActivity(intent)
@@ -63,13 +56,17 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         })
         rvMatches.adapter = matchesAdapter
 
-        // Load recipient matches from the API
+        // Load matches
         loadMatches()
     }
 
     private fun loadMatches() {
-        RetrofitClient.getInstance(this).getDonorMatches().enqueue(object : Callback<List<RecipientProfile>> {
-            override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+        // Remove the context parameter here!
+        RetrofitClient.getInstance().getDonorMatches().enqueue(object : Callback<List<RecipientProfile>> {
+            override fun onResponse(
+                call: Call<List<RecipientProfile>>,
+                response: Response<List<RecipientProfile>>
+            ) {
                 if (response.isSuccessful) {
                     val matches = response.body() ?: emptyList()
                     matchesList.clear()
@@ -88,7 +85,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                drawerLayout.openDrawer(GravityCompat.START)
+                binding.drawerLayout.openDrawer(GravityCompat.START)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -105,12 +102,9 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 val intent = Intent(this, DonorProfileActivity::class.java)
                 startActivity(intent)
             }
-            R.id.nav_messages -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
-            }
-            // Add other items as needed
+            R.id.nav_messages -> Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
         }
-        drawerLayout.closeDrawer(GravityCompat.START)
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 }

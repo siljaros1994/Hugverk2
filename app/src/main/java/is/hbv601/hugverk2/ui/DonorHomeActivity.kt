@@ -97,11 +97,17 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                             recipientList.addAll(recipients)
                             recipientAdapter.notifyDataSetChanged()
                         } else {
-                            Toast.makeText(this@DonorHomeActivity, "Error fetching recipient favorites", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@DonorHomeActivity,
+                                "Error fetching recipient favorites",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
+
                     override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
-                        Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 })
         }

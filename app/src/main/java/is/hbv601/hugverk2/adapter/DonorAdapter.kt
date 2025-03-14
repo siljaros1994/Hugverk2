@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,6 +56,7 @@ class DonorAdapter(
         holder.tvDonorType.text = "Donor Type: ${donor.donorType ?: "N/A"}"
 
         holder.btnFavorite.setOnClickListener {
+            Log.d("FavoriteButton", "Favorite button clicked for donor id: ${donor.donorProfileId}")
             listener.onFavoriteClicked(donor)
         }
 

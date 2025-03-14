@@ -1,6 +1,5 @@
 package `is`.hbv601.hbv601.hugverk2.data.api
 
-import android.content.Context
 import android.util.Log
 import `is`.hbv601.hugverk2.data.api.ApiService
 import okhttp3.OkHttpClient
@@ -15,9 +14,8 @@ object RetrofitClient {
 
     private const val BASE_URL = "http://192.168.101.4:8080/"
 
-
     // Create a CookieManager that accepts all cookies.
-    public val cookieManager = CookieManager().apply {
+    private val cookieManager = CookieManager().apply {
         setCookiePolicy(CookiePolicy.ACCEPT_ALL)
     }
 
@@ -52,25 +50,7 @@ object RetrofitClient {
         return retrofit.create(ApiService::class.java)
     }
 
-    object RetrofitClient {
-        private var INSTANCE : ApiService? = null
-        fun getInstance(): ApiService {
-            if (INSTANCE == null) {
-                val cookieManager = CookieManager()
-                cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL)
-
-                val client = OkHttpClient.Builder()
-                    .cookieJar(JavaNetCookieJar(cookieManager))
-                    .build()
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
-                    .build()
-
-                INSTANCE = retrofit.create(ApiService::class.java)
-            }
-            return INSTANCE !!
-        }
+    fun getCookieString(): String {
+        return cookieManager.cookieStore.cookies.joinToString("; ") { it.toString() }
     }
 }

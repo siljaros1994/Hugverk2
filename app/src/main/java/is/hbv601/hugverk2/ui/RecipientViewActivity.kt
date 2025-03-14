@@ -6,26 +6,26 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
-import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.model.RecipientProfile
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class RecipientViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
 
-    // UI components for displaying donor details
-    private lateinit var donorImage: ImageView
+    // UI components for displaying recipient details
+    private lateinit var recipientImage: ImageView
     private lateinit var tvTraits: TextView
     private lateinit var tvHeight: TextView
     private lateinit var tvWeight: TextView
@@ -36,43 +36,42 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var tvRace: TextView
     private lateinit var tvEthnicity: TextView
     private lateinit var tvBloodType: TextView
-    private lateinit var tvDonorType: TextView
+    private lateinit var tvRecipientType: TextView
     private lateinit var tvGetToKnow: TextView
 
-    private var donorProfileId: Long = -1L
+    private var recipientProfileId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_donor_view)
+        setContentView(R.layout.activity_recipient_view)
 
         // Initialize DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout)
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Update Navigation Header with logged in username
+        // Setup toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
+
+        // Update Navigation Header with logged-in username
         val headerView = navigationView.getHeaderView(0)
         val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
         val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPrefs.getString("username", "Guest")
         navHeaderTitle.text = "Welcome, $username!"
 
-        // Setup toolbar and drawer for side panel navigation
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
-
-
-        // Get donorProfileId passed from the donor card button
-        donorProfileId = intent.getLongExtra("donorProfileId", -1L)
-        if (donorProfileId == -1L) {
-            Toast.makeText(this, "Donor profile not found", Toast.LENGTH_SHORT).show()
+        // Get recipientProfileId passed from previous activity
+        recipientProfileId = intent.getLongExtra("recipientProfileId", -1L)
+        if (recipientProfileId == -1L) {
+            Toast.makeText(this, "Recipient profile not found", Toast.LENGTH_SHORT).show()
             finish()
         }
 
-        // Bind UI components
-        donorImage = findViewById(R.id.donorImage)
+        // Bind UI components from layout
+        recipientImage = findViewById(R.id.recipientImage)
         tvTraits = findViewById(R.id.tvTraits)
         tvHeight = findViewById(R.id.tvHeight)
         tvWeight = findViewById(R.id.tvWeight)
@@ -83,52 +82,55 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         tvRace = findViewById(R.id.tvRace)
         tvEthnicity = findViewById(R.id.tvEthnicity)
         tvBloodType = findViewById(R.id.tvBloodType)
-        tvDonorType = findViewById(R.id.tvDonorType)
+        tvRecipientType = findViewById(R.id.tvRecipientType)
         tvGetToKnow = findViewById(R.id.tvGetToKnow)
 
-        // Load donor profile data
-        loadDonorProfile()
+        // Load recipient profile data from the API
+        loadRecipientProfile()
     }
 
-    private fun loadDonorProfile() {
-        RetrofitClient.getInstance().viewDonorProfile(donorProfileId)
-            .enqueue(object : Callback<DonorProfile> {
-                override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
+    private fun loadRecipientProfile() {
+        RetrofitClient.getInstance().getRecipientProfile(recipientProfileId)
+            .enqueue(object : Callback<RecipientProfile> {
+                override fun onResponse(
+                    call: Call<RecipientProfile>,
+                    response: Response<RecipientProfile>
+                ) {
                     if (response.isSuccessful) {
-                        response.body()?.let { donor ->
-                            updateUI(donor)
-                        } ?: Toast.makeText(this@DonorViewActivity, "Donor profile not found", Toast.LENGTH_SHORT).show()
+                        response.body()?.let { recipient ->
+                            updateUI(recipient)
+                        } ?: Toast.makeText(this@RecipientViewActivity, "Recipient profile not found", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(this@DonorViewActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RecipientViewActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
-                override fun onFailure(call: Call<DonorProfile>, t: Throwable) {
-                    Toast.makeText(this@DonorViewActivity, "Network error", Toast.LENGTH_SHORT).show()
+                override fun onFailure(call: Call<RecipientProfile>, t: Throwable) {
+                    Toast.makeText(this@RecipientViewActivity, "Network error", Toast.LENGTH_SHORT).show()
                 }
             })
     }
 
-    private fun updateUI(donor: DonorProfile) {
-        tvTraits.text = "Traits: ${donor.traits ?: "Not specified"}"
-        tvHeight.text = "Height: ${donor.height ?: "Not specified"} cm"
-        tvWeight.text = "Weight: ${donor.weight ?: "Not specified"} kg"
-        tvEyeColor.text = "Eye Color: ${donor.eyeColor ?: "Not specified"}"
-        tvHairColor.text = "Hair Color: ${donor.hairColor ?: "Not specified"}"
-        tvEducationLevel.text = "Education Level: ${donor.educationLevel ?: "Not specified"}"
-        tvMedicalHistory.text = "Medical History: ${donor.medicalHistory?.joinToString(", ") ?: "Not specified"}"
-        tvRace.text = "Race: ${donor.race ?: "Not specified"}"
-        tvEthnicity.text = "Ethnicity: ${donor.ethnicity ?: "Not specified"}"
-        tvBloodType.text = "Blood Type: ${donor.bloodType ?: "Not specified"}"
-        tvDonorType.text = "Donor Type: ${donor.donorType ?: "Not specified"}"
-        tvGetToKnow.text = "Get to Know: ${donor.getToKnow ?: "Not specified"}"
+    private fun updateUI(recipient: RecipientProfile) {
+        tvTraits.text = "Traits: ${recipient.traits ?: "Not specified"}"
+        tvHeight.text = "Height: ${recipient.height ?: "Not specified"} cm"
+        tvWeight.text = "Weight: ${recipient.weight ?: "Not specified"} kg"
+        tvEyeColor.text = "Eye Color: ${recipient.eyeColor ?: "Not specified"}"
+        tvHairColor.text = "Hair Color: ${recipient.hairColor ?: "Not specified"}"
+        tvEducationLevel.text = "Education Level: ${recipient.educationLevel ?: "Not specified"}"
+        tvMedicalHistory.text = "Medical History: ${recipient.medicalHistory ?: "Not specified"}"
+        tvRace.text = "Race: ${recipient.race ?: "Not specified"}"
+        tvEthnicity.text = "Ethnicity: ${recipient.ethnicity ?: "Not specified"}"
+        tvBloodType.text = "Blood Type: ${recipient.bloodType ?: "Not specified"}"
+        tvRecipientType.text = "Recipient Type: ${recipient.recipientType ?: "Not specified"}"
+        tvGetToKnow.text = "Get to Know: ${recipient.getToKnow ?: "Not specified"}"
 
-        // Load donor image with Glide
-        donor.imagePath?.let { imageUrl ->
+        // Load recipient image using Glide
+        recipient.imagePath?.let { imageUrl ->
             Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.default_avatar)
                 .error(R.drawable.default_avatar)
-                .into(donorImage)
+                .into(recipientImage)
         }
     }
 

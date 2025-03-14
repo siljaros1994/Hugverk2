@@ -68,22 +68,20 @@ interface ApiService {
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
 
-    // Here er get the list of favorite donor profiles for a recipient.
-    @GET("recipient/favorites")
+    // Here we get favorite.
+    @GET("api/recipient/favorites")
     fun getFavoriteDonors(): Call<List<DonorProfile>>
 
     @GET("api/recipient/favoritedByDonor/{donorId}")
     fun getRecipientsWhoFavoritedDonor(@Path("donorId") donorId: Long): Call<List<RecipientProfile>>
 
-    // Here we add a donor to favorites
-    @GET("favorite/{donorProfileId}")
+    @GET("api/recipient/favorite/{donorProfileId}")
     fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
 
-    // Here we remove a donor from favorites
-    @POST("unfavorite/{donorProfileId}")
+    @POST("api/recipient/unfavorite/{donorProfileId}")
     fun unfavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
 
-    // Match users
+    // Here we get match users
     @GET("api/match/recipient/matches")
     fun getRecipientMatches(): Call<List<DonorProfile>>
 

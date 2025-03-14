@@ -60,7 +60,7 @@ class UserListActivity : AppCompatActivity() {
         val apiService = RetrofitClient.getInstance()
 
         // Fetch stored cookies (same as fetching users)
-        val cookies = RetrofitClient.cookieManager.cookieStore.cookies.joinToString("; ") { it.toString() }
+        val cookies = RetrofitClient.getCookieString()
 
         Log.d("CookieDebug", "Cookies sent with DELETE request: $cookies")
 
