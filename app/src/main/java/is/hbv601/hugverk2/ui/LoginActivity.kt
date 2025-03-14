@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
     private fun login(username: String, password: String) {
         val loginRequest = LoginRequest(username, password)
         Log.d("LoginActivity", "Logging in with username: $username, password: $password")
-        RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> { //(this)
+        RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("LoginActivity", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
@@ -51,20 +51,24 @@ class LoginActivity : AppCompatActivity() {
                     if (loginResponse != null) {
                         Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}, Username: ${loginResponse.username}")
                         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                        sharedPreferences.edit()
-                            .putLong("user_id", loginResponse.userId)
-                            .putString("user_type", loginResponse.userType)
-                            .putString("username", loginResponse.username)
-                            .putString("token", loginResponse.message)
-                            .apply()
+                        with(sharedPreferences.edit()) {
+                            putLong("user_id", loginResponse.userId)
+                            putString("user_type", loginResponse.userType)
+                            putString("username", loginResponse.username)
+                            // Save the token if needed (optional)
+                            putString("token", loginResponse.message)
 
-                        if (loginResponse.userType == "donor") {
-                            sharedPreferences.edit()
-                                .putLong("donor_id", loginResponse.userId)
-                                .apply()
+                            if (loginResponse.userType.equals("donor", ignoreCase = true)) {
+                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, loginResponse.donorId, null)
+                            } else if (loginResponse.userType.equals("recipient", ignoreCase = true)) {
+                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, null, loginResponse.recipientId)
+                            } else {
+                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, null, null)
+                            }
+                            apply()
                         }
 
-                        // Redirect based on user type
+                        // Here we redirect based on the user type
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)
@@ -93,12 +97,15 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveUserData(userId: Long, userType: String, token: String) {
+    private fun saveUserData(userId: Long, userType: String, token: String, donorId: Long?, recipientId: Long?) {
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putLong("user_id", userId)
-        editor.putString("user_type", userType)
-        editor.putString("token", token) // Save the token
-        editor.apply()
+        with(sharedPreferences.edit()) {
+            putLong("user_id", userId)
+            putString("user_type", userType)
+            putString("token", token)
+            donorId?.let { putLong("donor_id", it) }
+            recipientId?.let { putLong("recipient_id", it) }
+            apply()
+        }
     }
 }
