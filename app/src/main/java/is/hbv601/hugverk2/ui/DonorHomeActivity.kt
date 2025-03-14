@@ -78,6 +78,11 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             override fun onMatchClicked(recipient: RecipientProfile) {
                 Toast.makeText(this@DonorHomeActivity, "Match action for recipient ID ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
             }
+
+            override fun onUnMatchClicked(recipient: RecipientProfile) {
+                Toast.makeText(this@DonorHomeActivity, "Unmatch action not implemented", Toast.LENGTH_SHORT).show()
+            }
+
             override fun onViewProfileClicked(recipient: RecipientProfile) {
                 Log.d("DonorHomeActivity", "View profile clicked for recipient id: ${recipient.recipientProfileId}")
                 val intent = Intent(this@DonorHomeActivity, RecipientViewActivity::class.java)

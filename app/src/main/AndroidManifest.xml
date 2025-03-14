@@ -78,6 +78,5 @@
         <activity android:name=".ui.MessageActivity"/>
         <activity android:name=".ui.MessageListActivity"/>
 
-
     </application>
 </manifest>

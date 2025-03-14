@@ -49,22 +49,16 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
-                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}, Username: ${loginResponse.username}")
-                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                        with(sharedPreferences.edit()) {
+                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, " +
+                                "User Type: ${loginResponse.userType}, Username: ${loginResponse.username}, " +
+                                "DonorID: ${loginResponse.donorId}, RecipientID: ${loginResponse.recipientId}")
+                        with(getSharedPreferences("user_prefs", MODE_PRIVATE).edit()) {
                             putLong("user_id", loginResponse.userId)
                             putString("user_type", loginResponse.userType)
                             putString("username", loginResponse.username)
-                            // Save the token if needed (optional)
                             putString("token", loginResponse.message)
-
-                            if (loginResponse.userType.equals("donor", ignoreCase = true)) {
-                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, loginResponse.donorId, null)
-                            } else if (loginResponse.userType.equals("recipient", ignoreCase = true)) {
-                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, null, loginResponse.recipientId)
-                            } else {
-                                saveUserData(loginResponse.userId, loginResponse.userType, loginResponse.message, null, null)
-                            }
+                            loginResponse.donorId?.let { putLong("donor_id", it) }
+                            loginResponse.recipientId?.let { putLong("recipient_id", it) }
                             apply()
                         }
 
@@ -95,17 +89,5 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun saveUserData(userId: Long, userType: String, token: String, donorId: Long?, recipientId: Long?) {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            putLong("user_id", userId)
-            putString("user_type", userType)
-            putString("token", token)
-            donorId?.let { putLong("donor_id", it) }
-            recipientId?.let { putLong("recipient_id", it) }
-            apply()
-        }
     }
 }

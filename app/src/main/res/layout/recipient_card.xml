@@ -54,6 +54,13 @@
                 android:layout_height="wrap_content"
                 android:text="Blood Type: "
                 android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvRecipientType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recipient Type: "
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <LinearLayout
@@ -70,7 +77,7 @@
                 android:text="Match" />
 
             <Button
-                android:id="@+id/btnUnmatch"
+                android:id="@+id/btnUnMatch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Unmatch"

@@ -12,14 +12,15 @@ import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
 
 class RecipientAdapter(
-    private val recipients: List<RecipientProfile>,
+    private var recipients: List<RecipientProfile>,
     private val listener: OnRecipientClickListener
 ) : RecyclerView.Adapter<RecipientAdapter.RecipientViewHolder>() {
 
     interface OnRecipientClickListener {
         fun onMatchClicked(recipient: RecipientProfile)
+        fun onUnMatchClicked(recipient: RecipientProfile)
         fun onViewProfileClicked(recipient: RecipientProfile)
-        // Optionally add more actions, like Unmatch
+        // Here we can add more actions
     }
 
     inner class RecipientViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -28,9 +29,9 @@ class RecipientAdapter(
         val tvHairColor: TextView = itemView.findViewById(R.id.tvHairColor)
         val tvRace: TextView = itemView.findViewById(R.id.tvRace)
         val tvBloodType: TextView = itemView.findViewById(R.id.tvBloodType)
-        val tvHeight: TextView = itemView.findViewById(R.id.tvHeight)
-        val tvWeight: TextView = itemView.findViewById(R.id.tvWeight)
+        val tvRecipientType: TextView = itemView.findViewById(R.id.tvRecipientType)
         val btnMatch: Button = itemView.findViewById(R.id.btnMatch)
+        val btnUnMatch: Button = itemView.findViewById(R.id.btnUnMatch)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
     }
 
@@ -53,17 +54,26 @@ class RecipientAdapter(
         holder.tvHairColor.text = "Hair Color: ${recipient.hairColor ?: "N/A"}"
         holder.tvRace.text = "Race: ${recipient.race ?: "N/A"}"
         holder.tvBloodType.text = "Blood Type: ${recipient.bloodType ?: "N/A"}"
-        holder.tvHeight.text = "Height: ${recipient.height ?: "Not specified"} cm"
-        holder.tvWeight.text = "Weight: ${recipient.weight ?: "Not specified"} kg"
+        holder.tvRecipientType.text = "Recipient Type: ${recipient.recipientType ?: "N/A"}"
 
         // Set up button click listeners
         holder.btnMatch.setOnClickListener {
             listener.onMatchClicked(recipient)
         }
+
+        holder.btnUnMatch.setOnClickListener {
+            listener.onUnMatchClicked(recipient)
+        }
+
         holder.btnViewProfile.setOnClickListener {
             listener.onViewProfileClicked(recipient)
         }
     }
 
     override fun getItemCount(): Int = recipients.size
+
+    fun updateList(newList: List<RecipientProfile>) {
+        recipients = newList
+        notifyDataSetChanged()
+    }
 }

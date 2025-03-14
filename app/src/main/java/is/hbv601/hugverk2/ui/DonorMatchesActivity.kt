@@ -2,6 +2,7 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +20,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RecipientAdapter.OnRecipientClickListener {
 
     private lateinit var binding: ActivityDonorMatchesBinding
-    private lateinit var rvMatches: RecyclerView
     private lateinit var matchesAdapter: RecipientAdapter
     private var matchesList = mutableListOf<RecipientProfile>()
 
@@ -40,28 +40,14 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         // Initialize drawer and navigation view
         binding.navView.setNavigationItemSelectedListener(this)
 
-        // Setup RecyclerView
-        rvMatches = binding.rvMatches
-        rvMatches.layoutManager = GridLayoutManager(this, 1)
-        matchesAdapter = RecipientAdapter(matchesList, object : RecipientAdapter.OnRecipientClickListener {
-            override fun onMatchClicked(recipient: RecipientProfile) {
-                // Handle match action if needed
-            }
-            override fun onViewProfileClicked(recipient: RecipientProfile) {
-                // Launch RecipientViewActivity with recipientProfileId
-                val intent = Intent(this@DonorMatchesActivity, RecipientViewActivity::class.java)
-                intent.putExtra("recipientProfileId", recipient.recipientProfileId)
-                startActivity(intent)
-            }
-        })
-        rvMatches.adapter = matchesAdapter
+        binding.rvMatches.layoutManager = GridLayoutManager(this, 1)
+        matchesAdapter = RecipientAdapter(matchesList, this)
+        binding.rvMatches.adapter = matchesAdapter
 
-        // Load matches
         loadMatches()
     }
 
     private fun loadMatches() {
-        // Remove the context parameter here!
         RetrofitClient.getInstance().getDonorMatches().enqueue(object : Callback<List<RecipientProfile>> {
             override fun onResponse(
                 call: Call<List<RecipientProfile>>,
@@ -80,6 +66,21 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 Toast.makeText(this@DonorMatchesActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    override fun onMatchClicked(recipient: RecipientProfile) {
+        Toast.makeText(this, "Match clicked for recipient ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onUnMatchClicked(recipient: RecipientProfile) {
+        Log.d("DonorMatchesActivity", "Unmatch clicked for recipient id: ${recipient.recipientProfileId}")
+        Toast.makeText(this, "Unmatch action not implemented", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onViewProfileClicked(recipient: RecipientProfile) {
+        val intent = Intent(this@DonorMatchesActivity, RecipientViewActivity::class.java)
+        intent.putExtra("recipientProfileId", recipient.recipientProfileId)
+        startActivity(intent)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

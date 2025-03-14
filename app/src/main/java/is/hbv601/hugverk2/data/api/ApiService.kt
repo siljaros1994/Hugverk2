@@ -95,6 +95,12 @@ interface ApiService {
     @GET("api/match/donor/matches")
     fun getDonorMatches(): Call<List<RecipientProfile>>
 
+    @POST("api/match/unmatch")
+    fun unmatch(
+        @Query("donorId") donorId: Long,
+        @Query("recipientId") recipientId: Long
+    ): Call<Void>
+
     @GET("delete/{username}")
     fun deleteUser(
         @Path("username") username: String,
