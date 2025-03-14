@@ -103,7 +103,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun loadFavorites(page: Int) {
         isLoading = true
-        // Retrieve donor ID from sharedPreferences
         val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
         Log.d("DonorHomeActivity", "Loading favorites for donorId: $donorId, page: $page")
         if (donorId != -1L) {
@@ -113,21 +112,20 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         isLoading = false
                         if (response.isSuccessful) {
                             val recipients = response.body() ?: emptyList()
-                            Log.d("DonorHomeActivity", "Favorites fetched: ${recipients.size} items")
                             currentPage = page
                             isLastPage = recipients.size < pageSize
                             recipientList.clear()
                             recipientList.addAll(recipients)
                             recipientAdapter.notifyDataSetChanged()
                             binding.tvCurrentPage.text = "Page ${currentPage + 1}"
+                            Log.d("DonorHomeActivity", "Favorites fetched: ${recipientList.size} items")
                         } else {
-                            Log.e("DonorHomeActivity", "Error fetching favorites: ${response.code()}")
                             Toast.makeText(this@DonorHomeActivity, "Error fetching recipient favorites", Toast.LENGTH_SHORT).show()
                         }
                     }
+
                     override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
                         isLoading = false
-                        Log.e("DonorHomeActivity", "Network error when fetching favorites", t)
                         Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
                     }
                 })

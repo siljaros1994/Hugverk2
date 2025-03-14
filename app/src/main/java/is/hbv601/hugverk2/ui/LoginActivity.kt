@@ -54,9 +54,15 @@ class LoginActivity : AppCompatActivity() {
                         sharedPreferences.edit()
                             .putLong("user_id", loginResponse.userId)
                             .putString("user_type", loginResponse.userType)
-                            .putString("username", loginResponse.username)  // Save the correct username
+                            .putString("username", loginResponse.username)
                             .putString("token", loginResponse.message)
                             .apply()
+
+                        if (loginResponse.userType == "donor") {
+                            sharedPreferences.edit()
+                                .putLong("donor_id", loginResponse.userId)
+                                .apply()
+                        }
 
                         // Redirect based on user type
                         val intent = when (loginResponse.userType) {
