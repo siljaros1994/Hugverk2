@@ -47,6 +47,11 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
             override fun onFavoriteClicked(donor: DonorProfile) {
                 // Handle favorite action
             }
+
+            override fun onUnfavoriteClicked(donor: DonorProfile) {
+                // Handle unfavorite action
+            }
+
             override fun onViewProfileClicked(donor: DonorProfile) {
                 // Here we launch the DonorViewActivity with donorProfileId
                 val intent = Intent(this@RecipientMatchesActivity, DonorViewActivity::class.java)

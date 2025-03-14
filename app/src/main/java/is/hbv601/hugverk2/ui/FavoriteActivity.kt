@@ -2,6 +2,7 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -45,8 +46,11 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         rvFavorites.layoutManager = GridLayoutManager(this, 1)
         donorAdapter = DonorAdapter(favoritesList, object : DonorAdapter.OnDonorClickListener {
-            // In the favorites context, clicking "Favorite" means "Unfavorite"
             override fun onFavoriteClicked(donor: DonorProfile) {
+                // Optionally handle the "favorite" click if needed.
+            }
+            override fun onUnfavoriteClicked(donor: DonorProfile) {
+                Log.d("FavoriteActivity", "Unfavorite button clicked for donor id: ${donor.donorProfileId}")
                 RetrofitClient.getInstance()
                     .unfavoriteDonor(donor.donorProfileId!!)
                     .enqueue(object : Callback<Void> {
@@ -63,7 +67,6 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                         }
                     })
             }
-
             override fun onViewProfileClicked(donor: DonorProfile) {
                 val intent = Intent(this@FavoriteActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)
