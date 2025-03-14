@@ -20,6 +20,7 @@ class DonorAdapter(
 
     interface OnDonorClickListener {
         fun onFavoriteClicked(donor: DonorProfile)
+        fun onUnfavoriteClicked(donor: DonorProfile)
         fun onViewProfileClicked(donor: DonorProfile)
     }
 
@@ -31,6 +32,7 @@ class DonorAdapter(
         val tvBloodType: TextView = itemView.findViewById(R.id.tvBloodType)
         val tvDonorType: TextView = itemView.findViewById(R.id.tvDonorType)
         val btnFavorite: Button = itemView.findViewById(R.id.btnFavorite)
+        val btnUnfavorite: Button = itemView.findViewById(R.id.btnUnfavorite)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
     }
 
@@ -58,6 +60,11 @@ class DonorAdapter(
         holder.btnFavorite.setOnClickListener {
             Log.d("FavoriteButton", "Favorite button clicked for donor id: ${donor.donorProfileId}")
             listener.onFavoriteClicked(donor)
+        }
+
+        holder.btnUnfavorite.setOnClickListener {
+            Log.d("UnFavoriteButton", "UnFavorite button clicked for donor id: ${donor.donorProfileId}")
+            listener.onUnfavoriteClicked(donor)
         }
 
         holder.btnViewProfile.setOnClickListener {

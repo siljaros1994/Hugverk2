@@ -111,6 +111,23 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 })
             }
 
+            override fun onUnfavoriteClicked(donor: DonorProfile) {
+                Log.d("FavoriteAction", "Calling API to unfavorite donor with id: ${donor.donorProfileId}")
+                RetrofitClient.getInstance().unfavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(this@RecipientHomeActivity, "Donor removed from favorites", Toast.LENGTH_SHORT).show()
+                            // Optionally update donor state and refresh list
+                        } else {
+                            Toast.makeText(this@RecipientHomeActivity, "Error removing favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
             override fun onViewProfileClicked(donor: DonorProfile) {
                 // Launch the DonorViewActivity with the donor's profile ID
                 val intent = Intent(this@RecipientHomeActivity, DonorViewActivity::class.java)
