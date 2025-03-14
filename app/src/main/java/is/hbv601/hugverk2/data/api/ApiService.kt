@@ -75,6 +75,13 @@ interface ApiService {
     @GET("api/recipient/favoritedByDonor/{donorId}")
     fun getRecipientsWhoFavoritedDonor(@Path("donorId") donorId: Long): Call<List<RecipientProfile>>
 
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(
+        @Path("donorId") donorId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Call<List<RecipientProfile>>
+
     @GET("api/recipient/favorite/{donorProfileId}")
     fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
 

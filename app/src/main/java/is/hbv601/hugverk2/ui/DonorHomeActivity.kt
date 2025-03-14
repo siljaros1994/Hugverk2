@@ -31,6 +31,11 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private var recipientList = mutableListOf<RecipientProfile>()
     private lateinit var recipientAdapter: RecipientAdapter
 
+    private var currentPage = 0
+    private val pageSize = 5
+    private var isLastPage = false
+    private var isLoading = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDonorHomeBinding.inflate(layoutInflater)
@@ -74,7 +79,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 Toast.makeText(this@DonorHomeActivity, "Match action for recipient ID ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
             }
             override fun onViewProfileClicked(recipient: RecipientProfile) {
-                // Launch a RecipientViewActivity to show full recipient details (create this activity separately)
+                Log.d("DonorHomeActivity", "View profile clicked for recipient id: ${recipient.recipientProfileId}")
                 val intent = Intent(this@DonorHomeActivity, RecipientViewActivity::class.java)
                 intent.putExtra("recipientProfileId", recipient.recipientProfileId)
                 startActivity(intent)
@@ -82,34 +87,53 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         })
         binding.rvRecipientCards.adapter = recipientAdapter
 
-        // Retrieve donor ID from sharedPreferences.
-        val donorId = sharedPreferences.getLong("donor_id", -1)
+        binding.btnPreviousPage.setOnClickListener {
+            if (currentPage > 0 && !isLoading) {
+                loadFavorites(currentPage - 1)
+            }
+        }
+        binding.btnNextPage.setOnClickListener {
+            if (!isLastPage && !isLoading) {
+                loadFavorites(currentPage + 1)
+            }
+        }
+
+        loadFavorites(currentPage)
+    }
+
+    private fun loadFavorites(page: Int) {
+        isLoading = true
+        // Retrieve donor ID from sharedPreferences
+        val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
+        Log.d("DonorHomeActivity", "Loading favorites for donorId: $donorId, page: $page")
         if (donorId != -1L) {
-            RetrofitClient.getInstance().getRecipientsWhoFavoritedDonor(donorId)
+            RetrofitClient.getInstance().getRecipientsWhoFavoritedDonor(donorId, page, pageSize)
                 .enqueue(object : Callback<List<RecipientProfile>> {
-                    override fun onResponse(
-                        call: Call<List<RecipientProfile>>,
-                        response: Response<List<RecipientProfile>>
-                    ) {
+                    override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+                        isLoading = false
                         if (response.isSuccessful) {
                             val recipients = response.body() ?: emptyList()
+                            Log.d("DonorHomeActivity", "Favorites fetched: ${recipients.size} items")
+                            currentPage = page
+                            isLastPage = recipients.size < pageSize
                             recipientList.clear()
                             recipientList.addAll(recipients)
                             recipientAdapter.notifyDataSetChanged()
+                            binding.tvCurrentPage.text = "Page ${currentPage + 1}"
                         } else {
-                            Toast.makeText(
-                                this@DonorHomeActivity,
-                                "Error fetching recipient favorites",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Log.e("DonorHomeActivity", "Error fetching favorites: ${response.code()}")
+                            Toast.makeText(this@DonorHomeActivity, "Error fetching recipient favorites", Toast.LENGTH_SHORT).show()
                         }
                     }
-
                     override fun onFailure(call: Call<List<RecipientProfile>>, t: Throwable) {
-                        Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT)
-                            .show()
+                        isLoading = false
+                        Log.e("DonorHomeActivity", "Network error when fetching favorites", t)
+                        Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
                     }
                 })
+        } else {
+            isLoading = false
+            Log.e("DonorHomeActivity", "Donor ID not found in shared preferences")
         }
     }
 
