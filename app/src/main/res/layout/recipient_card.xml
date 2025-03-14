@@ -15,7 +15,7 @@
         android:padding="9dp">
 
         <ImageView
-            android:id="@+id/donorImage"
+            android:id="@+id/recipientImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
@@ -56,10 +56,10 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/tvDonorType"
+                android:id="@+id/tvRecipientType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Donor Type: "
+                android:text="Recipient Type: "
                 android:textStyle="bold"/>
         </LinearLayout>
 
@@ -71,16 +71,17 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/btnFavorite"
+                android:id="@+id/btnMatch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Favorite" />
+                android:text="Match" />
 
             <Button
-                android:id="@+id/btnUnfavorite"
+                android:id="@+id/btnUnMatch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Unfavorite" />
+                android:text="Unmatch"
+                android:layout_marginStart="16dp"/>
 
             <Button
                 android:id="@+id/btnViewProfile"

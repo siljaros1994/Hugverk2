@@ -43,22 +43,26 @@ class LoginActivity : AppCompatActivity() {
     private fun login(username: String, password: String) {
         val loginRequest = LoginRequest(username, password)
         Log.d("LoginActivity", "Logging in with username: $username, password: $password")
-        RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> { //(this)
+        RetrofitClient.getInstance().login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 Log.d("LoginActivity", "Response code: ${response.code()}")
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     if (loginResponse != null) {
-                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, User Type: ${loginResponse.userType}, Username: ${loginResponse.username}")
-                        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                        sharedPreferences.edit()
-                            .putLong("user_id", loginResponse.userId)
-                            .putString("user_type", loginResponse.userType)
-                            .putString("username", loginResponse.username)  // Save the correct username
-                            .putString("token", loginResponse.message)
-                            .apply()
+                        Log.d("LoginActivity", "Login successful. User ID: ${loginResponse.userId}, " +
+                                "User Type: ${loginResponse.userType}, Username: ${loginResponse.username}, " +
+                                "DonorID: ${loginResponse.donorId}, RecipientID: ${loginResponse.recipientId}")
+                        with(getSharedPreferences("user_prefs", MODE_PRIVATE).edit()) {
+                            putLong("user_id", loginResponse.userId)
+                            putString("user_type", loginResponse.userType)
+                            putString("username", loginResponse.username)
+                            putString("token", loginResponse.message)
+                            loginResponse.donorId?.let { putLong("donor_id", it) }
+                            loginResponse.recipientId?.let { putLong("recipient_id", it) }
+                            apply()
+                        }
 
-                        // Redirect based on user type
+                        // Here we redirect based on the user type
                         val intent = when (loginResponse.userType) {
                             "donor" -> Intent(this@LoginActivity, DonorHomeActivity::class.java)
                             "recipient" -> Intent(this@LoginActivity, RecipientHomeActivity::class.java)
@@ -85,14 +89,5 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this@LoginActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun saveUserData(userId: Long, userType: String, token: String) {
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putLong("user_id", userId)
-        editor.putString("user_type", userType)
-        editor.putString("token", token) // Save the token
-        editor.apply()
     }
 }

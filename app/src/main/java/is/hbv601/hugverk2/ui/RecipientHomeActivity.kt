@@ -93,7 +93,22 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
         donorAdapter = DonorAdapter(donorsList, object : DonorAdapter.OnDonorClickListener {
             override fun onFavoriteClicked(donor: DonorProfile) {
-                // Here comes favorite action, we call API to add favorite
+                Log.d("FavoriteAction", "Calling API to favorite donor with id: ${donor.donorProfileId}")
+                RetrofitClient.getInstance().addFavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Log.d("FavoriteAction", "Favorite added successfully for donor id: ${donor.donorProfileId}")
+                            Toast.makeText(this@RecipientHomeActivity, "Donor added to favorites", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Log.e("FavoriteAction", "Error adding favorite: ${response.code()}")
+                            Toast.makeText(this@RecipientHomeActivity, "Error adding favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Log.e("FavoriteAction", "Network error when adding favorite", t)
+                        Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
@@ -233,7 +248,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
             }
             R.id.nav_favorites -> {
-                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_matches -> {
                 Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()

@@ -68,6 +68,39 @@ interface ApiService {
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
 
+    // Here we get favorite.
+    @GET("api/recipient/favorites")
+    fun getFavoriteDonors(): Call<List<DonorProfile>>
+
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(@Path("donorId") donorId: Long): Call<List<RecipientProfile>>
+
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(
+        @Path("donorId") donorId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Call<List<RecipientProfile>>
+
+    @GET("api/recipient/favorite/{donorProfileId}")
+    fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
+
+    @POST("api/recipient/unfavorite/{donorProfileId}")
+    fun unfavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
+
+    // Here we get match users
+    @GET("api/match/recipient/matches")
+    fun getRecipientMatches(): Call<List<DonorProfile>>
+
+    @GET("api/match/donor/matches")
+    fun getDonorMatches(): Call<List<RecipientProfile>>
+
+    @POST("api/match/unmatch")
+    fun unmatch(
+        @Query("donorId") donorId: Long,
+        @Query("recipientId") recipientId: Long
+    ): Call<Void>
+
     @GET("delete/{username}")
     fun deleteUser(
         @Path("username") username: String,
