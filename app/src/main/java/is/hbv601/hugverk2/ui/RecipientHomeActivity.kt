@@ -254,7 +254,9 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+                // Start Recipient profile activity (or refresh the current one)
+                val intent = Intent(this, RecipientHomeActivity::class.java) // Always Recipient profile for RecipientHome
+                startActivity(intent)
             }
             R.id.nav_profile -> {
                 val intent = Intent(this, RecipientProfileActivity::class.java) // Always Recipient profile for RecipientHome
@@ -269,7 +271,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
             }
             R.id.nav_matches -> {
-                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()

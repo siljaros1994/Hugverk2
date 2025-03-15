@@ -50,9 +50,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     private fun loadMatches() {
         RetrofitClient.getInstance().getDonorMatches().enqueue(object : Callback<List<RecipientProfile>> {
             override fun onResponse(
-                call: Call<List<RecipientProfile>>,
-                response: Response<List<RecipientProfile>>
-            ) {
+                call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
                 if (response.isSuccessful) {
                     val matches = response.body() ?: emptyList()
                     matchesList.clear()
@@ -69,12 +67,27 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     }
 
     override fun onMatchClicked(recipient: RecipientProfile) {
-        Toast.makeText(this, "Match clicked for recipient ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Already matched", Toast.LENGTH_SHORT).show()
     }
 
     override fun onUnMatchClicked(recipient: RecipientProfile) {
-        Log.d("DonorMatchesActivity", "Unmatch clicked for recipient id: ${recipient.recipientProfileId}")
-        Toast.makeText(this, "Unmatch action not implemented", Toast.LENGTH_SHORT).show()
+        // Here we call  the unmatch endpoint.
+        val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
+        val recipientId = recipient.user?.id ?: return
+        RetrofitClient.getInstance().unmatch(donorId, recipientId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@DonorMatchesActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
+                        loadMatches()
+                    } else {
+                        Toast.makeText(this@DonorMatchesActivity, "Error unmatching", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@DonorMatchesActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     override fun onViewProfileClicked(recipient: RecipientProfile) {
@@ -103,7 +116,18 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 val intent = Intent(this, DonorProfileActivity::class.java)
                 startActivity(intent)
             }
-            R.id.nav_messages -> Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+            R.id.nav_messages -> {
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_matches -> {
+                // Start donor match activity (or refresh the current one)
+                val intent = Intent(this, DonorMatchesActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_booking -> {
+                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true

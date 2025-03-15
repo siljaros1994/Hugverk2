@@ -113,6 +113,7 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 startActivity(intent)
             }
             R.id.nav_matches -> {
+                // Start Recipient match activity (or refresh the current one)
                 val intent = Intent(this, RecipientMatchesActivity::class.java)
                 startActivity(intent)
             }

@@ -53,7 +53,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Set up navigation item selection
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Retrieve user data
+        // Retrieve user data from shared preferences.
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", null)
         val userType = sharedPreferences.getString("user_type", null) // Retrieve user type
@@ -76,11 +76,43 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         binding.rvRecipientCards.layoutManager = GridLayoutManager(this, 1)
         recipientAdapter = RecipientAdapter(recipientList, object : RecipientAdapter.OnRecipientClickListener {
             override fun onMatchClicked(recipient: RecipientProfile) {
-                Toast.makeText(this@DonorHomeActivity, "Match action for recipient ID ${recipient.recipientProfileId}", Toast.LENGTH_SHORT).show()
+                // Here we approve match, by calling API to approve match.
+                val donorId = sharedPreferences.getLong("donor_id", -1)
+                val recipientId = recipient.user?.id ?: return
+                RetrofitClient.getInstance().approveMatch(donorId, recipientId)
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@DonorHomeActivity, "Match approved successfully", Toast.LENGTH_SHORT).show()
+                                loadFavorites(currentPage) // refresh list
+                            } else {
+                                Toast.makeText(this@DonorHomeActivity, "Error approving match", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                        }
+                    })
             }
 
             override fun onUnMatchClicked(recipient: RecipientProfile) {
-                Toast.makeText(this@DonorHomeActivity, "Unmatch action not implemented", Toast.LENGTH_SHORT).show()
+                // Here we unmatch, by calling API to remove the match.
+                val donorId = sharedPreferences.getLong("donor_id", -1)
+                val recipientId = recipient.user?.id ?: return
+                RetrofitClient.getInstance().unmatch(donorId, recipientId)
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(this@DonorHomeActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
+                                loadFavorites(currentPage)
+                            } else {
+                                Toast.makeText(this@DonorHomeActivity, "Error unmatching", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                        }
+                    })
             }
 
             override fun onViewProfileClicked(recipient: RecipientProfile) {
@@ -167,7 +199,8 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
             }
             R.id.nav_matches -> {
-                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, DonorMatchesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()

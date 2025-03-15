@@ -61,6 +61,7 @@ interface ApiService {
     @POST("api/recipient/profile/saveOrEdit")
     fun saveOrEditRecipientProfile(@Body profile: RecipientProfile): Call<RecipientProfile>
 
+    // Upload images for profiles
     @Multipart
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
@@ -95,6 +96,12 @@ interface ApiService {
     @GET("api/match/donor/matches")
     fun getDonorMatches(): Call<List<RecipientProfile>>
 
+    @POST("api/match/approveMatch")
+    fun approveMatch(
+        @Query("donorId") donorId: Long,
+        @Query("recipientId") recipientId: Long
+    ): Call<Void>
+
     @POST("api/match/unmatch")
     fun unmatch(
         @Query("donorId") donorId: Long,
@@ -117,6 +124,6 @@ interface ApiService {
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
-    // Here we add our other endpoints here like search, match, message,...
+    // Here we add our other endpoints here like match, message,...
 
 }

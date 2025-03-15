@@ -108,11 +108,30 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_home -> startActivity(Intent(this, RecipientHomeActivity::class.java))
-            R.id.nav_profile -> startActivity(Intent(this, RecipientProfileActivity::class.java))
-            R.id.nav_messages -> Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
-            R.id.nav_matches -> startActivity(Intent(this, RecipientMatchesActivity::class.java))
-            R.id.nav_booking -> Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            R.id.nav_home -> {
+                val intent = Intent(this, RecipientHomeActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_profile -> {
+                val intent = Intent(this, RecipientProfileActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_messages -> {
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_favorites -> {
+                // Start recipient favorite activity (or refresh the current one)
+                val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_matches -> {
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_booking -> {
+                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
