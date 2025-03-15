@@ -78,18 +78,31 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             override fun onMatchClicked(recipient: RecipientProfile) {
                 // Here we approve match, by calling API to approve match.
                 val donorId = sharedPreferences.getLong("donor_id", -1)
-                val recipientId = recipient.user?.id ?: return
+                if (donorId == -1L) {
+                    Log.e("DonorHomeActivity", "Donor ID not found in shared preferences.")
+                    Toast.makeText(this@DonorHomeActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val recipientId = recipient.userId
+                if (recipientId == null) {
+                    Log.e("DonorHomeActivity", "Recipient user ID is null for recipient: $recipient")
+                    Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                Log.d("DonorHomeActivity", "Match button pressed. Donor ID: $donorId, Recipient ID: $recipientId")
                 RetrofitClient.getInstance().approveMatch(donorId, recipientId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            Log.d("DonorHomeActivity", "ApproveMatch response: ${response.code()} ${response.message()}")
                             if (response.isSuccessful) {
                                 Toast.makeText(this@DonorHomeActivity, "Match approved successfully", Toast.LENGTH_SHORT).show()
                                 loadFavorites(currentPage) // refresh list
                             } else {
-                                Toast.makeText(this@DonorHomeActivity, "Error approving match", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@DonorHomeActivity, "Error approving match: ${response.code()}", Toast.LENGTH_SHORT).show()
                             }
                         }
                         override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Log.e("DonorHomeActivity", "ApproveMatch failure", t)
                             Toast.makeText(this@DonorHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
                         }
                     })
@@ -98,13 +111,20 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             override fun onUnMatchClicked(recipient: RecipientProfile) {
                 // Here we unmatch, by calling API to remove the match.
                 val donorId = sharedPreferences.getLong("donor_id", -1)
-                val recipientId = recipient.user?.id ?: return
+                val recipientId = recipient.userId ?: run {
+                    Log.e("DonorHomeActivity", "Recipient userId is null for recipient: $recipient")
+                    Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
                 RetrofitClient.getInstance().unmatch(donorId, recipientId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             if (response.isSuccessful) {
                                 Toast.makeText(this@DonorHomeActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
-                                loadFavorites(currentPage)
+                                // Remove the unmatched recipient from the local list:
+                                recipientList.remove(recipient)
+                                recipientAdapter.notifyDataSetChanged()
                             } else {
                                 Toast.makeText(this@DonorHomeActivity, "Error unmatching", Toast.LENGTH_SHORT).show()
                             }

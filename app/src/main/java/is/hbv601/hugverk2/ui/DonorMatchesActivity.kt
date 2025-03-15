@@ -73,7 +73,12 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onUnMatchClicked(recipient: RecipientProfile) {
         // Here we call  the unmatch endpoint.
         val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
-        val recipientId = recipient.user?.id ?: return
+        val recipientId = recipient.userId ?: run {
+            Log.e("DonorMatchesActivity", "Recipient userId is null for recipient: $recipient")
+            Toast.makeText(this@DonorMatchesActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         RetrofitClient.getInstance().unmatch(donorId, recipientId)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

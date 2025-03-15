@@ -12,6 +12,9 @@
         android:id="@+id/nav_favorites"
         android:title="Favorites" />
     <item
+        android:id="@+id/nav_matches"
+        android:title="Matches" />
+    <item
         android:id="@+id/nav_booking"
         android:title="Booking" />
     <item

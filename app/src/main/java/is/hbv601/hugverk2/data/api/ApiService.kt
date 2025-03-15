@@ -83,7 +83,7 @@ interface ApiService {
         @Query("size") size: Int
     ): Call<List<RecipientProfile>>
 
-    @GET("api/recipient/favorite/{donorProfileId}")
+    @POST("api/recipient/favorite/{donorProfileId}")
     fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
 
     @POST("api/recipient/unfavorite/{donorProfileId}")
