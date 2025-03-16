@@ -118,13 +118,14 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     Toast.makeText(this@DonorHomeActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val recUserId = recipient.userId
-                if (recUserId == null) {
-                    Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+                val recProfileId = recipient.recipientProfileId
+                if (recProfileId == null) {
+                    Toast.makeText(this@DonorHomeActivity, "Recipient Profile ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                Log.d("DonorHomeActivity", "Unmatch pressed. Donor ID: $donorId, Recipient ID: $recUserId")
-                RetrofitClient.getInstance().unmatch(donorId, recUserId)
+                removedFavoriteIds.add(recProfileId)
+                Log.d("DonorHomeActivity", "Unmatch pressed. Donor ID: $donorId, Recipient ID: $recProfileId")
+                RetrofitClient.getInstance().unmatch(donorId, recProfileId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             if (response.isSuccessful) {
@@ -133,7 +134,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                                 recipientList.remove(recipient)
                                 recipientAdapter.notifyDataSetChanged()
                                 // Add to persisted set
-                                removedFavoriteIds.add(recUserId)
+                                removedFavoriteIds.add(recProfileId)
                             } else {
                                 Toast.makeText(this@DonorHomeActivity, "Error unmatching: ${response.code()}", Toast.LENGTH_SHORT).show()
                             }
@@ -175,20 +176,20 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             isLoading = false
             return
         }
-        Log.d("DonorHomeActivity", "Loading favorites for donorId: $donorId, page: $page")
+
         RetrofitClient.getInstance().getRecipientsWhoFavoritedDonor(donorId, page, pageSize)
             .enqueue(object : Callback<List<RecipientProfile>> {
-                override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+                override fun onResponse(
+                    call: Call<List<RecipientProfile>>,
+                    response: Response<List<RecipientProfile>>
+                ) {
                     isLoading = false
                     if (response.isSuccessful) {
                         val favorites = response.body() ?: emptyList()
-                        val filteredFavorites = favorites.filter { rec ->
-                            rec.userId?.let { it !in removedFavoriteIds } ?: true
-                        }
                         currentPage = page
-                        isLastPage = filteredFavorites.size < pageSize
+                        isLastPage = favorites.size < pageSize
                         recipientList.clear()
-                        recipientList.addAll(filteredFavorites)
+                        recipientList.addAll(favorites)
                         recipientAdapter.notifyDataSetChanged()
                         binding.tvCurrentPage.text = "Page ${currentPage + 1}"
                         Log.d("DonorHomeActivity", "Favorites fetched: ${recipientList.size} items")
