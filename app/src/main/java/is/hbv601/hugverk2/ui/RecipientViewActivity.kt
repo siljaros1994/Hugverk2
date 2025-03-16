@@ -162,6 +162,10 @@ class RecipientViewActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 val intent = Intent(this, FavoriteActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_matches -> {
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }

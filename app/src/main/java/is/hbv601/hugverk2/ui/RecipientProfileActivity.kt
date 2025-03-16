@@ -353,7 +353,9 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                // Already on the profile screen.
+                // Start Recipient profile activity (or refresh the current one)
+                val intent = Intent(this, RecipientProfile::class.java)
+                startActivity(intent)
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
@@ -361,6 +363,10 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
             }
             R.id.nav_favorites -> {
                 val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_matches -> {
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_booking -> {

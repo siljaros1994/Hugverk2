@@ -145,19 +145,19 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, RecipientHomeActivity::class.java)
+                val intent = Intent(this, DonorHomeActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, RecipientProfileActivity::class.java)
+                val intent = Intent(this, DonorProfileActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
                 startActivity(intent)
             }
-            R.id.nav_favorites -> {
-                val intent = Intent(this, FavoriteActivity::class.java)
+            R.id.nav_matches -> {
+                val intent = Intent(this, DonorMatchesActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_booking -> {

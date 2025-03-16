@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.adapter
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -58,10 +59,12 @@ class RecipientAdapter(
 
         // Set up button click listeners
         holder.btnMatch.setOnClickListener {
+            Log.d("RecipientAdapter", "Match button clicked for recipient: $recipient")
             listener.onMatchClicked(recipient)
         }
 
         holder.btnUnMatch.setOnClickListener {
+            Log.d("RecipientAdapter", "Unmatch button clicked for recipient: $recipient")
             listener.onUnMatchClicked(recipient)
         }
 

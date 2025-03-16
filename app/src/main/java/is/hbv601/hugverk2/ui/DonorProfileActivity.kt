@@ -384,14 +384,16 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                // Already on the profile screen.
+                // Start donor profile activity (or refresh the current one)
+                val intent = Intent(this, DonorProfileActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
                 startActivity(intent)
             }
-            R.id.nav_favorites -> {
-                val intent = Intent(this, FavoriteActivity::class.java)
+            R.id.nav_matches -> {
+                val intent = Intent(this, DonorMatchesActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_booking -> {

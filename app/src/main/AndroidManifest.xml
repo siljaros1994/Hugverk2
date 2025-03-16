@@ -73,6 +73,11 @@
             android:exported="true"
             android:label="Donor Profile" />
 
+        <activity
+            android:name=".ui.RecipientViewActivity"
+            android:exported="true"
+            android:label="Recipient Profile" />
+
         <activity android:name=".ui.AdminHomeActivity" />
         <activity android:name=".ui.UserListActivity" />
         <activity android:name=".ui.MessageActivity"/>
