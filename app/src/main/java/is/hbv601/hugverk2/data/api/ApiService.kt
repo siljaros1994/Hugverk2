@@ -124,6 +124,6 @@ interface ApiService {
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
-    // Here we add our other endpoints here like match, message,...
+    // Here we add our other endpoints here
 
 }
