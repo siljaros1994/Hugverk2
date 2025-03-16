@@ -52,6 +52,9 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Here we create the notification channel.
+        MatchNotificationHelper.createNotificationChannel(this)
+
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -169,6 +172,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         }
         // Here we load the first page
         loadDonors(0, null)
+        triggerMatchNotification()
 
         //location selection changes handler
         locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -179,6 +183,15 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+    }
+
+    private fun triggerMatchNotification() {
+        Log.d("NotificationTest", "Triggering match notification")
+        MatchNotificationHelper.showMatchNotification(
+            context = this,
+            matchTitle = "New Match Received!",
+            matchMessage = "A new donor has matched with you. Check your matches!"
+        )
     }
 
     private fun loadDonors(page: Int, selectedLocation: String? = null) {

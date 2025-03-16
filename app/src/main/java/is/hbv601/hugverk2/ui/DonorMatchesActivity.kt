@@ -48,8 +48,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
     private fun loadMatches() {
         RetrofitClient.getInstance().getDonorMatches().enqueue(object : Callback<List<RecipientProfile>> {
-            override fun onResponse(
-                call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
+            override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
                 if (response.isSuccessful) {
                     val matches = response.body() ?: emptyList()
                     matchesList.clear()
