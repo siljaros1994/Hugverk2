@@ -83,5 +83,9 @@
         <activity android:name=".ui.MessageActivity"/>
         <activity android:name=".ui.MessageListActivity"/>
 
+        <receiver
+            android:name=".ui.NotificationActionReceiver"
+            android:exported="false" />
+
     </application>
 </manifest>

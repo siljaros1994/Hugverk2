@@ -19,10 +19,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, DonorAdapter.OnDonorClickListener {
 
     private lateinit var binding: ActivityRecipientMatchesBinding
-    private lateinit var rvMatches: RecyclerView
     private lateinit var matchesAdapter: DonorAdapter
     private var matchesList = mutableListOf<DonorProfile>()
 
@@ -41,32 +40,14 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         binding.navView.setNavigationItemSelectedListener(this)
 
         // Setup RecyclerView
-        rvMatches = binding.rvMatches
-        rvMatches.layoutManager = GridLayoutManager(this, 1)
-        matchesAdapter = DonorAdapter(matchesList, object : DonorAdapter.OnDonorClickListener {
-            override fun onFavoriteClicked(donor: DonorProfile) {
-                // Handle favorite action
-            }
+        binding.rvMatches.layoutManager = GridLayoutManager(this, 1)
+        matchesAdapter = DonorAdapter(matchesList, this)
+        binding.rvMatches.adapter = matchesAdapter
 
-            override fun onUnfavoriteClicked(donor: DonorProfile) {
-                // Handle unfavorite action
-            }
-
-            override fun onViewProfileClicked(donor: DonorProfile) {
-                // Here we launch the DonorViewActivity with donorProfileId
-                val intent = Intent(this@RecipientMatchesActivity, DonorViewActivity::class.java)
-                intent.putExtra("donorProfileId", donor.donorProfileId)
-                startActivity(intent)
-            }
-        })
-        rvMatches.adapter = matchesAdapter
-
-        // Fetch matches from the API
         loadMatches()
     }
 
     private fun loadMatches() {
-        // Remove the context parameter from getInstance()
         RetrofitClient.getInstance().getRecipientMatches().enqueue(object : Callback<List<DonorProfile>> {
             override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
                 if (response.isSuccessful) {
@@ -82,6 +63,44 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 Toast.makeText(this@RecipientMatchesActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    override fun onFavoriteClicked(donor: DonorProfile) {
+        Toast.makeText(this, "Already matched", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onUnfavoriteClicked(donor: DonorProfile) {
+        // Retrieve the recipient's primary user id from SharedPreferences.
+        val recipientId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
+        if (recipientId == -1L) {
+            Toast.makeText(this, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // Get donor's user id (assuming donor.userId is the primary key)
+        val donorId = donor.userId ?: run {
+            Toast.makeText(this, "Donor ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        RetrofitClient.getInstance().unmatch(recipientId, donorId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@RecipientMatchesActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
+                        loadMatches()
+                    } else {
+                        Toast.makeText(this@RecipientMatchesActivity, "Error unmatching", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@RecipientMatchesActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    override fun onViewProfileClicked(donor: DonorProfile) {
+        val intent = Intent(this, DonorViewActivity::class.java)
+        intent.putExtra("donorProfileId", donor.donorProfileId)
+        startActivity(intent)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
