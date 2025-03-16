@@ -87,14 +87,14 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     Toast.makeText(this@DonorHomeActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val recipientId = recipient.userId
-                if (recipientId == null) {
+                val recipientProfileId = recipient.recipientProfileId
+                if (recipientProfileId == null) {
                     Log.e("DonorHomeActivity", "Recipient user ID is null for recipient: $recipient")
                     Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                Log.d("DonorHomeActivity", "Match button pressed. Donor ID: $donorId, Recipient ID: $recipientId")
-                RetrofitClient.getInstance().approveMatch(donorId, recipientId)
+                Log.d("DonorHomeActivity", "Match button pressed. Donor ID: $donorId, Recipient ID: $recipientProfileId")
+                RetrofitClient.getInstance().approveMatch(donorId, recipientProfileId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             Log.d("DonorHomeActivity", "ApproveMatch response: ${response.code()} ${response.message()}")
@@ -179,13 +179,13 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         RetrofitClient.getInstance().getRecipientsWhoFavoritedDonor(donorId, page, pageSize)
             .enqueue(object : Callback<List<RecipientProfile>> {
-                override fun onResponse(
-                    call: Call<List<RecipientProfile>>,
-                    response: Response<List<RecipientProfile>>
-                ) {
+                override fun onResponse(call: Call<List<RecipientProfile>>, response: Response<List<RecipientProfile>>) {
                     isLoading = false
                     if (response.isSuccessful) {
                         val favorites = response.body() ?: emptyList()
+                        val filteredFavorites = favorites.filter { recipient ->
+                            recipient.recipientProfileId?.let { it !in removedFavoriteIds } ?: true
+                        }
                         currentPage = page
                         isLastPage = favorites.size < pageSize
                         recipientList.clear()

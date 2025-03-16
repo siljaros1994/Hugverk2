@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="is.hbv601.hugverk2" />
+                  <option name="mobileSdkAppId" value="1:727729869769:android:9175f0d7d6940ee5730e18" />
+                  <option name="projectId" value="hugverk2" />
+                  <option name="projectNumber" value="727729869769" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -14,19 +14,16 @@ import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AdapterView
 import android.widget.Spinner
-import android.os.Build
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.OnBackPressedCallback
-import androidx.room.RoomDatabase
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.SearchView
 import com.google.android.material.navigation.NavigationView
-import `is`.hbv601.hugverk2.ui.DonorViewActivity
+import com.google.firebase.messaging.FirebaseMessaging
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,6 +52,17 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
+        // Retrieve and log the FCM token.
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                // Send token to your server if needed.
+                Log.d("RecipientHome", "FCM Token: $token")
+            } else {
+                Log.w("RecipientHome", "Fetching FCM token failed", task.exception)
+            }
+        }
+
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -63,6 +71,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we initialize the drawer layout and navigation view
         drawerLayout = binding.drawerLayout
         navigationView = binding.navView
+
+        triggerMatchNotification()
 
         // Set up navigation item selection
         navigationView.setNavigationItemSelectedListener(this)
@@ -172,7 +182,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         }
         // Here we load the first page
         loadDonors(0, null)
-        triggerMatchNotification()
 
         //location selection changes handler
         locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
