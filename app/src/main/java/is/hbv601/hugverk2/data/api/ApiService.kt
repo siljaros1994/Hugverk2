@@ -111,15 +111,14 @@ interface ApiService {
     @GET("api/donor/favorites/{donorId}")
     fun getFavoritingRecipients(
         @Path("donorId") donorId: Long,
-        //@Header("Authorization") authToken: String
     ): Call<List<RecipientProfile>>
 
     // Recipient sees their favorite donors
     @GET("api/recipient/favorites/{recipientId}")
     fun getFavoriteDonors(
         @Path("recipientId") recipientId: Long,
-        //@Header("Authorization") authToken: String
     ): Call<List<DonorProfile>>
+
 
 
 
