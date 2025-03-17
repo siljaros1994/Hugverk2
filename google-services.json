@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727729869769",
+    "project_id": "hugverk2",
+    "storage_bucket": "hugverk2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727729869769:android:9175f0d7d6940ee5730e18",
+        "android_client_info": {
+          "package_name": "is.hbv601.hugverk2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACb5qz7BclWAi46FtYi_X2OQpgCc41_A0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
