@@ -80,21 +80,22 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         binding.rvRecipientCards.layoutManager = GridLayoutManager(this, 1)
         recipientAdapter = RecipientAdapter(recipientList, object : RecipientAdapter.OnRecipientClickListener {
             override fun onMatchClicked(recipient: RecipientProfile) {
+                val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
                 // Here we approve match, by calling API to approve match.
-                val donorId = sharedPreferences.getLong("donor_id", -1)
+                val donorId = sharedPreferences.getLong("user_id", -1)
+                val recipientUserId = recipient.userId
                 if (donorId == -1L) {
                     Log.e("DonorHomeActivity", "Donor ID not found in shared preferences.")
                     Toast.makeText(this@DonorHomeActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val recipientProfileId = recipient.recipientProfileId
-                if (recipientProfileId == null) {
+                if (recipientUserId == null) {
                     Log.e("DonorHomeActivity", "Recipient user ID is null for recipient: $recipient")
                     Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                Log.d("DonorHomeActivity", "Match button pressed. Donor ID: $donorId, Recipient ID: $recipientProfileId")
-                RetrofitClient.getInstance().approveMatch(donorId, recipientProfileId)
+                Log.d("DonorHomeActivity", "Match button pressed. Donor ID: $donorId, Recipient ID: $recipientUserId")
+                RetrofitClient.getInstance().approveMatch(donorId, recipientUserId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             Log.d("DonorHomeActivity", "ApproveMatch response: ${response.code()} ${response.message()}")
@@ -113,28 +114,27 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
 
             override fun onUnMatchClicked(recipient: RecipientProfile) {
-                val donorId = sharedPreferences.getLong("donor_id", -1)
+                val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                val donorId = sharedPreferences.getLong("user_id", -1)
+                val recipientUserId = recipient.userId
                 if (donorId == -1L) {
                     Toast.makeText(this@DonorHomeActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val recProfileId = recipient.recipientProfileId
-                if (recProfileId == null) {
-                    Toast.makeText(this@DonorHomeActivity, "Recipient Profile ID not found", Toast.LENGTH_SHORT).show()
+                if (recipientUserId == null) {
+                    Toast.makeText(this@DonorHomeActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
                     return
                 }
-                removedFavoriteIds.add(recProfileId)
-                Log.d("DonorHomeActivity", "Unmatch pressed. Donor ID: $donorId, Recipient ID: $recProfileId")
-                RetrofitClient.getInstance().unmatch(donorId, recProfileId)
+                Log.d("DonorHomeActivity", "Unmatch pressed. Donor ID: $donorId, Recipient ID: $recipientUserId")
+                RetrofitClient.getInstance().unmatch(donorId, recipientUserId)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             if (response.isSuccessful) {
                                 Toast.makeText(this@DonorHomeActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
-                                // Immediately remove from current list
+                                // Here we remove recipient from current list and refresh the view
                                 recipientList.remove(recipient)
                                 recipientAdapter.notifyDataSetChanged()
-                                // Add to persisted set
-                                removedFavoriteIds.add(recProfileId)
+                                loadFavorites(currentPage)
                             } else {
                                 Toast.makeText(this@DonorHomeActivity, "Error unmatching: ${response.code()}", Toast.LENGTH_SHORT).show()
                             }
@@ -183,9 +183,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     isLoading = false
                     if (response.isSuccessful) {
                         val favorites = response.body() ?: emptyList()
-                        val filteredFavorites = favorites.filter { recipient ->
-                            recipient.recipientProfileId?.let { it !in removedFavoriteIds } ?: true
-                        }
                         currentPage = page
                         isLastPage = favorites.size < pageSize
                         recipientList.clear()
