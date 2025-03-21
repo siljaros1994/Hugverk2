@@ -1,6 +1,9 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import `is`.hbv601.hugverk2.R
 import android.os.Bundle
 import android.view.MenuItem
@@ -17,12 +20,17 @@ import android.widget.Spinner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.messaging.FirebaseMessaging
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
+import `is`.hbv601.hugverk2.data.db.AppDatabase
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,6 +52,8 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     private var isLastPage = false
     private val pageSize = 4
 
+    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
@@ -52,15 +62,45 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
-        // Retrieve and log the FCM token.
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val token = task.result
-                // Send token to your server if needed.
-                Log.d("RecipientHome", "FCM Token: $token")
-            } else {
-                Log.w("RecipientHome", "Fetching FCM token failed", task.exception)
+        // Request runtime permission for notifications on Android 13+.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
             }
+        }
+
+        // Check for match events from Room.
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val recipientId = sharedPreferences.getLong("user_id", -1)
+        if (recipientId != -1L) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = AppDatabase.getDatabase(this@RecipientHomeActivity)
+                val events = db.matchEventDao().getMatchEventsForRecipient(recipientId)
+                if (events.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        MatchNotificationHelper.showMatchNotification(
+                            context = this@RecipientHomeActivity,
+                            matchTitle = "New Match Received!",
+                            matchMessage = "A donor has matched with you. Check your matches!"
+                        )
+                    }
+                    db.matchEventDao().deleteEventsForRecipient(recipientId)
+                    Log.d("RecipientHome", "Match events processed and cleared for recipient $recipientId")
+                }
+            }
+        }
+
+        // Test button to manually trigger a simple notification.
+        binding.btnTestNotification.setOnClickListener {
+            Log.d("RecipientHome", "Test notification button clicked")
+            MatchNotificationHelper.showSimpleNotification(
+                context = this,
+                title = "Test Notification",
+                message = "This is a test notification."
+            )
         }
 
         // Here we setup the toolbar
@@ -72,13 +112,10 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         drawerLayout = binding.drawerLayout
         navigationView = binding.navView
 
-        triggerMatchNotification()
-
         // Set up navigation item selection
         navigationView.setNavigationItemSelectedListener(this)
 
         // Here we retrieve the user data
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "Unknown")
         val locationSpinner: Spinner = findViewById(R.id.spinnerLocation)
 
@@ -192,15 +229,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-    }
-
-    private fun triggerMatchNotification() {
-        Log.d("NotificationTest", "Triggering match notification")
-        MatchNotificationHelper.showMatchNotification(
-            context = this,
-            matchTitle = "New Match Received!",
-            matchMessage = "A new donor has matched with you. Check your matches!"
-        )
     }
 
     private fun loadDonors(page: Int, selectedLocation: String? = null) {
