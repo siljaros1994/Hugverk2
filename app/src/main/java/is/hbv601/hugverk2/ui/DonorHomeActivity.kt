@@ -14,13 +14,18 @@ import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.RecipientAdapter
+import `is`.hbv601.hugverk2.data.db.AppDatabase
+import `is`.hbv601.hugverk2.data.db.MatchEvent
 import `is`.hbv601.hugverk2.databinding.ActivityDonorHomeBinding
 import `is`.hbv601.hugverk2.model.RecipientProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener { // Implement the listener
+class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityDonorHomeBinding
     private lateinit var drawerLayout: DrawerLayout
@@ -101,7 +106,13 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                             Log.d("DonorHomeActivity", "ApproveMatch response: ${response.code()} ${response.message()}")
                             if (response.isSuccessful) {
                                 Toast.makeText(this@DonorHomeActivity, "Match approved successfully", Toast.LENGTH_SHORT).show()
-                                loadFavorites(currentPage) // refresh list
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val db = AppDatabase.getDatabase(this@DonorHomeActivity)
+                                    val matchEvent = MatchEvent(donorId = donorId, recipientId = recipientUserId)
+                                    db.matchEventDao().insert(matchEvent)
+                                    Log.d("DonorHomeActivity", "Match event saved for recipient $recipientUserId")
+                                }
+                                loadFavorites(currentPage) // Refresh list
                             } else {
                                 Toast.makeText(this@DonorHomeActivity, "Error approving match: ${response.code()}", Toast.LENGTH_SHORT).show()
                             }
