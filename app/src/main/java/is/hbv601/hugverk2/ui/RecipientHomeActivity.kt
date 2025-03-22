@@ -62,7 +62,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
-        // Request runtime permission for notifications on Android 13+.
+        // Here we request runtime permission for notifications on Android 13+.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
@@ -72,7 +72,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             }
         }
 
-        // Check for match events from Room.
+        // Here we check for match events from Room.
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val recipientId = sharedPreferences.getLong("user_id", -1)
         if (recipientId != -1L) {
@@ -91,16 +91,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                     Log.d("RecipientHome", "Match events processed and cleared for recipient $recipientId")
                 }
             }
-        }
-
-        // Test button to manually trigger a simple notification.
-        binding.btnTestNotification.setOnClickListener {
-            Log.d("RecipientHome", "Test notification button clicked")
-            MatchNotificationHelper.showSimpleNotification(
-                context = this,
-                title = "Test Notification",
-                message = "This is a test notification."
-            )
         }
 
         // Here we setup the toolbar
@@ -122,7 +112,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // here we define list of locations
         val locations = listOf("All", "Höfuðborgarsvæðið", "Suðurnes", "Norðurland", "Vesturland", "Austurland", "Suðurland")
 
-        // create adapter for the spinner
+        // Here we create an adapter for the spinner
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
         locationSpinner.adapter = adapter
 
@@ -269,8 +259,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 }
             })
     }
-
-
+    
     private fun filterDonors(query: String?, selectedLocation: String?) {
         filteredList.clear()
         filteredList.addAll(donorsList.filter { donor ->
