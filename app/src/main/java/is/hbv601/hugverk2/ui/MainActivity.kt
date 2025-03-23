@@ -17,6 +17,7 @@ import `is`.hbv601.hugverk2.ui.theme.Hugverk2Theme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
 
         // Navigate to LoginActivity when the app starts
@@ -36,8 +37,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

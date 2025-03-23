@@ -91,7 +91,7 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun loadDonorProfile() {
-        RetrofitClient.getInstance(this).viewDonorProfile(donorProfileId)
+        RetrofitClient.getInstance().viewDonorProfile(donorProfileId)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {
@@ -145,18 +145,20 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, RecipientHomeActivity::class.java)
+                val intent = Intent(this, DonorHomeActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, RecipientProfileActivity::class.java)
+                val intent = Intent(this, DonorProfileActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_messages -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
             }
-            R.id.nav_favorites -> {
-                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+            R.id.nav_matches -> {
+                val intent = Intent(this, DonorMatchesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()

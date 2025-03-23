@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.adapter.UserAdapter
 import `is`.hbv601.hugverk2.model.UserDTO
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
 import retrofit2.Call
@@ -31,7 +32,7 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun fetchUsersFromApi() {
-        val apiService = RetrofitClient.getInstance(this)
+        val apiService = RetrofitClient.getInstance()
 
         apiService.getAllUsers().enqueue(object : Callback<List<UserDTO>> {
             override fun onResponse(call: Call<List<UserDTO>>, response: Response<List<UserDTO>>) {
@@ -56,10 +57,10 @@ class UserListActivity : AppCompatActivity() {
     }
 
     private fun deleteUser(username: String, position: Int) {
-        val apiService = RetrofitClient.getInstance(this)
+        val apiService = RetrofitClient.getInstance()
 
         // Fetch stored cookies (same as fetching users)
-        val cookies = RetrofitClient.cookieManager.cookieStore.cookies.joinToString("; ") { it.toString() }
+        val cookies = RetrofitClient.getCookieString()
 
         Log.d("CookieDebug", "Cookies sent with DELETE request: $cookies")
 

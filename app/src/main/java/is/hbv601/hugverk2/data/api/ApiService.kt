@@ -10,8 +10,9 @@ import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
+import `is`.hbv601.hugverk2.model.MessageDTO
+import `is`.hbv601.hugverk2.model.MessageForm
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
-
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -51,7 +52,7 @@ interface ApiService {
     fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
 
     @GET("api/donor/all")
-    fun getDonors(@Query("page") page: Int, @Query("size") size: Int): Call<List<DonorProfile>>
+    fun getDonors(@Query("page") page: Int, @Query("size") size: Int, @Query("location") location: String? = null): Call<List<DonorProfile>>
 
     // Recipient profile:
     @GET("api/recipient/profile/{userId}")
@@ -60,27 +61,69 @@ interface ApiService {
     @POST("api/recipient/profile/saveOrEdit")
     fun saveOrEditRecipientProfile(@Body profile: RecipientProfile): Call<RecipientProfile>
 
+    // Upload images for profiles
     @Multipart
     @POST("api/upload")
     fun uploadFile(@Part file: MultipartBody.Part): Call<UploadResponse>
 
-
     @GET("api/users/all")
     fun getAllUsers(): Call<List<UserDTO>>
+
+    // Here we get favorite.
+    @GET("api/recipient/favorites")
+    fun getFavoriteDonors(): Call<List<DonorProfile>>
+
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(@Path("donorId") donorId: Long): Call<List<RecipientProfile>>
+
+    @GET("api/recipient/favoritedByDonor/{donorId}")
+    fun getRecipientsWhoFavoritedDonor(
+        @Path("donorId") donorId: Long,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Call<List<RecipientProfile>>
+
+    @POST("api/recipient/favorite/{donorProfileId}")
+    fun addFavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
+
+    @POST("api/recipient/unfavorite/{donorProfileId}")
+    fun unfavoriteDonor(@Path("donorProfileId") donorProfileId: Long): Call<Void>
+
+    // Here we get match users
+    @GET("api/match/recipient/matches")
+    fun getRecipientMatches(): Call<List<DonorProfile>>
+
+    @GET("api/match/donor/matches")
+    fun getDonorMatches(): Call<List<RecipientProfile>>
+
+    @POST("api/match/approveMatch")
+    fun approveMatch(
+        @Query("donorId") donorId: Long,
+        @Query("recipientId") recipientId: Long
+    ): Call<Void>
+
+    @POST("api/match/unmatch")
+    fun unmatch(
+        @Query("donorId") donorId: Long,
+        @Query("recipientId") recipientId: Long
+    ): Call<Void>
 
     @GET("delete/{username}")
     fun deleteUser(
         @Path("username") username: String,
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
+  
+    @GET("api/messages/{userType}/{id}")
+    fun getMessages(
+        @Path("userType") userType: String,
+        @Path("id") userId: Long
+    ): Call<List<MessageDTO>>
 
+    @Headers("Content-Type: application/json")
+    @POST("api/messages/send")
+    fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
-
-
-
-
-    // Here we add our other endpoints here like search, match, message,...
-
-
+    // Here we add our other endpoints here
 
 }

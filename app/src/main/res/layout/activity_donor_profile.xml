@@ -148,6 +148,17 @@
                     android:layout_height="wrap_content"
                     android:prompt="@string/select_medical_history" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Loctation:"
+                    android:textSize="16sp"/>
+                <Spinner
+                    android:id="@+id/spinnerLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/location_options"/>
+
                 <EditText
                     android:id="@+id/edit_height"
                     android:layout_width="match_parent"
@@ -266,6 +277,12 @@
                     android:layout_height="wrap_content"
                     android:text="Medical History: Not specified"
                     style="@style/ProfileText" />
+
+                <TextView
+                    android:id="@+id/textLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location: Not specified"/>
 
                 <TextView
                     android:id="@+id/textHeight"

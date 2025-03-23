@@ -7,13 +7,11 @@
     android:layout_height="match_parent"
     tools:context="is.hbv601.hugverk2.ui.DonorViewActivity">
 
-    <!-- Main content area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar with a menu button -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -21,7 +19,6 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <!-- Scrollable content for donor details -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -38,7 +35,6 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/default_avatar" />
 
-                <!-- Add TextViews for the donor details -->
                 <TextView
                     android:id="@+id/tvTraits"
                     android:layout_width="wrap_content"
@@ -138,7 +134,6 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- Navigation drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

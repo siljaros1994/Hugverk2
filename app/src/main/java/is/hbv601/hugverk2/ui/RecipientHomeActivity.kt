@@ -1,27 +1,37 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import `is`.hbv601.hugverk2.R
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
-import android.os.Build
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.OnBackPressedCallback
-import androidx.room.RoomDatabase
+import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
 import com.google.android.material.navigation.NavigationView
-import `is`.hbv601.hugverk2.ui.DonorViewActivity
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
+import `is`.hbv601.hugverk2.data.db.AppDatabase
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,17 +43,55 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     private lateinit var navigationView: NavigationView
     private lateinit var donorRecyclerView: RecyclerView
     private lateinit var donorAdapter: DonorAdapter
+    private lateinit var searchView: SearchView
 
     private var donorsList = mutableListOf<DonorProfile>()
+    private var filteredList = mutableListOf<DonorProfile>()
     private var currentPage = 0
     private var isLoading = false
     private var isLastPage = false
     private val pageSize = 4
 
+    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Here we create the notification channel.
+        MatchNotificationHelper.createNotificationChannel(this)
+
+        // Here we request runtime permission for notifications on Android 13+.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+
+        // Here we check for match events from Room.
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val recipientId = sharedPreferences.getLong("user_id", -1)
+        if (recipientId != -1L) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = AppDatabase.getDatabase(this@RecipientHomeActivity)
+                val events = db.matchEventDao().getMatchEventsForRecipient(recipientId)
+                if (events.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        MatchNotificationHelper.showMatchNotification(
+                            context = this@RecipientHomeActivity,
+                            matchTitle = "New Match Received!",
+                            matchMessage = "A donor has matched with you. Check your matches!"
+                        )
+                    }
+                    db.matchEventDao().deleteEventsForRecipient(recipientId)
+                    Log.d("RecipientHome", "Match events processed and cleared for recipient $recipientId")
+                }
+            }
+        }
 
         // Here we setup the toolbar
         setSupportActionBar(binding.toolbar)
@@ -58,8 +106,15 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         navigationView.setNavigationItemSelectedListener(this)
 
         // Here we retrieve the user data
-        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "Unknown")
+        val locationSpinner: Spinner = findViewById(R.id.spinnerLocation)
+
+        // here we define list of locations
+        val locations = listOf("All", "Höfuðborgarsvæðið", "Suðurnes", "Norðurland", "Vesturland", "Austurland", "Suðurland")
+
+        // Here we create an adapter for the spinner
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        locationSpinner.adapter = adapter
 
         if (username == null) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
@@ -71,14 +126,46 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
             navHeaderTitle.text = "Welcome, $username!"
         }
-
+        // recyclerview initialize
         donorRecyclerView = findViewById(R.id.rvDonorCards)
         val layoutManager = GridLayoutManager(this, 1)
         donorRecyclerView.layoutManager = layoutManager
 
         donorAdapter = DonorAdapter(donorsList, object : DonorAdapter.OnDonorClickListener {
             override fun onFavoriteClicked(donor: DonorProfile) {
-                // Here comes favorite action, we call API to add favorite
+                Log.d("FavoriteAction", "Calling API to favorite donor with id: ${donor.donorProfileId}")
+                RetrofitClient.getInstance().addFavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Log.d("FavoriteAction", "Favorite added successfully for donor id: ${donor.donorProfileId}")
+                            Toast.makeText(this@RecipientHomeActivity, "Donor added to favorites", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Log.e("FavoriteAction", "Error adding favorite: ${response.code()}")
+                            Toast.makeText(this@RecipientHomeActivity, "Error adding favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Log.e("FavoriteAction", "Network error when adding favorite", t)
+                        Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
+            override fun onUnfavoriteClicked(donor: DonorProfile) {
+                Log.d("FavoriteAction", "Calling API to unfavorite donor with id: ${donor.donorProfileId}")
+                RetrofitClient.getInstance().unfavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(this@RecipientHomeActivity, "Donor removed from favorites", Toast.LENGTH_SHORT).show()
+                            // Optionally update donor state and refresh list
+                        } else {
+                            Toast.makeText(this@RecipientHomeActivity, "Error removing favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
 
             override fun onViewProfileClicked(donor: DonorProfile) {
@@ -90,55 +177,107 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         })
 
         donorRecyclerView.adapter = donorAdapter
+        //search bar setup
+        searchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                filterDonors(newText, selectedLocation)
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                filterDonors(query, selectedLocation)
+                return true
+            }
+        })
 
         // Pagination: button click listeners
         binding.btnPreviousPage.setOnClickListener {
             if (currentPage > 0) {
-                loadDonors(currentPage - 1)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                loadDonors(currentPage - 1, selectedLocation)
             }
         }
 
         binding.btnNextPage.setOnClickListener {
             if (!isLastPage) {
-                loadDonors(currentPage + 1)
+                val selectedLocation = locations[locationSpinner.selectedItemPosition]
+                loadDonors(currentPage + 1, selectedLocation)
             }
         }
-
         // Here we load the first page
-        loadDonors(currentPage)
+        loadDonors(0, null)
+
+        //location selection changes handler
+        locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedLocation = if (position == 0) null else locations[position]
+                loadDonors(0, selectedLocation)
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
     }
 
-    private fun loadDonors(page: Int) {
+    private fun loadDonors(page: Int, selectedLocation: String? = null) {
         isLoading = true
-        RetrofitClient.getInstance().getDonors(page, pageSize).enqueue(object : Callback<List<DonorProfile>> { //this
-            override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
-                isLoading = false
-                if (response.isSuccessful) {
-                    val donors = response.body() ?: emptyList()
-                    if (page == 0) {
-                        donorsList.clear()
-                    }
-                    if (donors.isNotEmpty()) {
-                        currentPage = page
-                        donorsList.clear()
-                        donorsList.addAll(donors)
-                        donorAdapter.notifyDataSetChanged()
-                        binding.tvCurrentPage.text = "Page ${currentPage + 1}"
-                        // If fewer items than pageSize, it's the last page
-                        isLastPage = donors.size < pageSize
-                    } else {
-                        isLastPage = true
-                    }
-                } else {
-                    Toast.makeText(this@RecipientHomeActivity, "Error fetching donor profiles", Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<List<DonorProfile>>, t: Throwable) {
-                isLoading = false
-                Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
-            }
+        val locationParam = if (selectedLocation == "All" || selectedLocation.isNullOrBlank()) null else selectedLocation
+
+        RetrofitClient.getInstance().getDonors(page, pageSize, locationParam)
+            .enqueue(object : Callback<List<DonorProfile>> {
+                override fun onResponse(call: Call<List<DonorProfile>>, response: Response<List<DonorProfile>>) {
+                    isLoading = false
+                    if (response.isSuccessful) {
+                        val donors = response.body() ?: emptyList()
+
+                        if (donors.isEmpty()) {
+                            donorsList.clear()
+                            donorAdapter.updateList(donorsList)
+                            binding.tvCurrentPage.text = "No donors found"
+                            isLastPage = true
+                        } else {
+                            if (page == 0) {
+                                donorsList.clear()
+                            }
+                            currentPage = page
+                            donorsList.clear()
+                            donorsList.addAll(donors)
+                            filterDonors(searchView.query.toString(), selectedLocation)
+                            binding.tvCurrentPage.text = "Page ${currentPage + 1}"
+                            isLastPage = donors.size < pageSize
+                        }
+                    } else {
+                        Toast.makeText(this@RecipientHomeActivity, "Error fetching donor profiles", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<List<DonorProfile>>, t: Throwable) {
+                    isLoading = false
+                    Toast.makeText(this@RecipientHomeActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+    
+    private fun filterDonors(query: String?, selectedLocation: String?) {
+        filteredList.clear()
+        filteredList.addAll(donorsList.filter { donor ->
+            val matchesSearch = query.isNullOrBlank() || donor.donorType?.contains(query, ignoreCase = true) == true ||
+                    donor.eyeColor?.contains(query, ignoreCase = true) == true ||
+                    donor.hairColor?.contains(query, ignoreCase = true) == true ||
+                    donor.educationLevel?.contains(query, ignoreCase = true) == true ||
+                    donor.race?.contains(query, ignoreCase = true) == true ||
+                    donor.ethnicity?.contains(query, ignoreCase = true) == true ||
+                    donor.bloodType?.contains(query, ignoreCase = true) == true ||
+                    donor.getToKnow?.contains(query, ignoreCase = true) == true ||
+                    donor.traits?.contains(query, ignoreCase = true) == true
+
+            val matchesLocation = selectedLocation.isNullOrBlank() || selectedLocation == "All" || donor.location?.contains(selectedLocation, ignoreCase = true) == true
+
+            matchesSearch && matchesLocation
         })
+        donorAdapter.updateList(filteredList)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -154,20 +293,25 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                Toast.makeText(this, "Home clicked", Toast.LENGTH_SHORT).show()
+                // Start Recipient profile activity (or refresh the current one)
+                val intent = Intent(this, RecipientHomeActivity::class.java) // Always Recipient profile for RecipientHome
+                startActivity(intent)
             }
             R.id.nav_profile -> {
                 val intent = Intent(this, RecipientProfileActivity::class.java) // Always Recipient profile for RecipientHome
                 startActivity(intent)
             }
             R.id.nav_messages -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_favorites -> {
-                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_matches -> {
-                Toast.makeText(this, "Matches clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()

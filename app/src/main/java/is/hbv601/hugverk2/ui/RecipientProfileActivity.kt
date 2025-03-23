@@ -353,13 +353,21 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                // Already on the profile screen.
+                // Start Recipient profile activity (or refresh the current one)
+                val intent = Intent(this, RecipientProfile::class.java)
+                startActivity(intent)
             }
             R.id.nav_messages -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MessageListActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_favorites -> {
-                Toast.makeText(this, "Favorites clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, FavoriteActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_matches -> {
+                val intent = Intent(this, RecipientMatchesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
