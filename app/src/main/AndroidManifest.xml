@@ -66,6 +66,9 @@
             android:name="is.hbv601.hugverk2.ui.RecipientMatchesActivity"
             android:exported="false" />
 
+        <activity android:name="is.hbv601.hugverk2.ui.BookingActivity"
+            android:exported="false"/>
+
         <activity android:name=".ui.LogoutActivity"
             android:exported="true" />
       

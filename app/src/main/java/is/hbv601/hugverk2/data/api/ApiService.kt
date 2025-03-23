@@ -128,23 +128,23 @@ interface ApiService {
 
     // Here we add our other endpoints here
     // Book an appointment
-    @POST("api/bookings/book")
+    @POST("/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>
 
     //Get recipient's appointments
-    @GET("api/bookings/recipient/{id}")
+    @GET("/bookings/recipient/{id}")
     fun getRecipientAppointments(@Path("id") recipientId: Long): Call<List<BookingDTO>>
 
     //Confirm an appointment
-    @POST("api/bookings/confirm/{id}")
+    @POST("/bookings/confirm/{id}")
     fun confirmAppointment(@Path("id") bookingId: Long): Call<Void>
 
     //Cancel an appointment
-    @POST("api/bookings/cancel/{id}")
+    @POST("/bookings/cancel/{id}")
     fun cancelAppointment(@Path("id") bookingId: Long): Call<Void>
 
     //Get donor's pending bookings
-    @GET("api/bookings/donor/{id}/pending")
+    @GET("/bookings/donor/{id}/pending")
     fun getPendingAppointments(@Path("id") donorId: Long): Call<List<BookingDTO>>
 
 

@@ -27,6 +27,16 @@ object RetrofitClient {
                 val request = chain.request()
                 val cookies = cookieManager.cookieStore.cookies
                 Log.d("CookieManager", "Before request, stored cookies: $cookies")
+                // Forcefully attach JSESSIONID
+                val sessionCookie = cookies.find { it.name == "JSESSIONID" }
+                val requestWithSession = if (sessionCookie != null) {
+                    request.newBuilder()
+                        .addHeader("Cookie", "JSESSIONID=${sessionCookie.value}")
+                        .build()
+                } else {
+                    request
+                }
+
                 val response = chain.proceed(request)
                 Log.d("CookieManager", "After response, stored cookies: ${cookieManager.cookieStore.cookies}")
                 response
