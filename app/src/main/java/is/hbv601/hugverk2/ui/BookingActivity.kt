@@ -157,8 +157,10 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             val selectedDonorId = donorSpinner.tag as? Long
 
             if (selectedDonorId != null) {
+                Log.d("BookingActivity", "Calling API to book an appointment with donorId: $selectedDonorId and recipientId: $recipientId")
                 bookAppointment(selectedDonorId, date, time)
             } else {
+                Log.e("BookingActivity", "No donor selected for booking")
                 Toast.makeText(this, "Please select a donor", Toast.LENGTH_SHORT).show()
             }
         }
@@ -196,7 +198,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //}
 
         val bookingRequest = BookingDTO(
-            id = recipientId, //Set id to recipientId if needed, else null
+            id = null, //Set id to recipientId if needed, else null
             donorId = donorId,
             recipientId = recipientId,
             date = date,
@@ -207,7 +209,9 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         //Log before making the API call (debugging 401 authorization)
         Log.d("BookingActivity", "Sending booking request: $bookingRequest")
-        Log.d("BookingActivity", "Stored cookies before request: ${RetrofitClient.getCookieString()}")
+        //Log.d("BookingActivity", "Stored cookies before request: ${RetrofitClient.getCookieString()}")
+
+        //Debugga þennan hluta
 
         RetrofitClient.getInstance().bookAppointment(bookingRequest).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
