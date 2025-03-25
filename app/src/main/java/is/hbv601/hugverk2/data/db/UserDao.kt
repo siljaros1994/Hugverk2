@@ -7,11 +7,11 @@ import androidx.room.Query
 @Dao
 interface UserDao {
     @Insert
-    suspend fun insert(user: User)
+    suspend fun insert(user: User): Long
 
     @Query("SELECT * FROM users WHERE username = :username LIMIT 1")
     suspend fun findByUsername(username: String): User?
 
     @Query("DELETE FROM users")
-    suspend fun deleteAll()
+    suspend fun deleteAll(): Int
 }

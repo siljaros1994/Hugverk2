@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -43,6 +43,8 @@ android {
 
 dependencies {
 
+    implementation ("androidx.core:core-ktx:1.15.0")
+
     // Retrofit for API calls
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -52,8 +54,9 @@ dependencies {
 
 
     // Room (Kotlin version)
-    implementation("androidx.room:room-runtime:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 
     // Gson for JSON parsing
     implementation("com.google.code.gson:gson:2.10.1")
@@ -70,8 +73,7 @@ dependencies {
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation(libs.firebase.messaging)
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    kapt("com.github.bumptech.glide:compiler:4.12.0")
     // Glide OkHttp integration for sending cookies with HTTP requests.
     implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0")
 
