@@ -13,6 +13,7 @@ import `is`.hbv601.hugverk2.model.UserDTO
 import `is`.hbv601.hugverk2.model.MessageDTO
 import `is`.hbv601.hugverk2.model.MessageForm
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
+import `is`.hbv601.hugverk2.models.BookingDTO
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -25,6 +26,7 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Header
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -125,5 +127,26 @@ interface ApiService {
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
     // Here we add our other endpoints here
+    // Book an appointment
+    @POST("api/bookings/book")
+    fun bookAppointment(@Body request: BookingDTO): Call<Void>
+
+    //Get recipient's appointments
+    @GET("/bookings/recipient/{id}")
+    fun getRecipientAppointments(@Path("id") recipientId: Long): Call<List<BookingDTO>>
+
+    //Confirm an appointment
+    @POST("/bookings/confirm/{id}")
+    fun confirmAppointment(@Path("id") bookingId: Long): Call<Void>
+
+    //Cancel an appointment
+    @POST("/bookings/cancel/{id}")
+    fun cancelAppointment(@Path("id") bookingId: Long): Call<Void>
+
+    //Get donor's pending bookings, fits the ApiController.java
+    @GET("/bookings/donor/{donorId}/pending")
+    fun getPendingAppointments(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
+
+
 
 }

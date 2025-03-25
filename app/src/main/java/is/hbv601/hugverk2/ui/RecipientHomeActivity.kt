@@ -314,7 +314,9 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
             }
             R.id.nav_booking -> {
-                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, BookingActivity::class.java)
+                startActivity(intent)
+                //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
             // Handle other menu items
             R.id.nav_logout -> { //Matches navigation menu ID

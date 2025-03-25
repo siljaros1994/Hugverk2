@@ -49,6 +49,10 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // RecyclerView for displaying lists
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
+
+
     // Room (Kotlin version)
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
