@@ -131,9 +131,13 @@ interface ApiService {
     @POST("api/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>
 
+    // Fetch confirmed appointments for a recipient
+    @GET("/api/bookings/recipient/{recipientId}/confirmed")
+    fun getConfirmedAppointmentsForRecipient(@Path("recipientId") recipientId: Long): Call<List<BookingDTO>>
+
     //Get recipient's appointments
-    @GET("/api/bookings/recipient/{id}")
-    fun getRecipientAppointments(@Path("id") recipientId: Long): Call<List<BookingDTO>>
+    //@GET("/api/bookings/recipient/{id}")
+    //fun getRecipientAppointments(@Path("id") recipientId: Long): Call<List<BookingDTO>>
 
     //Confirm an appointment
     @POST("/api/bookings/confirm/{bookingId}")
@@ -146,6 +150,10 @@ interface ApiService {
     //Get donor's pending bookings, fits the ApiController.java
     @GET("/api/bookings/donor/{donorId}/pending")
     fun getPendingAppointments(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
+
+    // Fetch confirmed appointments for a donor
+    @GET("/api/bookings/donor/{donorId}/confirmed")
+    fun getConfirmedAppointmentsForDonor(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
 
 
 

@@ -86,9 +86,20 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun setupDonorBooking() {
+        val pendingRecyclerView: RecyclerView = findViewById(R.id.appointmentsRecyclerView)
+        val confirmedRecyclerView: RecyclerView = findViewById(R.id.confirmedAppointmentsRecyclerView)
+
+        loadPendingAppointments(pendingRecyclerView)
+        loadConfirmedAppointmentsForDonor(confirmedRecyclerView)
+    }
+
+    /*
+    private fun setupDonorBooking() {
         val recyclerView: RecyclerView = findViewById(R.id.appointmentsRecyclerView)
         loadPendingAppointments(recyclerView)
     }
+
+     */
 
     private fun setupRecipientBooking() {
         val donorSpinner: Spinner = findViewById(R.id.donorSpinner)
@@ -98,6 +109,9 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val recipientId = sharedPreferences.getLong("user_id", -1)
+        //For loading approved appointments
+        val confirmedRecyclerView: RecyclerView = findViewById(R.id.confirmedAppointmentsRecyclerView)
+        loadConfirmedAppointmentsForRecipient(confirmedRecyclerView)
 
         if (recipientId == -1L) {
             Toast.makeText(this, "Recipient ID not found!", Toast.LENGTH_SHORT).show()
@@ -196,6 +210,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             })
     }
 
+    //Loading pending appointments for the donor
     private fun loadPendingAppointments(recyclerView: RecyclerView) {
         val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
         if (donorId == -1L) {
@@ -265,6 +280,75 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
         })
     }
+
+    // Load confirmed appointments for donors
+    private fun loadConfirmedAppointmentsForDonor(recyclerView: RecyclerView) {
+        val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
+        if (donorId == -1L) {
+            Toast.makeText(this, "Donor ID not found!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        RetrofitClient.getInstance().getConfirmedAppointmentsForDonor(donorId)
+            .enqueue(object : Callback<List<BookingDTO>> {
+                override fun onResponse(call: Call<List<BookingDTO>>, response: Response<List<BookingDTO>>) {
+                    if (response.isSuccessful) {
+                        val bookings = response.body() ?: emptyList()
+                        recyclerView.layoutManager = LinearLayoutManager(this@BookingActivity)
+                        recyclerView.adapter = BookingAdapter(bookings, object : BookingAdapter.OnBookingClickListener {
+                            override fun onConfirmClicked(booking: BookingDTO) {
+                                Toast.makeText(this@BookingActivity, "Appointment already confirmed", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onCancelClicked(booking: BookingDTO) {
+                                cancelBooking(booking.id!!)
+                            }
+                        })
+                    } else {
+                        Toast.makeText(this@BookingActivity, "Failed to load confirmed appointments", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<BookingDTO>>, t: Throwable) {
+                    Toast.makeText(this@BookingActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // Load confirmed appointments for recipients
+    private fun loadConfirmedAppointmentsForRecipient(recyclerView: RecyclerView) {
+        val recipientId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
+        if (recipientId == -1L) {
+            Toast.makeText(this, "Recipient ID not found!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        RetrofitClient.getInstance().getConfirmedAppointmentsForRecipient(recipientId)
+            .enqueue(object : Callback<List<BookingDTO>> {
+                override fun onResponse(call: Call<List<BookingDTO>>, response: Response<List<BookingDTO>>) {
+                    if (response.isSuccessful) {
+                        val bookings = response.body() ?: emptyList()
+                        recyclerView.layoutManager = LinearLayoutManager(this@BookingActivity)
+                        recyclerView.adapter = BookingAdapter(bookings, object : BookingAdapter.OnBookingClickListener {
+                            override fun onConfirmClicked(booking: BookingDTO) {
+                                Toast.makeText(this@BookingActivity, "Appointment already confirmed", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onCancelClicked(booking: BookingDTO) {
+                                cancelBooking(booking.id!!)
+                            }
+                        })
+                    } else {
+                        Toast.makeText(this@BookingActivity, "Failed to load confirmed appointments", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<BookingDTO>>, t: Throwable) {
+                    Toast.makeText(this@BookingActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
 
 
 }
