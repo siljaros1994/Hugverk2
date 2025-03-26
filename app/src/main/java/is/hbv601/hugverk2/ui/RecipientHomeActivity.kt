@@ -27,6 +27,7 @@ import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.data.db.AppDatabase
 import `is`.hbv601.hugverk2.databinding.ActivityRecipientHomeBinding
 import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.model.RecipientProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,6 +133,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         donorRecyclerView.layoutManager = layoutManager
 
         donorAdapter = DonorAdapter(donorsList, object : DonorAdapter.OnDonorClickListener {
+            override fun onMessageClicked(donor: DonorProfile) {}
             override fun onFavoriteClicked(donor: DonorProfile) {
                 Log.d("FavoriteAction", "Calling API to favorite donor with id: ${donor.donorProfileId}")
                 RetrofitClient.getInstance().addFavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
