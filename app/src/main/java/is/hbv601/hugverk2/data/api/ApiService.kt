@@ -131,6 +131,7 @@ interface ApiService {
     @POST("api/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>
 
+
     // Fetch confirmed appointments for a recipient
     @GET("/api/bookings/recipient/{recipientId}/confirmed")
     fun getConfirmedAppointmentsForRecipient(@Path("recipientId") recipientId: Long): Call<List<BookingDTO>>
@@ -154,6 +155,7 @@ interface ApiService {
     // Fetch confirmed appointments for a donor
     @GET("/api/bookings/donor/{donorId}/confirmed")
     fun getConfirmedAppointmentsForDonor(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
+
 
 
 
