@@ -243,7 +243,16 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
             }
             R.id.nav_booking -> {
-                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+                val donorId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
+                if (donorId == -1L) {
+                    Toast.makeText(this, "Donor ID not found", Toast.LENGTH_SHORT).show()
+                    return true
+                }
+                val intent = Intent(this, BookingActivity::class.java)
+                intent.putExtra("donorId", donorId)
+                startActivity(intent)
+                //DonorBookingActivity
             }
             R.id.nav_logout -> { //Matches navigation menu ID
                 Log.d("DonorHomeActivity", "Logout button clicked!") // Debugging Log
