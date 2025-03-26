@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -50,7 +49,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         } else {
             Toast.makeText(this, "Unknown user type", Toast.LENGTH_LONG).show()
             finish()
-            //return
+
         }
 
         //Initialize Navigation Drawer
@@ -80,6 +79,19 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, BookingActivity::class.java))
+            }
+            R.id.nav_logout -> { //Matches navigation menu ID
+                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
+                //Close the navigation drawer before logging out
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                }
+                //Delay logout slightly to prevent UI conflicts
+                drawerLayout.postDelayed({
+                    val intent = Intent(this, LogoutActivity::class.java)
+                    startActivity(intent) //Call logout function
+                    finish()
+                }, 300) //Small delay ensures smooth UI transition
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
