@@ -40,6 +40,15 @@
             android:layout_height="wrap_content"
             android:scrollbars="vertical" />
 
+        <TextView
+            android:id="@+id/confirmedAppointmentsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmed Appointments"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="20dp"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/confirmedAppointmentsRecyclerView"
             android:layout_width="match_parent"

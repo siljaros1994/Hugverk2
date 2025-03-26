@@ -136,10 +136,6 @@ interface ApiService {
     @GET("/api/bookings/recipient/{recipientId}/confirmed")
     fun getConfirmedAppointmentsForRecipient(@Path("recipientId") recipientId: Long): Call<List<BookingDTO>>
 
-    //Get recipient's appointments
-    //@GET("/api/bookings/recipient/{id}")
-    //fun getRecipientAppointments(@Path("id") recipientId: Long): Call<List<BookingDTO>>
-
     //Confirm an appointment
     @POST("/api/bookings/confirm/{bookingId}")
     fun confirmAppointment(@Path("bookingId") bookingId: Long): Call<Void>

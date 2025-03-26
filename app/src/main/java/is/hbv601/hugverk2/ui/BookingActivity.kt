@@ -68,7 +68,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        //navigationView.setNavigationItemSelectedListener(this)
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -94,13 +94,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         loadConfirmedAppointmentsForDonor(confirmedRecyclerView)
     }
 
-    /*
-    private fun setupDonorBooking() {
-        val recyclerView: RecyclerView = findViewById(R.id.appointmentsRecyclerView)
-        loadPendingAppointments(recyclerView)
-    }
 
-     */
 
     private fun setupRecipientBooking() {
         val donorSpinner: Spinner = findViewById(R.id.donorSpinner)
@@ -353,6 +347,9 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
 }
+
+
+
 
 
 
