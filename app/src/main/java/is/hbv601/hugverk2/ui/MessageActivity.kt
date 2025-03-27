@@ -72,12 +72,15 @@ class MessageActivity : AppCompatActivity() {
     private fun fetchMessages() {
         if (receiverId == null) return
 
-        RetrofitClient.getInstance().getMessages(userType, loggedInUserId)
+        RetrofitClient.getInstance().getConversationWith(receiverId!!)
             .enqueue(object : Callback<List<MessageDTO>> {
                 override fun onResponse(call: Call<List<MessageDTO>>, response: Response<List<MessageDTO>>) {
                     if (response.isSuccessful) {
                         messages.clear()
-                        response.body()?.let { messages.addAll(it) }
+                        response.body()?.let {
+                            messages.addAll(it)
+                            Log.d("MessageActivity", "Messages received from API: ${it.size}")
+                        }
                         adapter.notifyDataSetChanged()
                         recyclerMessages.scrollToPosition(messages.size - 1)
                     } else {
@@ -91,9 +94,12 @@ class MessageActivity : AppCompatActivity() {
             })
     }
 
+
     private fun sendMessage() {
         val text = editMessage.text.toString().trim()
         if (text.isBlank() || receiverId == null) return
+
+        Log.d("SendMessage", "Sending message: sender=$loggedInUserId, receiver=$receiverId, text=$text")
 
         val messageForm = MessageForm(
             senderId = loggedInUserId,
