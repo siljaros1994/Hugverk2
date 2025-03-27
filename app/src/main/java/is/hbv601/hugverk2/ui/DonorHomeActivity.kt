@@ -84,6 +84,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         // Here we setup an RecyclerView for recipient cards
         binding.rvRecipientCards.layoutManager = GridLayoutManager(this, 1)
         recipientAdapter = RecipientAdapter(recipientList, object : RecipientAdapter.OnRecipientClickListener {
+            override fun onMessageClicked(recipient: RecipientProfile) {}
             override fun onMatchClicked(recipient: RecipientProfile) {
                 val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
                 // Here we approve match, by calling API to approve match.

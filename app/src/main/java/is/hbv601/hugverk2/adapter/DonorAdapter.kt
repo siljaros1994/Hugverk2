@@ -14,14 +14,20 @@ import `is`.hbv601.hugverk2.model.DonorProfile
 
 class DonorAdapter(
     private var donors: List<DonorProfile>,
-    private val listener: OnDonorClickListener
-
+    private val listener: OnDonorClickListener,
+    // Adding so we can control the buttons better
+    private val mode: Mode = Mode.DEFAULT
 ) : RecyclerView.Adapter<DonorAdapter.DonorViewHolder>() {
+    // control the buttons
+    enum class Mode {
+        DEFAULT, MESSAGE_ONLY
+    }
 
     interface OnDonorClickListener {
         fun onFavoriteClicked(donor: DonorProfile)
         fun onUnfavoriteClicked(donor: DonorProfile)
         fun onViewProfileClicked(donor: DonorProfile)
+        fun onMessageClicked(donor: DonorProfile)
     }
 
     inner class DonorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -34,6 +40,7 @@ class DonorAdapter(
         val btnFavorite: Button = itemView.findViewById(R.id.btnFavorite)
         val btnUnfavorite: Button = itemView.findViewById(R.id.btnUnfavorite)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
+        val btnMessage: Button = itemView.findViewById(R.id.btnMessage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonorViewHolder {
@@ -69,6 +76,26 @@ class DonorAdapter(
 
         holder.btnViewProfile.setOnClickListener {
             listener.onViewProfileClicked(donor)
+        }
+
+        holder.btnMessage.setOnClickListener {
+            listener.onMessageClicked(donor)
+        }
+
+        when (mode) {
+            Mode.DEFAULT -> {
+                holder.btnFavorite.visibility = View.VISIBLE
+                holder.btnUnfavorite.visibility = View.VISIBLE
+                holder.btnViewProfile.visibility = View.VISIBLE
+                holder.btnMessage.visibility = View.GONE
+            }
+            Mode.MESSAGE_ONLY -> {
+                holder.btnFavorite.visibility = View.GONE
+                holder.btnUnfavorite.visibility = View.GONE
+                holder.btnViewProfile.visibility = View.GONE
+                holder.btnMessage.visibility = View.VISIBLE
+            }
+            //we can add more of this here if we want, i think it would be good t.d to take out favorite after you've favorited them.
         }
     }
 

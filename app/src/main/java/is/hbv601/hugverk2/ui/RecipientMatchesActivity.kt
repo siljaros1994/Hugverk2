@@ -103,6 +103,8 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         startActivity(intent)
     }
 
+    override fun onMessageClicked(donor: DonorProfile) {}
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -141,4 +143,5 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }
