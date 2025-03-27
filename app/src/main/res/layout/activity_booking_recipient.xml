@@ -57,6 +57,7 @@
         <!-- Book Appointment Button -->
         <Button
             android:id="@+id/bookButton"
+            style="@style/cardbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Book Appointment"

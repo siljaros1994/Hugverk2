@@ -62,6 +62,7 @@ tools:context=".ui.RecipientHomeActivity">
 
         <Button
             android:id="@+id/btnPreviousPage"
+            style="@style/PaginationButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Previous" />
@@ -77,6 +78,7 @@ tools:context=".ui.RecipientHomeActivity">
 
         <Button
             android:id="@+id/btnNextPage"
+            style="@style/PaginationButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Next" />

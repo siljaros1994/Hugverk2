@@ -77,19 +77,6 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, BookingActivity::class.java))
             }
-            R.id.nav_logout -> { //Matches navigation menu ID
-                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
-                //Close the navigation drawer before logging out
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                //Delay logout slightly to prevent UI conflicts
-                drawerLayout.postDelayed({
-                    val intent = Intent(this, LogoutActivity::class.java)
-                    startActivity(intent) //Call logout function
-                    finish()
-                }, 300) //Small delay ensures smooth UI transition
-            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

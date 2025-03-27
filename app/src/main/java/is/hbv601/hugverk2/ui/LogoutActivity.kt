@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import `is`.hbv601.hugverk2.R
 
-class LogoutActivity : AppCompatActivity() { //  Fix: Extend AppCompatActivity
+class LogoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

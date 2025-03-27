@@ -50,16 +50,25 @@ class RecipientViewActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userType = sharedPrefs.getString("user_type", "recipient")
+        if (userType.equals("recipient", ignoreCase = true)) {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_recipient)
+        } else {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_donor)
+        }
+
         // Setup toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
-        // Update Navigation Header with logged-in username
+        // Update navigation header with the logged-in username
         val headerView = navigationView.getHeaderView(0)
         val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
-        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPrefs.getString("username", "Guest")
         navHeaderTitle.text = "Welcome, $username!"
 
@@ -142,26 +151,44 @@ class RecipientViewActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Read the current user type from shared preferences
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userType = sharedPrefs.getString("user_type", "recipient")
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, RecipientHomeActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientHomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorHomeActivity::class.java))
+                }
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, RecipientProfileActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientProfileActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorProfileActivity::class.java))
+                }
             }
             R.id.nav_messages -> {
-                val intent = Intent(this, MessageListActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, MessageListActivity::class.java))
+                } else {
+                    startActivity(Intent(this, MessageListActivity::class.java))
+                }
             }
             R.id.nav_favorites -> {
-                val intent = Intent(this, FavoriteActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, FavoriteActivity::class.java))
+                } else {
+                    startActivity(Intent(this, FavoriteActivity::class.java))
+                }
             }
             R.id.nav_matches -> {
-                val intent = Intent(this, RecipientMatchesActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientMatchesActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorMatchesActivity::class.java))
+                }
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
