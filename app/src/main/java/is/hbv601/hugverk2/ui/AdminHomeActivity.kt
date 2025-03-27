@@ -2,9 +2,12 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import `is`.hbv601.hugverk2.R
+import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
+import `is`.hbv601.hugverk2.model.DonorProfile
 
 class AdminHomeActivity : AppCompatActivity() {
 
@@ -20,12 +23,50 @@ class AdminHomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val testNotificationButton: Button = findViewById(R.id.btnTestNotification)
-        testNotificationButton.setOnClickListener {
-            AdminNotificationHelper.showDonationLimitNotification(
-                this,
-                donorName = "Test Donor"
-            )
+
+        val checkLimitsButton: Button = findViewById(R.id.btnCheckDonorLimits)
+        checkLimitsButton.setOnClickListener {
+            fetchDonorsAndNotifyIfLimitReached()
         }
+
+
+
+        fetchDonorsAndNotifyIfLimitReached()
+
     }
+
+
+    private fun fetchDonorsAndNotifyIfLimitReached() {
+        val apiService = RetrofitClient.getInstance()
+
+        apiService.getDonors(0, 100).enqueue(object : retrofit2.Callback<List<DonorProfile>> {
+            override fun onResponse(
+                call: retrofit2.Call<List<DonorProfile>>,
+                response: retrofit2.Response<List<DonorProfile>>
+            ) {
+                if (response.isSuccessful) {
+                    val donors = response.body() ?: return
+                    for (donor in donors) {
+                        if ((donor.donationsCompleted ?: 0) == (donor.donationLimit ?: 0)) {
+                            val donorName = donor.user?.username ?: "Donor #${donor.donorProfileId}"
+                            AdminNotificationHelper.showDonationLimitNotification(
+                                this@AdminHomeActivity,
+                                donorName
+                            )
+                        }
+                    }
+                } else {
+                    Log.e("AdminHome", "Failed to fetch donors: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<List<DonorProfile>>, t: Throwable) {
+                Log.e("AdminHome", "Error fetching donors", t)
+            }
+        })
+    }
+
+
+
+
 }

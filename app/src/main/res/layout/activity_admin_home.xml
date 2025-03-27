@@ -22,12 +22,10 @@
 
 
     <Button
-        android:id="@+id/btnTestNotification"
+        android:id="@+id/btnCheckDonorLimits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Admin Notification"
-        android:layout_marginTop="16dp" />
-
+        android:text="Check Donor Limits" />
 
 
 </LinearLayout>
