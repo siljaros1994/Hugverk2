@@ -20,4 +20,14 @@
         android:text="See List of Users"
         android:layout_marginTop="20dp"/>
 
+
+    <Button
+        android:id="@+id/btnTestNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Admin Notification"
+        android:layout_marginTop="16dp" />
+
+
+
 </LinearLayout>

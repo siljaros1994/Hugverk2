@@ -12,10 +12,20 @@ class AdminHomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_home)
 
+        AdminNotificationHelper.createNotificationChannel(this)
+
         val btnSeeUsers: Button = findViewById(R.id.btnSeeUsers)
         btnSeeUsers.setOnClickListener {
             val intent = Intent(this, UserListActivity::class.java)
             startActivity(intent)
+        }
+
+        val testNotificationButton: Button = findViewById(R.id.btnTestNotification)
+        testNotificationButton.setOnClickListener {
+            AdminNotificationHelper.showDonationLimitNotification(
+                this,
+                donorName = "Test Donor"
+            )
         }
     }
 }
