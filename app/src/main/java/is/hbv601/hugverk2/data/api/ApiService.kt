@@ -115,12 +115,10 @@ interface ApiService {
         @Path("username") username: String,
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
-  
-    @GET("api/messages/{userType}/{id}")
-    fun getMessages(
-        @Path("userType") userType: String,
-        @Path("id") userId: Long
-    ): Call<List<MessageDTO>>
+
+    @GET("api/messages/conversation/{receiverId}")
+    fun getConversationWith(@Path("receiverId") receiverId: Long): Call<List<MessageDTO>>
+
 
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
@@ -146,7 +144,4 @@ interface ApiService {
     //Get donor's pending bookings, fits the ApiController.java
     @GET("/bookings/donor/{donorId}/pending")
     fun getPendingAppointments(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
-
-
-
 }
