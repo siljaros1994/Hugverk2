@@ -5,5 +5,5 @@ data class MessageDTO(
     val senderId: Long,
     val receiverId: Long,
     val content: String,
-    val timestamp: String
+    val timestamp: String,
 )
