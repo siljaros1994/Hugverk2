@@ -25,8 +25,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-
 class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
@@ -49,7 +47,6 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         } else {
             Toast.makeText(this, "Unknown user type", Toast.LENGTH_LONG).show()
             finish()
-
         }
 
         //Initialize Navigation Drawer
@@ -105,8 +102,6 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         loadPendingAppointments(pendingRecyclerView)
         loadConfirmedAppointmentsForDonor(confirmedRecyclerView)
     }
-
-
 
     private fun setupRecipientBooking() {
         val donorSpinner: Spinner = findViewById(R.id.donorSpinner)
@@ -355,9 +350,6 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
             })
     }
-
-
-
 }
 
 

@@ -5,7 +5,6 @@ package `is`.hbv601.hugverk2.models
 
 //Matches the backend version BookingDTO.java
 
-
 data class BookingDTO (
     val id: Long?,
     val donorId: Long,

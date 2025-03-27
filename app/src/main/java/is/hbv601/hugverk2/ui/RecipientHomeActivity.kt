@@ -172,6 +172,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
             override fun onViewProfileClicked(donor: DonorProfile) {
                 // Launch the DonorViewActivity with the donor's profile ID
+                Log.d("RecipientHomeActivity", "View profile clicked for donor id: ${donor.donorProfileId}")
                 val intent = Intent(this@RecipientHomeActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)
                 startActivity(intent)

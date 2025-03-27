@@ -50,18 +50,18 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
+        // Setup toolbar and drawer for side panel navigation
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
+
         // Update Navigation Header with logged in username
         val headerView = navigationView.getHeaderView(0)
         val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
         val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPrefs.getString("username", "Guest")
         navHeaderTitle.text = "Welcome, $username!"
-
-        // Setup toolbar and drawer for side panel navigation
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
 
         // Get donorProfileId passed from the donor card button

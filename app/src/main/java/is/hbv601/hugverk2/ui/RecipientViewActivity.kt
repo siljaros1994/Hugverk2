@@ -90,12 +90,9 @@ class RecipientViewActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     }
 
     private fun loadRecipientProfile() {
-        RetrofitClient.getInstance().getRecipientProfile(recipientProfileId)
+        RetrofitClient.getInstance().viewRecipientProfile(recipientProfileId)
             .enqueue(object : Callback<RecipientProfile> {
-                override fun onResponse(
-                    call: Call<RecipientProfile>,
-                    response: Response<RecipientProfile>
-                ) {
+                override fun onResponse(call: Call<RecipientProfile>, response: Response<RecipientProfile>) {
                     if (response.isSuccessful) {
                         response.body()?.let { recipient ->
                             updateUI(recipient)

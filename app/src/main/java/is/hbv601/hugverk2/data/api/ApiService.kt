@@ -53,6 +53,9 @@ interface ApiService {
     @GET("api/donor/view/{donorProfileId}")
     fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
 
+    @GET("api/recipient/view/{recipientProfileId}")
+    fun viewRecipientProfile(@Path("recipientProfileId") recipientProfileId: Long): Call<RecipientProfile>
+
     @GET("api/donor/all")
     fun getDonors(@Query("page") page: Int, @Query("size") size: Int, @Query("location") location: String? = null): Call<List<DonorProfile>>
 
@@ -119,7 +122,6 @@ interface ApiService {
     @GET("api/messages/conversation/{receiverId}")
     fun getConversationWith(@Path("receiverId") receiverId: Long): Call<List<MessageDTO>>
 
-
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
@@ -128,7 +130,6 @@ interface ApiService {
     // Book an appointment
     @POST("api/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>
-
 
     // Fetch confirmed appointments for a recipient
     @GET("/api/bookings/recipient/{recipientId}/confirmed")
