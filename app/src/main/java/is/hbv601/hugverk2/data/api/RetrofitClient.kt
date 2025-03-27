@@ -12,7 +12,7 @@ import okhttp3.JavaNetCookieJar
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://192.168.101.4:8080/"
+    private const val BASE_URL = "http://192.168.1.15:8080/"
 
     // Create a CookieManager that accepts all cookies.
     private val cookieManager = CookieManager().apply {
@@ -27,6 +27,16 @@ object RetrofitClient {
                 val request = chain.request()
                 val cookies = cookieManager.cookieStore.cookies
                 Log.d("CookieManager", "Before request, stored cookies: $cookies")
+                // Forcefully attach JSESSIONID
+                val sessionCookie = cookies.find { it.name == "JSESSIONID" }
+                val requestWithSession = if (sessionCookie != null) {
+                    request.newBuilder()
+                        .addHeader("Cookie", "JSESSIONID=${sessionCookie.value}")
+                        .build()
+                } else {
+                    request
+                }
+
                 val response = chain.proceed(request)
                 Log.d("CookieManager", "After response, stored cookies: ${cookieManager.cookieStore.cookies}")
                 response

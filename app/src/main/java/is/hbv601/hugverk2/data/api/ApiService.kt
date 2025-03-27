@@ -13,6 +13,7 @@ import `is`.hbv601.hugverk2.model.UserDTO
 import `is`.hbv601.hugverk2.model.MessageDTO
 import `is`.hbv601.hugverk2.model.MessageForm
 import `is`.hbv601.hugverk2.model.DeleteResponseDTO
+import `is`.hbv601.hugverk2.models.BookingDTO
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -25,6 +26,7 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Header
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -113,17 +115,39 @@ interface ApiService {
         @Path("username") username: String,
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
-  
-    @GET("api/messages/{userType}/{id}")
-    fun getMessages(
-        @Path("userType") userType: String,
-        @Path("id") userId: Long
-    ): Call<List<MessageDTO>>
+
+    @GET("api/messages/conversation/{receiverId}")
+    fun getConversationWith(@Path("receiverId") receiverId: Long): Call<List<MessageDTO>>
+
 
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
     // Here we add our other endpoints here
+    // Book an appointment
+    @POST("api/bookings/book")
+    fun bookAppointment(@Body request: BookingDTO): Call<Void>
+
+
+    // Fetch confirmed appointments for a recipient
+    @GET("/api/bookings/recipient/{recipientId}/confirmed")
+    fun getConfirmedAppointmentsForRecipient(@Path("recipientId") recipientId: Long): Call<List<BookingDTO>>
+
+    //Confirm an appointment
+    @POST("/api/bookings/confirm/{bookingId}")
+    fun confirmAppointment(@Path("bookingId") bookingId: Long): Call<Void>
+
+    //Cancel an appointment
+    @POST("/api/bookings/cancel/{bookingId}")
+    fun cancelAppointment(@Path("bookingId") bookingId: Long): Call<Void>
+
+    //Get donor's pending bookings, fits the ApiController.java
+    @GET("/api/bookings/donor/{donorId}/pending")
+    fun getPendingAppointments(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
+
+    // Fetch confirmed appointments for a donor
+    @GET("/api/bookings/donor/{donorId}/confirmed")
+    fun getConfirmedAppointmentsForDonor(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
 
 }

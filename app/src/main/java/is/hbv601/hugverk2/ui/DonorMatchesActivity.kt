@@ -98,6 +98,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         intent.putExtra("recipientProfileId", recipient.recipientProfileId)
         startActivity(intent)
     }
+    override fun onMessageClicked(recipient: RecipientProfile) {}
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -131,6 +132,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
+
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
