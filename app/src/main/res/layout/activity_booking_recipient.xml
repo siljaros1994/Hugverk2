@@ -80,6 +80,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/confirmedAppointmentsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical" />
+
+
     </LinearLayout>
 
     <!-- Navigation Drawer -->
