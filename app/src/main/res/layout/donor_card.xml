@@ -9,7 +9,7 @@
     android:layout_margin="50dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="9dp">
@@ -23,71 +23,83 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="20dp">
+            android:layout_height="113dp"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvEyeColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Eye Color: "
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvHairColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hair Color: "
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvRace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Race: "
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvBloodType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Blood Type: "
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDonorType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Donor Type: "
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_width="292dp"
+            android:layout_height="167dp"
             android:layout_marginTop="15dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnFavorite"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Favorite" />
 
             <Button
                 android:id="@+id/btnUnfavorite"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Unfavorite" />
 
             <Button
                 android:id="@+id/btnViewProfile"
+                style="@style/cardbutton"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="View Profile" />
+
+            <Button
+                android:id="@+id/btnMessage"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="View Profile"
-                android:layout_marginStart="16dp"/>
+                android:layout_marginStart="16dp"
+                android:text="Message" />
+
         </LinearLayout>
 
     </LinearLayout>

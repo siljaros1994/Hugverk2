@@ -5,8 +5,6 @@ import `is`.hbv601.hugverk2.model.RegisterResponse
 import `is`.hbv601.hugverk2.model.LoginRequest
 import `is`.hbv601.hugverk2.model.LoginResponse
 import `is`.hbv601.hugverk2.model.DonorProfile
-import `is`.hbv601.hugverk2.model.LogoutRequest
-import `is`.hbv601.hugverk2.model.LogoutResponse
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import `is`.hbv601.hugverk2.model.UploadResponse
 import `is`.hbv601.hugverk2.model.UserDTO
@@ -17,7 +15,6 @@ import `is`.hbv601.hugverk2.models.BookingDTO
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
@@ -52,6 +49,9 @@ interface ApiService {
     //donorpage view profile:
     @GET("api/donor/view/{donorProfileId}")
     fun viewDonorProfile(@Path("donorProfileId") donorProfileId: Long): Call<DonorProfile>
+
+    @GET("api/recipient/view/{recipientProfileId}")
+    fun viewRecipientProfile(@Path("recipientProfileId") recipientProfileId: Long): Call<RecipientProfile>
 
     @GET("api/donor/all")
     fun getDonors(@Query("page") page: Int, @Query("size") size: Int, @Query("location") location: String? = null): Call<List<DonorProfile>>
@@ -115,12 +115,9 @@ interface ApiService {
         @Path("username") username: String,
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
-  
-    @GET("api/messages/{userType}/{id}")
-    fun getMessages(
-        @Path("userType") userType: String,
-        @Path("id") userId: Long
-    ): Call<List<MessageDTO>>
+
+    @GET("api/messages/conversation/{receiverId}")
+    fun getConversationWith(@Path("receiverId") receiverId: Long): Call<List<MessageDTO>>
 
     @Headers("Content-Type: application/json")
     @POST("api/messages/send")
@@ -130,7 +127,6 @@ interface ApiService {
     // Book an appointment
     @POST("api/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>
-
 
     // Fetch confirmed appointments for a recipient
     @GET("/api/bookings/recipient/{recipientId}/confirmed")
@@ -151,8 +147,5 @@ interface ApiService {
     // Fetch confirmed appointments for a donor
     @GET("/api/bookings/donor/{donorId}/confirmed")
     fun getConfirmedAppointmentsForDonor(@Path("donorId") donorId: Long): Call<List<BookingDTO>>
-
-
-
 
 }

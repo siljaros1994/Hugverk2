@@ -12,15 +12,22 @@ import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
 
+
 class RecipientAdapter(
     private var recipients: List<RecipientProfile>,
-    private val listener: OnRecipientClickListener
+    private val listener: OnRecipientClickListener,
+    private val mode: Mode = Mode.DEFAULT
 ) : RecyclerView.Adapter<RecipientAdapter.RecipientViewHolder>() {
+
+    enum class Mode {
+        DEFAULT, MESSAGE_ONLY
+    }
 
     interface OnRecipientClickListener {
         fun onMatchClicked(recipient: RecipientProfile)
         fun onUnMatchClicked(recipient: RecipientProfile)
         fun onViewProfileClicked(recipient: RecipientProfile)
+        fun onMessageClicked(recipient: RecipientProfile)
         // Here we can add more actions
     }
 
@@ -34,6 +41,7 @@ class RecipientAdapter(
         val btnMatch: Button = itemView.findViewById(R.id.btnMatch)
         val btnUnMatch: Button = itemView.findViewById(R.id.btnUnMatch)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
+        val btnMessage: Button = itemView.findViewById(R.id.btnMessage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipientViewHolder {
@@ -70,6 +78,26 @@ class RecipientAdapter(
 
         holder.btnViewProfile.setOnClickListener {
             listener.onViewProfileClicked(recipient)
+
+        }
+
+        holder.btnMessage.setOnClickListener {
+            listener.onMessageClicked(recipient)
+        }
+
+        when (mode) {
+            Mode.DEFAULT -> {
+                holder.btnMatch.visibility = View.VISIBLE
+                holder.btnUnMatch.visibility = View.VISIBLE
+                holder.btnViewProfile.visibility = View.VISIBLE
+                holder.btnMessage.visibility = View.GONE
+            }
+            Mode.MESSAGE_ONLY -> {
+                holder.btnMatch.visibility = View.GONE
+                holder.btnUnMatch.visibility = View.GONE
+                holder.btnViewProfile.visibility = View.GONE
+                holder.btnMessage.visibility = View.VISIBLE
+            }
         }
     }
 

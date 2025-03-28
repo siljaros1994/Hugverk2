@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.navigation.NavigationView
 import `is`.hbv601.hugverk2.R
@@ -22,8 +24,11 @@ import retrofit2.Response
 class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RecipientAdapter.OnRecipientClickListener {
 
     private lateinit var binding: ActivityDonorMatchesBinding
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
     private lateinit var matchesAdapter: RecipientAdapter
     private var matchesList = mutableListOf<RecipientProfile>()
+    private var userType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +42,23 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
         // Initialize drawer and navigation view
-        binding.navView.setNavigationItemSelectedListener(this)
+        drawerLayout = binding.drawerLayout
+        navigationView = binding.navView
+        navigationView.setNavigationItemSelectedListener(this)
+
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val username = sharedPrefs.getString("username", "Guest")
+        userType = sharedPrefs.getString("user_type", "donor")
+        if (userType.equals("donor", ignoreCase = true)) {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_donor)
+        } else {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_recipient)
+        }
+        val headerView = navigationView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        navHeaderTitle.text = "Welcome, $username!"
 
         binding.rvMatches.layoutManager = GridLayoutManager(this, 1)
         matchesAdapter = RecipientAdapter(matchesList, this)
@@ -98,6 +119,7 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         intent.putExtra("recipientProfileId", recipient.recipientProfileId)
         startActivity(intent)
     }
+    override fun onMessageClicked(recipient: RecipientProfile) {}
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -112,12 +134,18 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, DonorHomeActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorHomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientHomeActivity::class.java))
+                }
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, DonorProfileActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorProfileActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientProfileActivity::class.java))
+                }
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
@@ -125,8 +153,11 @@ class DonorMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
             R.id.nav_matches -> {
                 // Start donor match activity (or refresh the current one)
-                val intent = Intent(this, DonorMatchesActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorMatchesActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientMatchesActivity::class.java))
+                }
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()

@@ -72,6 +72,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 intent.putExtra("donorProfileId", donor.donorProfileId)
                 startActivity(intent)
             }
+            override fun onMessageClicked(donor: DonorProfile) {}
         })
         rvFavorites.adapter = donorAdapter
 

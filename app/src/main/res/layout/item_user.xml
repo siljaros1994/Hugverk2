@@ -27,5 +27,4 @@
         android:backgroundTint="@android:color/holo_red_light"
         android:textColor="@android:color/white"/>
 
-
 </LinearLayout>
