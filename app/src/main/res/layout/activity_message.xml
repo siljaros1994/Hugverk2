@@ -30,7 +30,10 @@
             android:id="@+id/buttonSend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"/>
+            android:text="Send"
+            android:backgroundTint="#ED4C84"
+            android:textColor="#FFFFFF"
+            />
     </LinearLayout>
 
 
