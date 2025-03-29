@@ -119,6 +119,15 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
+        //Logout button
+        val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+
         // Bind edit fields
         spinnerEyeColor = findViewById(R.id.spinner_eyeColor)
         spinnerHairColor = findViewById(R.id.spinner_hairColor)
@@ -399,19 +408,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
-            R.id.nav_logout -> { //Matches navigation menu ID
-                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
-                //Close the navigation drawer before logging out
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                //Delay logout slightly to prevent UI conflicts
-                drawerLayout.postDelayed({
-                    val intent = Intent(this, LogoutActivity::class.java)
-                    startActivity(intent) //Call logout function
-                    finish()
-                }, 300) //Small delay ensures smooth UI transition
-            }
+
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

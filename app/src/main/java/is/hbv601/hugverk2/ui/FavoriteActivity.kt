@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -16,6 +17,7 @@ import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.model.DonorProfile
 import androidx.appcompat.widget.Toolbar
+import `is`.hbv601.hugverk2.R.id.btnLogout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +40,18 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         toolbar = findViewById(R.id.toolbar)
         navView = findViewById(R.id.nav_view)
         rvFavorites = findViewById(R.id.rvFavorites)
+
+        //Logout button
+        /*
+        val logoutButton: Button = findViewById(btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -133,6 +147,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
+            /*
             R.id.nav_logout -> { //Matches navigation menu ID
                 Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
                 //Close the navigation drawer before logging out
@@ -146,6 +161,8 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     finish()
                 }, 300) //Small delay ensures smooth UI transition
             }
+
+             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
