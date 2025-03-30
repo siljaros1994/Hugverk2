@@ -14,6 +14,8 @@ object RetrofitClient {
 
     private const val BASE_URL = "http://192.168.101.4:8080/"
 
+    //In school  130.208.102.35
+
     // Create a CookieManager that accepts all cookies.
     private val cookieManager = CookieManager().apply {
         setCookiePolicy(CookiePolicy.ACCEPT_ALL)
@@ -37,7 +39,7 @@ object RetrofitClient {
                     request
                 }
 
-                val response = chain.proceed(request)
+                val response = chain.proceed(requestWithSession) //(request)
                 Log.d("CookieManager", "After response, stored cookies: ${cookieManager.cookieStore.cookies}")
                 response
             }

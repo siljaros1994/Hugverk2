@@ -47,6 +47,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         } else {
             Toast.makeText(this, "Unknown user type", Toast.LENGTH_LONG).show()
             finish()
+
         }
 
         //Initialize Navigation Drawer
@@ -58,6 +59,19 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        //Logout button
+        /*
+        val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
+
+
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -66,6 +80,9 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         toggle.syncState()
 
     }
+
+
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -77,6 +94,8 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, BookingActivity::class.java))
             }
+
+
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

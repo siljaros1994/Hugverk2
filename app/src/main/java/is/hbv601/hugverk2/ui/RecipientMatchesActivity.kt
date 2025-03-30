@@ -198,5 +198,4 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
-
 }

@@ -120,6 +120,18 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
+        //Logout button
+        /*val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
+
+
         // Bind edit fields
         spinnerEyeColor = findViewById(R.id.spinner_eyeColor)
         spinnerHairColor = findViewById(R.id.spinner_hairColor)
@@ -423,6 +435,7 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
+
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

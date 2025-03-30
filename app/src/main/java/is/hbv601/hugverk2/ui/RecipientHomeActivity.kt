@@ -66,6 +66,18 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
+        /*
+        //here is the logout button
+        val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
+
         // Here we request runtime permission for notifications on Android 13+.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -363,6 +375,24 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
                 //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
+            /*
+            R.id.nav_logout -> {
+                startActivity(Intent(this, LogoutActivity::class.java))
+                finish()
+                true
+            }
+            else -> false
+
+             */
+            /*
+            R.id.nav_logout -> {
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent)
+                finish()
+                return true
+            }
+
+             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
