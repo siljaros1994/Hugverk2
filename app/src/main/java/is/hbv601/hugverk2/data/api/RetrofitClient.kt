@@ -42,7 +42,7 @@ object RetrofitClient {
                     request
                 }
 
-                val response = chain.proceed(request)
+                val response = chain.proceed(requestWithSession) //(request)
                 Log.d("CookieManager", "After response, stored cookies: ${cookieManager.cookieStore.cookies}")
                 response
             }

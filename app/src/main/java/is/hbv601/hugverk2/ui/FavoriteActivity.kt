@@ -42,15 +42,12 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         rvFavorites = findViewById(R.id.rvFavorites)
 
         //Logout button
-        /*
-        val logoutButton: Button = findViewById(btnLogout)
-        logoutButton.setOnClickListener {
-            val intent = Intent(this, LogoutActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
 
-         */
+
+
+
+
+
 
 
         setSupportActionBar(toolbar)

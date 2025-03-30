@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -41,6 +42,8 @@ class MessageActivity : AppCompatActivity() {
             finish()
             return
         }
+
+
 
         // Shared preferences
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)

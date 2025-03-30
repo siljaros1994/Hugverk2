@@ -60,12 +60,16 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         setSupportActionBar(toolbar)
 
         //Logout button
+        /*
         val logoutButton: Button = findViewById(R.id.btnLogout)
         logoutButton.setOnClickListener {
             val intent = Intent(this, LogoutActivity::class.java)
             startActivity(intent)
             finish()
         }
+
+         */
+
 
 
         val toggle = ActionBarDrawerToggle(

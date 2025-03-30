@@ -3,6 +3,7 @@ package `is`.hbv601.hugverk2.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,9 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientMatchesBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+
 
         // Setup toolbar
         val toolbar: Toolbar = binding.toolbar
