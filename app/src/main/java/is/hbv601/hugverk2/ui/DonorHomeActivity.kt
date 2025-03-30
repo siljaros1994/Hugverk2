@@ -373,6 +373,14 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
                 //DonorBookingActivity
             }
+            /*R.id.nav_logout -> {
+                startActivity(Intent(this, LogoutActivity::class.java))
+                finish()
+                true
+            }
+            else -> false
+
+             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

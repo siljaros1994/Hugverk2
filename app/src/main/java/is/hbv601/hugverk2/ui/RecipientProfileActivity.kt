@@ -124,12 +124,17 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
         //Logout Button
+        /*
         val logoutButton: Button = findViewById(R.id.btnLogout)
         logoutButton.setOnClickListener {
             val intent = Intent(this, LogoutActivity::class.java)
             startActivity(intent)
             finish()
         }
+
+         */
+
+
 
 
         // Bind edit fields
