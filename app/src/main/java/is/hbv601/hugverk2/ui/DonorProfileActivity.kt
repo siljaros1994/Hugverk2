@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -157,6 +158,29 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
 
         // Initialize MultiSelectSpinner options
         spinnerMedicalHistory.setItems(resources.getStringArray(R.array.medical_history_options))
+
+        // logout button
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
+        }
 
         // Fetch the donor profile
         val userId = getLoggedInUserId()
