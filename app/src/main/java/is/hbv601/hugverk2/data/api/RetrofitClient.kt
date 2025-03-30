@@ -12,9 +12,11 @@ import okhttp3.JavaNetCookieJar
 
 object RetrofitClient {
 
+
     private const val BASE_URL = "http://192.168.101.4:8080/"
 
     //In school  130.208.102.35
+
 
     // Create a CookieManager that accepts all cookies.
     private val cookieManager = CookieManager().apply {
