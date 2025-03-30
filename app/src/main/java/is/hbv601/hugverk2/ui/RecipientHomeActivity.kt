@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
+import android.view.Gravity
 import android.widget.ArrayAdapter
 import android.widget.AdapterView
+import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Spinner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +66,18 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
+        /*
+        //here is the logout button
+        val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
+
         // Here we request runtime permission for notifications on Android 13+.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -108,25 +123,53 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
         // Here we retrieve the user data
         val username = sharedPreferences.getString("username", "Unknown")
-        val locationSpinner: Spinner = findViewById(R.id.spinnerLocation)
+        val userType = sharedPreferences.getString("user_type", "recipient")
 
-        // here we define list of locations
-        val locations = listOf("All", "Höfuðborgarsvæðið", "Suðurnes", "Norðurland", "Vesturland", "Austurland", "Suðurland")
-
-        // Here we create an adapter for the spinner
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
-        locationSpinner.adapter = adapter
-
-        if (username == null) {
+        if (username == null || userType == null) {
             Toast.makeText(this, "User data not found. Please log in again.", Toast.LENGTH_SHORT).show()
             finish()
         } else {
-            // Here we display the username on the homepage
             binding.welcomeMessage.text = "Hello, $username!"
             val headerView = navigationView.getHeaderView(0)
             val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
             navHeaderTitle.text = "Welcome, $username!"
+            if (userType.equals("recipient", ignoreCase = true)) {
+                navigationView.menu.clear()
+                navigationView.inflateMenu(R.menu.drawer_menu_recipient)
+            } else {
+                navigationView.menu.clear()
+                navigationView.inflateMenu(R.menu.drawer_menu_donor)
+            }
         }
+
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+        //Delay logout slightly to prevent UI conflicts
+        drawerLayout.postDelayed({
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent) //Call logout function
+            finish()
+        }, 300) //Small delay ensures smooth UI transition
+    }
+
+        val locationSpinner: Spinner = findViewById(R.id.spinnerLocation)
+        // here we define list of locations
+        val locations = listOf("All", "Höfuðborgarsvæðið", "Suðurnes", "Norðurland", "Vesturland", "Austurland", "Suðurland")
+        // Here we create an adapter for the spinner
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locations)
+        locationSpinner.adapter = adapter
+
         // recyclerview initialize
         donorRecyclerView = findViewById(R.id.rvDonorCards)
         val layoutManager = GridLayoutManager(this, 1)
@@ -172,6 +215,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
             override fun onViewProfileClicked(donor: DonorProfile) {
                 // Launch the DonorViewActivity with the donor's profile ID
+                Log.d("RecipientHomeActivity", "View profile clicked for donor id: ${donor.donorProfileId}")
                 val intent = Intent(this@RecipientHomeActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)
                 startActivity(intent)
@@ -293,15 +337,23 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userType = sharedPrefs.getString("user_type", "recipient")
         when (item.itemId) {
             R.id.nav_home -> {
                 // Start Recipient profile activity (or refresh the current one)
-                val intent = Intent(this, RecipientHomeActivity::class.java) // Always Recipient profile for RecipientHome
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientHomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorHomeActivity::class.java))
+                }
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, RecipientProfileActivity::class.java) // Always Recipient profile for RecipientHome
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientProfileActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorProfileActivity::class.java))
+                }
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
@@ -312,29 +364,35 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
             }
             R.id.nav_matches -> {
-                val intent = Intent(this, RecipientMatchesActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientMatchesActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorMatchesActivity::class.java))
+                }
             }
             R.id.nav_booking -> {
                 val intent = Intent(this, BookingActivity::class.java)
                 startActivity(intent)
                 //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
-            // Handle other menu items
-            R.id.nav_logout -> { //Matches navigation menu ID
-                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
-                //Close the navigation drawer before logging out
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                //Delay logout slightly to prevent UI conflicts
-                drawerLayout.postDelayed({
-                    val intent = Intent(this, LogoutActivity::class.java)
-                    startActivity(intent) //Call logout function
-                    finish()
-                }, 300) //Small delay ensures smooth UI transition
+            /*
+            R.id.nav_logout -> {
+                startActivity(Intent(this, LogoutActivity::class.java))
+                finish()
+                true
+            }
+            else -> false
+
+             */
+            /*
+            R.id.nav_logout -> {
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent)
+                finish()
+                return true
             }
 
+             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

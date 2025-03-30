@@ -4,9 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
@@ -123,6 +125,20 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
+        //Logout Button
+        /*
+        val logoutButton: Button = findViewById(R.id.btnLogout)
+        logoutButton.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+         */
+
+
+
+
         // Bind edit fields
         spinnerEyeColor = findViewById(R.id.spinner_eyeColor)
         spinnerHairColor = findViewById(R.id.spinner_hairColor)
@@ -156,6 +172,28 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
 
         // Initialize MultiSelectSpinner options
         spinnerMedicalHistory.setItems(resources.getStringArray(R.array.medical_history_options))
+
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
+        }
 
         // Fetch recipient profile data
         val userId = getLoggedInUserId()
@@ -373,19 +411,6 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
 
-            R.id.nav_logout -> { //Matches navigation menu ID
-                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
-                //Close the navigation drawer before logging out
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                //Delay logout slightly to prevent UI conflicts
-                drawerLayout.postDelayed({
-                    val intent = Intent(this, LogoutActivity::class.java)
-                    startActivity(intent) //Call logout function
-                    finish()
-                }, 300) //Small delay ensures smooth UI transition
-            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
