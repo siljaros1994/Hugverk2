@@ -2,11 +2,16 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
@@ -22,8 +27,11 @@ import retrofit2.Response
 class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, DonorAdapter.OnDonorClickListener {
 
     private lateinit var binding: ActivityRecipientMatchesBinding
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
     private lateinit var matchesAdapter: DonorAdapter
     private var matchesList = mutableListOf<DonorProfile>()
+    private var userType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +45,23 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
         // Initialize drawer and navigation view
-        binding.navView.setNavigationItemSelectedListener(this)
+        drawerLayout = binding.drawerLayout
+        navigationView = binding.navView
+        navigationView.setNavigationItemSelectedListener(this)
+
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val username = sharedPrefs.getString("username", "Guest")
+        userType = sharedPrefs.getString("user_type", "recipient")
+        if (userType.equals("recipient", ignoreCase = true)) {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_recipient)
+        } else {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_donor)
+        }
+        val headerView = navigationView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        navHeaderTitle.text = "Welcome, $username!"
 
         // Setup RecyclerView
         binding.rvMatches.layoutManager = GridLayoutManager(this, 1)
@@ -45,6 +69,28 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
         binding.rvMatches.adapter = matchesAdapter
 
         loadMatches()
+
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
+        }
     }
 
     private fun loadMatches() {
@@ -118,12 +164,18 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, RecipientHomeActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientHomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorHomeActivity::class.java))
+                }
             }
             R.id.nav_profile -> {
-                val intent = Intent(this, RecipientProfileActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientProfileActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorProfileActivity::class.java))
+                }
             }
             R.id.nav_messages -> {
                 val intent = Intent(this, MessageListActivity::class.java)
@@ -135,13 +187,15 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
             }
             R.id.nav_matches -> {
                 // Start Recipient match activity (or refresh the current one)
-                val intent = Intent(this, RecipientMatchesActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("recipient", ignoreCase = true)) {
+                    startActivity(Intent(this, RecipientMatchesActivity::class.java))
+                } else {
+                    startActivity(Intent(this, DonorMatchesActivity::class.java))
+                }
             }
             R.id.nav_booking -> Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
-
 }

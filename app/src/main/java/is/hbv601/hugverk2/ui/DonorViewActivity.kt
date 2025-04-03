@@ -50,12 +50,15 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
-        // Update Navigation Header with logged in username
-        val headerView = navigationView.getHeaderView(0)
-        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
         val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val username = sharedPrefs.getString("username", "Guest")
-        navHeaderTitle.text = "Welcome, $username!"
+        val userType = sharedPrefs.getString("user_type", "donor")
+        if (userType.equals("donor", ignoreCase = true)) {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_donor)
+        } else {
+            navigationView.menu.clear()
+            navigationView.inflateMenu(R.menu.drawer_menu_recipient)
+        }
 
         // Setup toolbar and drawer for side panel navigation
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -63,6 +66,11 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
+        // Update navigation header with the logged-in username
+        val headerView = navigationView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        val username = sharedPrefs.getString("username", "Guest")
+        navHeaderTitle.text = "Welcome, $username!"
 
         // Get donorProfileId passed from the donor card button
         donorProfileId = intent.getLongExtra("donorProfileId", -1L)
@@ -93,17 +101,30 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun loadDonorProfile() {
         RetrofitClient.getInstance().viewDonorProfile(donorProfileId)
             .enqueue(object : Callback<DonorProfile> {
-                override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
+                override fun onResponse(
+                    call: Call<DonorProfile>,
+                    response: Response<DonorProfile>
+                ) {
                     if (response.isSuccessful) {
                         response.body()?.let { donor ->
                             updateUI(donor)
-                        } ?: Toast.makeText(this@DonorViewActivity, "Donor profile not found", Toast.LENGTH_SHORT).show()
+                        } ?: Toast.makeText(
+                            this@DonorViewActivity,
+                            "Donor profile not found",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(this@DonorViewActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@DonorViewActivity,
+                            "Error: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
+
                 override fun onFailure(call: Call<DonorProfile>, t: Throwable) {
-                    Toast.makeText(this@DonorViewActivity, "Network error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DonorViewActivity, "Network error", Toast.LENGTH_SHORT)
+                        .show()
                 }
             })
     }
@@ -115,7 +136,8 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         tvEyeColor.text = "Eye Color: ${donor.eyeColor ?: "Not specified"}"
         tvHairColor.text = "Hair Color: ${donor.hairColor ?: "Not specified"}"
         tvEducationLevel.text = "Education Level: ${donor.educationLevel ?: "Not specified"}"
-        tvMedicalHistory.text = "Medical History: ${donor.medicalHistory?.joinToString(", ") ?: "Not specified"}"
+        tvMedicalHistory.text =
+            "Medical History: ${donor.medicalHistory?.joinToString(", ") ?: "Not specified"}"
         tvRace.text = "Race: ${donor.race ?: "Not specified"}"
         tvEthnicity.text = "Ethnicity: ${donor.ethnicity ?: "Not specified"}"
         tvBloodType.text = "Blood Type: ${donor.bloodType ?: "Not specified"}"
@@ -138,28 +160,48 @@ class DonorViewActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 drawerLayout.openDrawer(GravityCompat.START)
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Here we read the current user type from shared preferences
+        val sharedPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val userType = sharedPrefs.getString("user_type", "donor")
         when (item.itemId) {
             R.id.nav_home -> {
-                val intent = Intent(this, DonorHomeActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorHomeActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientHomeActivity::class.java))
+                }
             }
+
             R.id.nav_profile -> {
-                val intent = Intent(this, DonorProfileActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorProfileActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientProfileActivity::class.java))
+                }
             }
+
             R.id.nav_messages -> {
-                val intent = Intent(this, MessageListActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, MessageListActivity::class.java))
+                } else {
+                    startActivity(Intent(this, MessageListActivity::class.java))
+                }
             }
+
             R.id.nav_matches -> {
-                val intent = Intent(this, DonorMatchesActivity::class.java)
-                startActivity(intent)
+                if (userType.equals("donor", ignoreCase = true)) {
+                    startActivity(Intent(this, DonorMatchesActivity::class.java))
+                } else {
+                    startActivity(Intent(this, RecipientMatchesActivity::class.java))
+                }
             }
+
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }

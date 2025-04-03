@@ -3,7 +3,10 @@ package `is`.hbv601.hugverk2.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -16,6 +19,7 @@ import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.adapter.DonorAdapter
 import `is`.hbv601.hugverk2.model.DonorProfile
 import androidx.appcompat.widget.Toolbar
+import `is`.hbv601.hugverk2.R.id.btnLogout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,6 +29,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: Toolbar
     private lateinit var navView: NavigationView
+    private lateinit var navigationView: NavigationView
     private lateinit var rvFavorites: RecyclerView
     private lateinit var donorAdapter: DonorAdapter
     private var favoritesList = mutableListOf<DonorProfile>()
@@ -77,6 +82,28 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         rvFavorites.adapter = donorAdapter
 
         loadFavorites()
+
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
+        }
     }
 
     private fun loadFavorites() {
@@ -132,19 +159,6 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
             R.id.nav_booking -> {
                 Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
-            }
-            R.id.nav_logout -> { //Matches navigation menu ID
-                Log.d("RecipientHomeActivity", "Logout button clicked!") //Debugging Log
-                //Close the navigation drawer before logging out
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                }
-                //Delay logout slightly to prevent UI conflicts
-                drawerLayout.postDelayed({
-                    val intent = Intent(this, LogoutActivity::class.java)
-                    startActivity(intent) //Call logout function
-                    finish()
-                }, 300) //Small delay ensures smooth UI transition
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)

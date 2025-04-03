@@ -72,12 +72,14 @@
 
             <Button
                 android:id="@+id/btnMatch"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Match" />
 
             <Button
                 android:id="@+id/btnUnMatch"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Unmatch"
@@ -85,6 +87,7 @@
 
             <Button
                 android:id="@+id/btnViewProfile"
+                style="@style/cardbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View Profile"
