@@ -10,5 +10,6 @@
         <domain includeSubdomains="true">130.208.102.234</domain>
         <domain includeSubdomains="true">130.208.102.35</domain>
         <domain includeSubdomains="true">172.20.112.1</domain>
+        <domain includeSubdomains="true"> 192.168.0.100</domain>
     </domain-config>
 </network-security-config>
