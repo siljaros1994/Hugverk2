@@ -3,8 +3,11 @@ package `is`.hbv601.hugverk2.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
 import `is`.hbv601.hugverk2.model.DonorProfile
@@ -14,6 +17,8 @@ class AdminHomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_home)
+        //drawerLayout = findViewById(R.id.drawer_layout)
+        //navigationView = findViewById(R.id.nav_view)
 
         AdminNotificationHelper.createNotificationChannel(this)
 
@@ -32,6 +37,14 @@ class AdminHomeActivity : AppCompatActivity() {
 
 
         fetchDonorsAndNotifyIfLimitReached()
+
+        //Logout button
+        val btnLogout: Button = findViewById(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            val intent = Intent(this, LogoutActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
     }
 

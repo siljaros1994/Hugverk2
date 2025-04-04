@@ -180,7 +180,7 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 startActivity(intent)
             }
             R.id.nav_booking -> {
-                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, BookingActivity::class.java))
             }
             R.id.nav_favorites -> {
                 if (userType == "recipient") {

@@ -29,7 +29,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: Toolbar
     private lateinit var navView: NavigationView
-    private lateinit var navigationView: NavigationView
+    //private lateinit var navigationView: NavigationView
     private lateinit var rvFavorites: RecyclerView
     private lateinit var donorAdapter: DonorAdapter
     private var favoritesList = mutableListOf<DonorProfile>()
@@ -83,14 +83,14 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         loadFavorites()
 
-        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navView, false)
         val lp = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
         )
         lp.gravity = Gravity.BOTTOM
         footerView.layoutParams = lp
-        navigationView.addView(footerView)
+        navView.addView(footerView)
 
         footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
             // Close the navigation drawer before logging out
@@ -158,7 +158,8 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 startActivity(intent)
             }
             R.id.nav_booking -> {
-                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, BookingActivity::class.java)
+                startActivity(intent)
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
