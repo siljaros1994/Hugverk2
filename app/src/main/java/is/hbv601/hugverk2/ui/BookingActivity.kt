@@ -4,6 +4,7 @@ import android.content.Intent
 import android.widget.*
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -59,16 +60,28 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        //Logout button
-        /*
-        val logoutButton: Button = findViewById(R.id.btnLogout)
-        logoutButton.setOnClickListener {
-            val intent = Intent(this, LogoutActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
 
-         */
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, navigationView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        navigationView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
+        }
 
 
 
@@ -90,9 +103,7 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_favorites -> startActivity(Intent(this, FavoriteActivity::class.java))
             R.id.nav_messages -> startActivity(Intent(this, MessageListActivity::class.java))
             R.id.nav_matches -> startActivity(Intent(this, RecipientMatchesActivity::class.java))
-            R.id.nav_booking -> {
-                Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, BookingActivity::class.java))
+            R.id.nav_booking -> { startActivity(Intent(this, BookingActivity::class.java))
             }
 
 
@@ -100,6 +111,8 @@ class BookingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
 
     private fun setupDonorBooking() {
         val pendingRecyclerView: RecyclerView = findViewById(R.id.appointmentsRecyclerView)
