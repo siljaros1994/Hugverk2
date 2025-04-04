@@ -70,6 +70,8 @@ class MessageActivity : AppCompatActivity() {
         buttonSend.setOnClickListener {
             sendMessage()
         }
+
+
     }
 
     private fun fetchMessages() {

@@ -2,6 +2,7 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import `is`.hbv601.hugverk2.R
@@ -14,6 +15,8 @@ import `is`.hbv601.hugverk2.adapter.RecipientAdapter
 import `is`.hbv601.hugverk2.model.DonorProfile
 import `is`.hbv601.hugverk2.model.RecipientProfile
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
@@ -54,6 +57,28 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         } else {
             setupRecipientAdapter()
             loadRecipientMatches()
+        }
+
+        val footerView = layoutInflater.inflate(R.layout.nav_footer, binding.navView, false)
+        val lp = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        lp.gravity = Gravity.BOTTOM
+        footerView.layoutParams = lp
+        binding.navView.addView(footerView)
+
+        footerView.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            // Close the navigation drawer before logging out
+            if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+            }
+            // Delay logout slightly to prevent UI conflicts
+            binding.drawerLayout.postDelayed({
+                val intent = Intent(this, LogoutActivity::class.java)
+                startActivity(intent) //Call logout function
+                finish()
+            }, 300)
         }
     }
 

@@ -375,24 +375,7 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
                 //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
-            /*
-            R.id.nav_logout -> {
-                startActivity(Intent(this, LogoutActivity::class.java))
-                finish()
-                true
-            }
-            else -> false
 
-             */
-            /*
-            R.id.nav_logout -> {
-                val intent = Intent(this, LogoutActivity::class.java)
-                startActivity(intent)
-                finish()
-                return true
-            }
-
-             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
