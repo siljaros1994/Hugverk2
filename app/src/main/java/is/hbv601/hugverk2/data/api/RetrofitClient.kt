@@ -12,7 +12,7 @@ import okhttp3.JavaNetCookieJar
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://192.168.0.100:8080"
+    private const val BASE_URL = "http://192.168.1.15:8080"
 
 
 
