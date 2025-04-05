@@ -77,7 +77,8 @@ class MessageActivity : AppCompatActivity() {
     private fun fetchMessages() {
         if (receiverId == null) return
 
-        RetrofitClient.getInstance().getConversationWith(receiverId!!)
+        //RetrofitClient.getInstance().getConversationWith(userType, receiverId!!)
+            RetrofitClient.getInstance().getConversationWith(receiverId!!)
             .enqueue(object : Callback<List<MessageDTO>> {
                 override fun onResponse(call: Call<List<MessageDTO>>, response: Response<List<MessageDTO>>) {
                     if (response.isSuccessful) {

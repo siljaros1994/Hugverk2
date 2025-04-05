@@ -120,15 +120,6 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
-        //Logout button
-        /*val logoutButton: Button = findViewById(R.id.btnLogout)
-        logoutButton.setOnClickListener {
-            val intent = Intent(this, LogoutActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-         */
 
 
 

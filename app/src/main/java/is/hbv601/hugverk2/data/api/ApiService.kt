@@ -116,6 +116,12 @@ interface ApiService {
         @Header("Cookie") cookie: String
     ): Call<DeleteResponseDTO>
 
+    //@GET("api/messages/{userType}/{id}")
+    //fun getConversationWith(
+    //    @Path("userType") userType: String,
+    //    @Path("id") receiverId: Long
+    //): Call<List<MessageDTO>>
+
     @GET("api/messages/conversation/{receiverId}")
     fun getConversationWith(@Path("receiverId") receiverId: Long): Call<List<MessageDTO>>
 

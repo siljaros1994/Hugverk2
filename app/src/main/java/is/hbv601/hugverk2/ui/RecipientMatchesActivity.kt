@@ -193,7 +193,7 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
                     startActivity(Intent(this, DonorMatchesActivity::class.java))
                 }
             }
-            R.id.nav_booking -> Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
+            R.id.nav_booking -> startActivity(Intent(this, BookingActivity::class.java))
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
