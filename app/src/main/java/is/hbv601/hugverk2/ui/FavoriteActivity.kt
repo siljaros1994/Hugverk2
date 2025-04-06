@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -29,7 +30,6 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: Toolbar
     private lateinit var navView: NavigationView
-    //private lateinit var navigationView: NavigationView
     private lateinit var rvFavorites: RecyclerView
     private lateinit var donorAdapter: DonorAdapter
     private var favoritesList = mutableListOf<DonorProfile>()
@@ -49,6 +49,13 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
         navView.setNavigationItemSelectedListener(this)
 
+        val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val username = sharedPreferences.getString("username", "Guest")
+
+        val headerView = navView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        navHeaderTitle.text = "Welcome, $username!"
+
         rvFavorites.layoutManager = GridLayoutManager(this, 1)
         donorAdapter = DonorAdapter(favoritesList, object : DonorAdapter.OnDonorClickListener {
             override fun onFavoriteClicked(donor: DonorProfile) {
@@ -56,9 +63,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
             override fun onUnfavoriteClicked(donor: DonorProfile) {
                 Log.d("FavoriteActivity", "Unfavorite button clicked for donor id: ${donor.donorProfileId}")
-                RetrofitClient.getInstance()
-                    .unfavoriteDonor(donor.donorProfileId!!)
-                    .enqueue(object : Callback<Void> {
+                RetrofitClient.getInstance().unfavoriteDonor(donor.donorProfileId!!).enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                             if (response.isSuccessful) {
                                 Toast.makeText(this@FavoriteActivity, "Donor removed from favorites", Toast.LENGTH_SHORT).show()
@@ -72,6 +77,7 @@ class FavoriteActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                         }
                     })
             }
+            override fun onUnmatchClicked(donor: DonorProfile) {}
             override fun onViewProfileClicked(donor: DonorProfile) {
                 val intent = Intent(this@FavoriteActivity, DonorViewActivity::class.java)
                 intent.putExtra("donorProfileId", donor.donorProfileId)

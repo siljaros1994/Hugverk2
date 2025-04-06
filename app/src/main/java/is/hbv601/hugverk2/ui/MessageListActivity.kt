@@ -2,6 +2,7 @@ package `is`.hbv601.hugverk2.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -108,8 +109,9 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             }
             override fun onFavoriteClicked(donor: DonorProfile) {}
             override fun onUnfavoriteClicked(donor: DonorProfile) {}
+            override fun onUnmatchClicked(donor: DonorProfile) {}
             override fun onViewProfileClicked(donor: DonorProfile) {}
-        }, DonorAdapter.Mode.MESSAGE_ONLY)
+        }, mode = DonorAdapter.Mode.MESSAGE_ONLY)
 
         binding.rvMatches.adapter = donorAdapter
     }

@@ -363,7 +363,7 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_booking -> {
                 //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
                 val donorId =
-                    getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("donor_id", -1)
+                    getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
                 if (donorId == -1L) {
                     Toast.makeText(this, "Donor ID not found", Toast.LENGTH_SHORT).show()
                     return true
@@ -373,14 +373,6 @@ class DonorHomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 startActivity(intent)
                 //DonorBookingActivity
             }
-            /*R.id.nav_logout -> {
-                startActivity(Intent(this, LogoutActivity::class.java))
-                finish()
-                true
-            }
-            else -> false
-
-             */
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

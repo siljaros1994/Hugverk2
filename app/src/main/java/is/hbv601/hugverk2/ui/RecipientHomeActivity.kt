@@ -66,18 +66,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         // Here we create the notification channel.
         MatchNotificationHelper.createNotificationChannel(this)
 
-        /*
-        //here is the logout button
-        val logoutButton: Button = findViewById(R.id.btnLogout)
-        logoutButton.setOnClickListener {
-            val intent = Intent(this, LogoutActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-         */
-
-
         // Here we request runtime permission for notifications on Android 13+.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -213,6 +201,10 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 })
             }
 
+            override fun onUnmatchClicked(donor: DonorProfile) {
+                Log.d("FavoriteActivity", "onUnmatchClicked not used in recipient home")
+            }
+
             override fun onViewProfileClicked(donor: DonorProfile) {
                 // Launch the DonorViewActivity with the donor's profile ID
                 Log.d("RecipientHomeActivity", "View profile clicked for donor id: ${donor.donorProfileId}")
@@ -264,7 +256,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
     }
 
     private fun loadDonors(page: Int, selectedLocation: String? = null) {
@@ -375,7 +366,6 @@ class RecipientHomeActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 startActivity(intent)
                 //Toast.makeText(this, "Booking clicked", Toast.LENGTH_SHORT).show()
             }
-
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

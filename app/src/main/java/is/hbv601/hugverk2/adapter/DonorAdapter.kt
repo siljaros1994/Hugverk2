@@ -15,17 +15,19 @@ import `is`.hbv601.hugverk2.model.DonorProfile
 class DonorAdapter(
     private var donors: List<DonorProfile>,
     private val listener: OnDonorClickListener,
-    // Adding so we can control the buttons better
+    private val layoutRes: Int = R.layout.donor_card,
     private val mode: Mode = Mode.DEFAULT
 ) : RecyclerView.Adapter<DonorAdapter.DonorViewHolder>() {
+
     // control the buttons
     enum class Mode {
-        DEFAULT, MESSAGE_ONLY
+        DEFAULT, MESSAGE_ONLY, MATCH
     }
 
     interface OnDonorClickListener {
         fun onFavoriteClicked(donor: DonorProfile)
         fun onUnfavoriteClicked(donor: DonorProfile)
+        fun onUnmatchClicked(donor: DonorProfile)
         fun onViewProfileClicked(donor: DonorProfile)
         fun onMessageClicked(donor: DonorProfile)
     }
@@ -37,14 +39,15 @@ class DonorAdapter(
         val tvRace: TextView = itemView.findViewById(R.id.tvRace)
         val tvBloodType: TextView = itemView.findViewById(R.id.tvBloodType)
         val tvDonorType: TextView = itemView.findViewById(R.id.tvDonorType)
-        val btnFavorite: Button = itemView.findViewById(R.id.btnFavorite)
-        val btnUnfavorite: Button = itemView.findViewById(R.id.btnUnfavorite)
+        val btnFavorite: Button? = itemView.findViewById(R.id.btnFavorite)
+        val btnUnfavorite: Button? = itemView.findViewById(R.id.btnUnfavorite)
+        val btnUnmatch: Button? = itemView.findViewById(R.id.btnUnmatch)
         val btnViewProfile: Button = itemView.findViewById(R.id.btnViewProfile)
-        val btnMessage: Button = itemView.findViewById(R.id.btnMessage)
+        val btnMessage: Button? = itemView.findViewById(R.id.btnMessage)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonorViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.donor_card, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
         return DonorViewHolder(view)
     }
 
@@ -64,38 +67,47 @@ class DonorAdapter(
         holder.tvBloodType.text = "Blood Type: ${donor.bloodType ?: "N/A"}"
         holder.tvDonorType.text = "Donor Type: ${donor.donorType ?: "N/A"}"
 
-        holder.btnFavorite.setOnClickListener {
+        holder.btnFavorite?.setOnClickListener {
             Log.d("FavoriteButton", "Favorite button clicked for donor id: ${donor.donorProfileId}")
             listener.onFavoriteClicked(donor)
         }
-
-        holder.btnUnfavorite.setOnClickListener {
-            Log.d("UnFavoriteButton", "UnFavorite button clicked for donor id: ${donor.donorProfileId}")
+        holder.btnUnfavorite?.setOnClickListener {
+            Log.d("UnFavoriteButton", "Unfavorite button clicked for donor id: ${donor.donorProfileId}")
             listener.onUnfavoriteClicked(donor)
         }
-
+        holder.btnUnmatch?.setOnClickListener {
+            Log.d("UnmatchButton", "Unmatch clicked for donor id: ${donor.donorProfileId}")
+            listener.onUnmatchClicked(donor)
+        }
         holder.btnViewProfile.setOnClickListener {
             listener.onViewProfileClicked(donor)
         }
-
-        holder.btnMessage.setOnClickListener {
+        holder.btnMessage?.setOnClickListener {
             listener.onMessageClicked(donor)
         }
 
         when (mode) {
             Mode.DEFAULT -> {
-                holder.btnFavorite.visibility = View.VISIBLE
-                holder.btnUnfavorite.visibility = View.VISIBLE
+                holder.btnFavorite?.visibility = View.VISIBLE
+                holder.btnUnfavorite?.visibility = View.VISIBLE
+                holder.btnUnmatch?.visibility = View.GONE
                 holder.btnViewProfile.visibility = View.VISIBLE
-                holder.btnMessage.visibility = View.GONE
+                holder.btnMessage?.visibility = View.GONE
+            }
+            Mode.MATCH -> {
+                holder.btnFavorite?.visibility = View.GONE
+                holder.btnUnfavorite?.visibility = View.GONE
+                holder.btnUnmatch?.visibility = View.VISIBLE
+                holder.btnViewProfile.visibility = View.VISIBLE
+                holder.btnMessage?.visibility = View.VISIBLE
             }
             Mode.MESSAGE_ONLY -> {
-                holder.btnFavorite.visibility = View.GONE
-                holder.btnUnfavorite.visibility = View.GONE
+                holder.btnFavorite?.visibility = View.GONE
+                holder.btnUnfavorite?.visibility = View.GONE
+                holder.btnUnmatch?.visibility = View.GONE
                 holder.btnViewProfile.visibility = View.GONE
-                holder.btnMessage.visibility = View.VISIBLE
+                holder.btnMessage?.visibility = View.VISIBLE
             }
-            //we can add more of this here if we want, i think it would be good t.d to take out favorite after you've favorited them.
         }
     }
 

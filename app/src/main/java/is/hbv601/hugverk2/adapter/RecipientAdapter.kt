@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
 
-
 class RecipientAdapter(
     private var recipients: List<RecipientProfile>,
     private val listener: OnRecipientClickListener,

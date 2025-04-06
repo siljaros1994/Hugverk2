@@ -65,7 +65,12 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
 
         // Setup RecyclerView
         binding.rvMatches.layoutManager = GridLayoutManager(this, 1)
-        matchesAdapter = DonorAdapter(matchesList, this)
+        matchesAdapter = DonorAdapter(
+            donors = matchesList,
+            listener = this,
+            layoutRes = R.layout.matchdonor_card,
+            mode = DonorAdapter.Mode.MATCH
+        )
         binding.rvMatches.adapter = matchesAdapter
 
         loadMatches()
@@ -122,12 +127,37 @@ class RecipientMatchesActivity : AppCompatActivity(), NavigationView.OnNavigatio
             Toast.makeText(this, "Recipient ID not found", Toast.LENGTH_SHORT).show()
             return
         }
-        // Get donor's user id (assuming donor.userId is the primary key)
-        val donorId = donor.userId ?: run {
+        val donorId = donor.donorProfileId ?: run {
             Toast.makeText(this, "Donor ID not found", Toast.LENGTH_SHORT).show()
             return
         }
-        RetrofitClient.getInstance().unmatch(recipientId, donorId)
+        RetrofitClient.getInstance().unmatch(donorId, recipientId )
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@RecipientMatchesActivity, "Unmatched successfully", Toast.LENGTH_SHORT).show()
+                        loadMatches()
+                    } else {
+                        Toast.makeText(this@RecipientMatchesActivity, "Error unmatching", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@RecipientMatchesActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    override fun onUnmatchClicked(donor: DonorProfile) {
+        val recipientId = getSharedPreferences("user_prefs", MODE_PRIVATE).getLong("user_id", -1)
+        if (recipientId == -1L) {
+            Toast.makeText(this@RecipientMatchesActivity, "Recipient ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val donorId = donor.donorProfileId ?: run {
+            Toast.makeText(this@RecipientMatchesActivity, "Donor ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        RetrofitClient.getInstance().unmatch(donorId, recipientId)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
