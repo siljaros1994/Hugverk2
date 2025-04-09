@@ -20,7 +20,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Booking"/>
+            app:title="Booking"
+            app:titleTextColor="@android:color/white"/>
 
         <!-- Title -->
         <TextView
