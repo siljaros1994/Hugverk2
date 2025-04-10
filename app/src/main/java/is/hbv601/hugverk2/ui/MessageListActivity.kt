@@ -18,6 +18,7 @@ import `is`.hbv601.hugverk2.model.RecipientProfile
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
@@ -48,7 +49,12 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         binding.navView.setNavigationItemSelectedListener(this)
         //usertype
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val username = prefs.getString("username", "Guest") ?: "Guest"
         userType = prefs.getString("user_type", "recipient") ?: "recipient"
+
+        val headerView = binding.navView.getHeaderView(0)
+        val navHeaderTitle = headerView.findViewById<TextView>(R.id.nav_header_title)
+        navHeaderTitle.text = "Welcome, $username!"
 
         binding.rvMatches.layoutManager = LinearLayoutManager(this)
 
@@ -89,6 +95,7 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 val intent = Intent(this@MessageListActivity, MessageActivity::class.java)
                 intent.putExtra("receiverId", recipient.userId)
                 intent.putExtra("receiverName", recipient.user?.username ?: "Unknown")
+                intent.putExtra("receiverProfileImageUrl", recipient.imagePath)
                 startActivity(intent)
             }
             override fun onMatchClicked(recipient: RecipientProfile) {}
@@ -105,6 +112,7 @@ class MessageListActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 val intent = Intent(this@MessageListActivity, MessageActivity::class.java)
                 intent.putExtra("receiverId", donor.userId)
                 intent.putExtra("receiverName", donor.user?.username ?: "Unknown")
+                intent.putExtra("receiverProfileImageUrl", donor.imagePath)
                 startActivity(intent)
             }
             override fun onFavoriteClicked(donor: DonorProfile) {}

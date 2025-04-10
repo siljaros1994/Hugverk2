@@ -6,4 +6,5 @@ data class MessageDTO(
     val receiverId: Long,
     val content: String,
     val timestamp: String,
+    val senderProfilePictureUrl: String?
 )

@@ -11,8 +11,10 @@ import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.MessageDTO
 
-class MessageAdapter(private val messages: List<MessageDTO>, private val userId: Long) :
-    RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(
+    private val messages: List<MessageDTO>,
+    private val userId: Long
+) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val messageTextView: TextView = view.findViewById(R.id.messageTextView)
@@ -51,7 +53,9 @@ class MessageAdapter(private val messages: List<MessageDTO>, private val userId:
             holder.messageTextView.layoutParams = params
 
             Glide.with(holder.itemView.context)
-                .load(R.drawable.default_avatar)
+                .load(message.senderProfilePictureUrl ?: R.drawable.default_avatar)
+                .placeholder(R.drawable.default_avatar)
+                .error(R.drawable.default_avatar)
                 .into(holder.profileImageView)
         }
     }
