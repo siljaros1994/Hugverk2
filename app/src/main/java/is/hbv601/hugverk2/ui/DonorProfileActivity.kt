@@ -120,18 +120,6 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(android.R.drawable.ic_menu_sort_by_size)
 
-        //Logout button
-        /*val logoutButton: Button = findViewById(R.id.btnLogout)
-        logoutButton.setOnClickListener {
-            val intent = Intent(this, LogoutActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-         */
-
-
-
         // Bind edit fields
         spinnerEyeColor = findViewById(R.id.spinner_eyeColor)
         spinnerHairColor = findViewById(R.id.spinner_hairColor)
@@ -385,13 +373,16 @@ class DonorProfileActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             location = selectedLocation
         )
         Log.d("DonorProfile", "Saving profile with imagePath: ${profile.imagePath}")
-        RetrofitClient.getInstance().saveOrEditDonorProfile(profile) //(this)
+        RetrofitClient.getInstance().saveOrEditDonorProfile(profile)
             .enqueue(object : Callback<DonorProfile> {
                 override fun onResponse(call: Call<DonorProfile>, response: Response<DonorProfile>) {
                     if (response.isSuccessful) {
                         response.body()?.let { updatedProfile ->
                             updatePreview(updatedProfile)
                             Toast.makeText(this@DonorProfileActivity, "Profile saved", Toast.LENGTH_SHORT).show()
+                            val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE).edit()
+                            prefs.putString("profile_image_url", updatedProfile.imagePath)
+                            prefs.apply()
                         }
                     } else {
                         Toast.makeText(this@DonorProfileActivity, "Error saving profile: ${response.code()}", Toast.LENGTH_SHORT).show()

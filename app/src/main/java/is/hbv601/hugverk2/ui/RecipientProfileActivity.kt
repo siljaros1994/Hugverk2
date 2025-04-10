@@ -350,6 +350,9 @@ class RecipientProfileActivity : AppCompatActivity(), NavigationView.OnNavigatio
                         response.body()?.let { updatedProfile ->
                             updatePreview(updatedProfile)
                             Toast.makeText(this@RecipientProfileActivity, "Profile saved", Toast.LENGTH_SHORT).show()
+                            val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE).edit()
+                            prefs.putString("profile_image_url", updatedProfile.imagePath)
+                            prefs.apply()
                         }
                     } else {
                         Toast.makeText(this@RecipientProfileActivity, "Error saving profile: ${response.code()}", Toast.LENGTH_SHORT).show()

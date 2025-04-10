@@ -1,10 +1,11 @@
 package `is`.hbv601.hugverk2.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import `is`.hbv601.hbv601.hugverk2.data.api.RetrofitClient
@@ -17,12 +18,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.widget.Toast
+import com.bumptech.glide.Glide
 
 class MessageActivity : AppCompatActivity() {
 
     private lateinit var recyclerMessages: RecyclerView
     private lateinit var editMessage: EditText
     private lateinit var buttonSend: Button
+
+    // Header views
+    private lateinit var chatHeaderImage: ImageView
+    private lateinit var chatHeaderTitle: TextView
 
     private var receiverId: Long? = null
     private var loggedInUserId: Long = -1
@@ -35,6 +41,9 @@ class MessageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
 
+        chatHeaderImage = findViewById(R.id.chatHeaderImage)
+        chatHeaderTitle = findViewById(R.id.chatHeaderTitle)
+
         // Retrieve extras
         receiverId = intent.getLongExtra("receiverId", -1L)
         if (receiverId == -1L) {
@@ -43,12 +52,20 @@ class MessageActivity : AppCompatActivity() {
             return
         }
 
-
+        val receiverProfileImageUrl = intent.getStringExtra("receiverProfileImageUrl")
+        Glide.with(this)
+            .load(if (!receiverProfileImageUrl.isNullOrEmpty()) receiverProfileImageUrl else R.drawable.default_avatar)
+            .circleCrop() // This applies the circular crop transformation
+            .placeholder(R.drawable.default_avatar)
+            .error(R.drawable.default_avatar)
+            .into(chatHeaderImage)
 
         // Shared preferences
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         loggedInUserId = sharedPreferences.getLong("user_id", -1L)
         userType = sharedPreferences.getString("user_type", "recipient") ?: "recipient"
+        val username = sharedPreferences.getString("username", "Guest")
+        chatHeaderTitle.text = username
 
         if (loggedInUserId == -1L) {
             Toast.makeText(this, "User not logged in properly", Toast.LENGTH_SHORT).show()
@@ -70,8 +87,6 @@ class MessageActivity : AppCompatActivity() {
         buttonSend.setOnClickListener {
             sendMessage()
         }
-
-
     }
 
     private fun fetchMessages() {

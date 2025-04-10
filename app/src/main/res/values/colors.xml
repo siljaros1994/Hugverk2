@@ -11,4 +11,5 @@
     <color name="highlightColor">#ffffff</color>
     <color name="buttonColor">#ea4c88</color>
     <color name="gray">#AAAAAA</color>
+    <color name="chatBackground">#F5F5F5</color>
 </resources>
