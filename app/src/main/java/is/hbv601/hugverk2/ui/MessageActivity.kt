@@ -26,13 +26,15 @@ class MessageActivity : AppCompatActivity() {
     private lateinit var editMessage: EditText
     private lateinit var buttonSend: Button
 
-    // Header views
+    // Header views for messages
     private lateinit var chatHeaderImage: ImageView
     private lateinit var chatHeaderTitle: TextView
 
     private var receiverId: Long? = null
     private var loggedInUserId: Long = -1
     private var userType: String = "recipient"
+    private var receiverName: String = ""
+    private var receiverProfileImageUrl: String? = null
 
     private val messages = mutableListOf<MessageDTO>()
     private lateinit var adapter: MessageAdapter
@@ -46,26 +48,24 @@ class MessageActivity : AppCompatActivity() {
 
         // Retrieve extras
         receiverId = intent.getLongExtra("receiverId", -1L)
+        receiverName = intent.getStringExtra("receiverName") ?: "Unknown"
+        receiverProfileImageUrl = intent.getStringExtra("receiverProfileImageUrl")
+
+        Log.d("MessageActivity", "Received intent extras -> receiverId: $receiverId, receiverName: $receiverName, receiverProfileImageUrl: $receiverProfileImageUrl")
+
         if (receiverId == -1L) {
             Toast.makeText(this, "No recipient selected", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        val receiverProfileImageUrl = intent.getStringExtra("receiverProfileImageUrl")
-        Glide.with(this)
-            .load(if (!receiverProfileImageUrl.isNullOrEmpty()) receiverProfileImageUrl else R.drawable.default_avatar)
-            .circleCrop() // This applies the circular crop transformation
-            .placeholder(R.drawable.default_avatar)
-            .error(R.drawable.default_avatar)
-            .into(chatHeaderImage)
+        chatHeaderTitle.text = receiverName
+        loadProfileImage(receiverProfileImageUrl)
 
         // Shared preferences
         val sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
         loggedInUserId = sharedPreferences.getLong("user_id", -1L)
         userType = sharedPreferences.getString("user_type", "recipient") ?: "recipient"
-        val username = sharedPreferences.getString("username", "Guest")
-        chatHeaderTitle.text = username
 
         if (loggedInUserId == -1L) {
             Toast.makeText(this, "User not logged in properly", Toast.LENGTH_SHORT).show()
@@ -87,6 +87,14 @@ class MessageActivity : AppCompatActivity() {
         buttonSend.setOnClickListener {
             sendMessage()
         }
+    }
+
+    private fun loadProfileImage(imageUrl: String?) {
+        Glide.with(this)
+            .load(if (!imageUrl.isNullOrEmpty()) imageUrl else R.drawable.default_avatar)
+            .placeholder(R.drawable.default_avatar)
+            .error(R.drawable.default_avatar)
+            .into(chatHeaderImage)
     }
 
     private fun fetchMessages() {
@@ -113,7 +121,6 @@ class MessageActivity : AppCompatActivity() {
                 }
             })
     }
-
 
     private fun sendMessage() {
         val text = editMessage.text.toString().trim()

@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.adapter
 
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.DonorProfile
+import `is`.hbv601.hugverk2.ui.MessageActivity
 
 class DonorAdapter(
     private var donors: List<DonorProfile>,
@@ -83,7 +85,16 @@ class DonorAdapter(
             listener.onViewProfileClicked(donor)
         }
         holder.btnMessage?.setOnClickListener {
-            listener.onMessageClicked(donor)
+            val donorUserId = donor.userId ?: -1L
+            val donorName = donor.username ?: donor.user?.username ?: "Unknown"
+            Log.d("DonorAdapter", "Passing donor data -> userId: $donorUserId, username: $donorName, imagePath: ${donor.imagePath}")
+
+            val intent = Intent(holder.itemView.context, MessageActivity::class.java).apply {
+                putExtra("receiverId", donorUserId)
+                putExtra("receiverName", donorName)
+                putExtra("receiverProfileImageUrl", donor.imagePath)
+            }
+            holder.itemView.context.startActivity(intent)
         }
 
         when (mode) {
