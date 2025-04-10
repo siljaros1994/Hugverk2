@@ -1,5 +1,6 @@
 package `is`.hbv601.hugverk2.adapter
 
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import `is`.hbv601.hugverk2.R
 import `is`.hbv601.hugverk2.model.RecipientProfile
+import `is`.hbv601.hugverk2.ui.MessageActivity
 
 class RecipientAdapter(
     private var recipients: List<RecipientProfile>,
@@ -81,7 +83,12 @@ class RecipientAdapter(
         }
 
         holder.btnMessage.setOnClickListener {
-            listener.onMessageClicked(recipient)
+            val intent = Intent(holder.itemView.context, MessageActivity::class.java).apply {
+                putExtra("receiverId", recipient.userId ?: -1L)
+                putExtra("receiverName", recipient.user?.username ?: "Unknown")
+                putExtra("receiverProfileImageUrl", recipient.imagePath)
+            }
+            holder.itemView.context.startActivity(intent)
         }
 
         when (mode) {

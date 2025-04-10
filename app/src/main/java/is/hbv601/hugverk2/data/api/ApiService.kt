@@ -123,7 +123,6 @@ interface ApiService {
     @POST("api/messages/send")
     fun sendMessage(@Body messageForm: MessageForm): Call<Void>
 
-    // Here we add our other endpoints here
     // Book an appointment
     @POST("api/bookings/book")
     fun bookAppointment(@Body request: BookingDTO): Call<Void>

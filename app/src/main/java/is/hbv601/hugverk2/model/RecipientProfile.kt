@@ -17,5 +17,6 @@ data class RecipientProfile(
     var traits: String? = null,
     var imagePath: String? = null,
     var userId: Long? = null,
+    var username: String? = null,
     var user: MyAppUser? = null
 )
