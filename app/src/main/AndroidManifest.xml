@@ -83,10 +83,13 @@
             android:exported="true"
             android:label="Recipient Profile" />
 
-        <activity android:name=".ui.AdminHomeActivity" />
+        <activity android:name=".ui.AdminHomeActivity"
+            android:theme="@style/AdminTheme" />
+
         <activity android:name=".ui.UserListActivity" />
         <activity android:name=".ui.MessageActivity"/>
         <activity android:name=".ui.MessageListActivity"/>
+
 
     </application>
 </manifest>

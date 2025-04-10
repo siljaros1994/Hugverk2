@@ -85,7 +85,7 @@ class RecipientAdapter(
         holder.btnMessage.setOnClickListener {
             val intent = Intent(holder.itemView.context, MessageActivity::class.java).apply {
                 putExtra("receiverId", recipient.userId ?: -1L)
-                putExtra("receiverName", recipient.user?.username ?: "Unknown")
+                putExtra("receiverName", recipient.username ?: "Unknown")
                 putExtra("receiverProfileImageUrl", recipient.imagePath)
             }
             holder.itemView.context.startActivity(intent)

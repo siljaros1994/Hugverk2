@@ -86,12 +86,12 @@ class DonorAdapter(
         }
         holder.btnMessage?.setOnClickListener {
             val donorUserId = donor.userId ?: -1L
-            val donorName = donor.username ?: donor.user?.username ?: "Unknown"
+            val donorName = donor.username ?: "Unknown"
             Log.d("DonorAdapter", "Passing donor data -> userId: $donorUserId, username: $donorName, imagePath: ${donor.imagePath}")
 
             val intent = Intent(holder.itemView.context, MessageActivity::class.java).apply {
                 putExtra("receiverId", donorUserId)
-                putExtra("receiverName", donorName)
+                putExtra("receiverName", donor.username ?: "Unknown")
                 putExtra("receiverProfileImageUrl", donor.imagePath)
             }
             holder.itemView.context.startActivity(intent)
